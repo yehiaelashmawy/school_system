@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/features/splash/presentations/views/splash_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const SchoolSystemApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SchoolSystemApp extends StatelessWidget {
+  const SchoolSystemApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(body: Center(child: Text('School System'))),
-    );
+    return MaterialApp(home: SplashView());
   }
 }
