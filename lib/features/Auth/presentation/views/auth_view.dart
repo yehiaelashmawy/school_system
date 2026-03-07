@@ -7,6 +7,9 @@ class AuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: AuthViewBody());
+    return const Scaffold(
+      backgroundColor: Color(0xffF6F7F8),
+      body: AuthViewBody(),
+    );
   }
 }

@@ -11,29 +11,29 @@ class Assets {
   static const String imagesLogin = "assets/images/login.svg";
 
   /// Assets for imagesOnboardingBage1
-  /// assets/images/onboarding_bage_1.svg
+  /// assets/images/onboarding_bage_1.png
   static const String imagesOnboardingBage1 =
-      "assets/images/onboarding_bage_1.svg";
+      "assets/images/onboarding_bage_1.png";
 
   /// Assets for imagesOnboardingBage2
-  /// assets/images/onboarding_bage_2.svg
+  /// assets/images/onboarding_bage_2.png
   static const String imagesOnboardingBage2 =
-      "assets/images/onboarding_bage_2.svg";
+      "assets/images/onboarding_bage_2.png";
 
   /// Assets for imagesOnboardingBage3
-  /// assets/images/onboarding_bage_3.svg
+  /// assets/images/onboarding_bage_3.png
   static const String imagesOnboardingBage3 =
-      "assets/images/onboarding_bage_3.svg";
+      "assets/images/onboarding_bage_3.png";
 
   /// Assets for imagesParentAuth
-  /// assets/images/parent_auth.svg
-  static const String imagesParentAuth = "assets/images/parent_auth.svg";
+  /// assets/images/parent_auth.png
+  static const String imagesParentAuth = "assets/images/parent_auth.png";
 
   /// Assets for imagesStudentAuth
-  /// assets/images/student_auth.svg
-  static const String imagesStudentAuth = "assets/images/student_auth.svg";
+  /// assets/images/student_auth.png
+  static const String imagesStudentAuth = "assets/images/student_auth.png";
 
   /// Assets for imagesTeatherAuth
-  /// assets/images/teather_auth.svg
-  static const String imagesTeatherAuth = "assets/images/teather_auth.svg";
+  /// assets/images/teather_auth.png
+  static const String imagesTeatherAuth = "assets/images/teather_auth.png";
 }
