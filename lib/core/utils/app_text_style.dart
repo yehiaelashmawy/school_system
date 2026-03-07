@@ -31,12 +31,24 @@ abstract class AppTextStyle {
     fontSize: 16,
     fontWeight: FontWeight.bold,
   );
+  static const TextStyle semiBold16 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+  static const TextStyle semiBold14 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+  );
   static const TextStyle regular16 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,
   );
   static const TextStyle regular18 = TextStyle(
     fontSize: 18,
+    fontWeight: FontWeight.normal,
+  );
+  static const TextStyle regular14 = TextStyle(
+    fontSize: 14,
     fontWeight: FontWeight.normal,
   );
   static const TextStyle medium18 = TextStyle(
