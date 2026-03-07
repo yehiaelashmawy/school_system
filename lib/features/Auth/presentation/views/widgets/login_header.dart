@@ -8,12 +8,15 @@ class LoginHeader extends StatelessWidget {
     return Container(
       height: 240,
       width: double.infinity,
+      clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Stack(
         children: [
-          Positioned.fill(child: Image.asset('assets/images/login.png')),
+          Positioned.fill(
+            child: Image.asset('assets/images/login.png', fit: BoxFit.fill),
+          ),
         ],
       ),
     );
