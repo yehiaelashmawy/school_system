@@ -17,23 +17,23 @@ class _OnBordingViewBodyState extends State<OnBordingViewBody> {
 
   final List<OnBoardingPageModel> pages = [
     OnBoardingPageModel(
-      title: 'Manage school\nactivities easily',
+      title: 'Manage school activities easily',
       description:
-          'Organize your classes, schedules, and\nstudent activities in one place.',
+          'Organize your classes, schedules, and student activities in one place.',
       image: 'assets/images/onboarding_bage_1.png',
       hasImagePadding: true,
     ),
     OnBoardingPageModel(
-      title: 'Track attendance and\ngrades',
+      title: 'Track attendance and grades',
       description:
-          'Monitor student performance with real-\ntime analytics and detailed progress\nreports at your fingertips.',
+          'Monitor student performance with real-time analytics and detailed progress reports at your fingertips.',
       image: 'assets/images/onboarding_bage_2.png',
       hasImagePadding: true,
     ),
     OnBoardingPageModel(
-      title: 'Learn smarter with\nSmartTutor AI',
+      title: 'Learn smarter with SmartTutor AI',
       description:
-          'Experience the power of personalized\nlearning guided by advanced artificial\nintelligence designed to adapt to your unique\npace.',
+          'Experience the power of personalized learning guided by advanced artificial intelligence designed to adapt to your unique pace.',
       image: 'assets/images/onboarding_bage_3.png',
       headerTitle: 'SmartTutor AI',
       hasImagePadding: false,
@@ -65,14 +65,16 @@ class _OnBordingViewBodyState extends State<OnBordingViewBody> {
               headerTitle: pages[currentIndex].headerTitle,
             ),
             const SizedBox(height: 16),
-            OnBoardingPageView(
-              pageController: pageController,
-              pages: pages,
-              onPageChanged: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
+            Expanded(
+              child: OnBoardingPageView(
+                pageController: pageController,
+                pages: pages,
+                onPageChanged: (index) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
             ),
             OnBoardingFooter(
               currentIndex: currentIndex,
