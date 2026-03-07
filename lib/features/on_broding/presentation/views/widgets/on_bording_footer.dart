@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+    import 'package:flutter/material.dart';
+import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/custom_dot_indicator.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/on_boarding_button.dart';
 
@@ -40,7 +41,7 @@ class OnBoardingFooter extends StatelessWidget {
                       curve: Curves.easeInOut,
                     );
                   } else {
-                    // Navigate to Login/Home
+                    Navigator.pushReplacementNamed(context, AuthView.routeName);
                   }
                 },
                 text: currentIndex == 2 ? 'Get started' : 'Next',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_system/features/on_broding/presentation/views/widgets/on_boarding_footer.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/on_boarding_header.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/on_boarding_page_view.dart';
+import 'package:school_system/features/on_broding/presentation/views/widgets/on_bording_footer.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/onberding_page_model.dart';
 
 class OnBordingViewBody extends StatefulWidget {

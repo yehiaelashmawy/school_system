@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/on_broding/presentation/views/on_bording_view.dart';
 import 'package:school_system/features/splash/presentation/views/splash_view.dart';
 
@@ -8,6 +9,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const SplashView());
     case OnBordingView.routeName:
       return MaterialPageRoute(builder: (context) => const OnBordingView());
+    case AuthView.routeName:
+      return MaterialPageRoute(builder: (context) => const AuthView());
     default:
       return MaterialPageRoute(builder: (context) => const SplashView());
   }
