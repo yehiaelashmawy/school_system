@@ -3,6 +3,7 @@ import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/Auth/presentation/views/forgot_password_view.dart';
 import 'package:school_system/features/Auth/presentation/views/login_view.dart';
 import 'package:school_system/features/Auth/presentation/views/resret_password_view.dart';
+import 'package:school_system/features/Auth/presentation/views/scusse_view.dart';
 import 'package:school_system/features/Auth/presentation/views/verification_view.dart';
 import 'package:school_system/features/on_broding/presentation/views/on_bording_view.dart';
 import 'package:school_system/features/splash/presentation/views/splash_view.dart';
@@ -25,6 +26,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       );
     case VerificationView.routeName:
       return MaterialPageRoute(builder: (context) => const VerificationView());
+    case ScusseView.routeName:
+      return MaterialPageRoute(builder: (context) => const ScusseView());
     default:
       return MaterialPageRoute(builder: (context) => const SplashView());
   }
