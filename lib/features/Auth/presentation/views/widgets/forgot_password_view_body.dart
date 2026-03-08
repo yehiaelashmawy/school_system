@@ -4,6 +4,7 @@ import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/widgets/custom_app_bar.dart';
 import 'package:school_system/core/widgets/custom_button.dart';
 import 'package:school_system/core/widgets/custom_text_field.dart';
+import 'package:school_system/features/Auth/presentation/views/verification_view.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/custom_back_to_login.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/custom_buttom_logo.dart';
 import 'package:svg_flutter/svg.dart';
@@ -64,7 +65,15 @@ class ForgotPasswordViewBody extends StatelessWidget {
                       const SizedBox(height: 8),
                       const CustomTextField(hintText: 'name@email.com'),
                       const SizedBox(height: 24),
-                      const CustomButton(text: 'Send Reset Code'),
+                      CustomButton(
+                        text: 'Send Reset Code',
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            VerificationView.routeName,
+                          );
+                        },
+                      ),
                       const SizedBox(height: 28),
                       CustomBackToLogin(),
                     ],
