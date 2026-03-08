@@ -5,6 +5,7 @@ import 'package:school_system/core/widgets/custom_app_bar.dart';
 import 'package:school_system/core/widgets/custom_button.dart';
 import 'package:school_system/core/widgets/custom_text_field.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/custom_back_to_login.dart';
+import 'package:school_system/features/Auth/presentation/views/widgets/password_requirements_box.dart';
 import 'package:svg_flutter/svg.dart';
 
 class ResetPasswordViewBody extends StatelessWidget {
@@ -89,7 +90,18 @@ class ResetPasswordViewBody extends StatelessWidget {
                       obscureText: true,
                     ),
                     const SizedBox(height: 24),
-                    const PasswordRequirementsBox(),
+                    const PasswordRequirementsBox(
+                      requirements: [
+                        PasswordRequirementModel(
+                          text: 'At least 8 characters long',
+                          isValid: true,
+                        ),
+                        PasswordRequirementModel(
+                          text: 'Must include a symbol or number',
+                          isValid: false,
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 32),
                     const CustomButton(text: 'Reset Password'),
                     const SizedBox(height: 24),
@@ -113,64 +125,6 @@ class ResetPasswordViewBody extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class PasswordRequirementsBox extends StatelessWidget {
-  const PasswordRequirementsBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFF1F5F9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      child: const Column(
-        children: [
-          RequirementItem(text: 'At least 8 characters long', isValid: true),
-          SizedBox(height: 12),
-          RequirementItem(
-            text: 'Must include a symbol or number',
-            isValid: false,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class RequirementItem extends StatelessWidget {
-  const RequirementItem({super.key, required this.text, required this.isValid});
-
-  final String text;
-  final bool isValid;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          isValid ? Icons.check_circle_outline : Icons.circle_outlined,
-          size: 18,
-          color: isValid ? const Color(0xFF22C55E) : const Color(0xFFCBD5E1),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextStyle.medium18.copyWith(
-              fontSize: 14,
-              color: isValid
-                  ? const Color(0xFF475569)
-                  : const Color(0xFF94A3B8),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
