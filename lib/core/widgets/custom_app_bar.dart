@@ -3,10 +3,16 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 
 class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key, required this.title, this.onBackPressed});
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.onBackPressed,
+    this.showBackButton = true,
+  });
 
   final String title;
   final VoidCallback? onBackPressed;
+  final bool showBackButton;
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +21,14 @@ class CustomAppBar extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: onBackPressed ?? () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+          if (showBackButton)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: onBackPressed ?? () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+              ),
             ),
-          ),
           Text(
             title,
             style: AppTextStyle.bold20.copyWith(color: AppColors.darkBlue),
