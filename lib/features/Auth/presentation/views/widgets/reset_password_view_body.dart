@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/widgets/custom_app_bar.dart';
 import 'package:school_system/core/widgets/custom_button.dart';
 import 'package:school_system/core/widgets/custom_text_field.dart';
@@ -51,10 +52,15 @@ class ResetPasswordViewBody extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'Create New Password',
                       textAlign: TextAlign.center,
-                      style: AppTextStyle.bold24,
+                      style: AppTextStyle.bold24.copyWith(
+                        fontSize: SizeConfig.getResponsiveFontSize(
+                          context,
+                          fontSize: 24,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -62,14 +68,23 @@ class ResetPasswordViewBody extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: AppTextStyle.regular16.copyWith(
                         color: AppColors.grey,
+                        fontSize: SizeConfig.getResponsiveFontSize(
+                          context,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'New Password',
-                        style: AppTextStyle.semiBold14,
+                        style: AppTextStyle.semiBold14.copyWith(
+                          fontSize: SizeConfig.getResponsiveFontSize(
+                            context,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -78,11 +93,16 @@ class ResetPasswordViewBody extends StatelessWidget {
                       obscureText: true,
                     ),
                     const SizedBox(height: 24),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Confirm New Password',
-                        style: AppTextStyle.semiBold14,
+                        style: AppTextStyle.semiBold14.copyWith(
+                          fontSize: SizeConfig.getResponsiveFontSize(
+                            context,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -118,6 +138,10 @@ class ResetPasswordViewBody extends StatelessWidget {
                           'Remember your password? ',
                           style: AppTextStyle.regular14.copyWith(
                             color: AppColors.grey,
+                            fontSize: SizeConfig.getResponsiveFontSize(
+                              context,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                         const CustomBackToLogin(showArrow: false),

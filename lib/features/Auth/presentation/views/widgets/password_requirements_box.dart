@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/utils/size_config.dart';
 
 class PasswordRequirementModel {
   final String text;
@@ -58,7 +59,7 @@ class RequirementItem extends StatelessWidget {
           child: Text(
             text,
             style: AppTextStyle.medium18.copyWith(
-              fontSize: 14,
+              fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 14),
               color: isValid
                   ? const Color(0xFF475569)
                   : const Color(0xFF94A3B8),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/widgets/custom_button.dart';
 import 'package:school_system/core/widgets/custom_text_field.dart';
+import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/remember_me_and_forgot_password.dart';
 
 class LoginForm extends StatelessWidget {
@@ -26,6 +28,10 @@ class LoginForm extends StatelessWidget {
                   'Welcome ',
                   style: AppTextStyle.bold24.copyWith(
                     color: AppColors.darkBlue,
+                    fontSize: SizeConfig.getResponsiveFontSize(
+                      context,
+                      fontSize: 24,
+                    ),
                   ),
                 ),
               ),
@@ -33,7 +39,14 @@ class LoginForm extends StatelessWidget {
               Center(
                 child: Text(
                   'Log in to continue your learning journey',
-                  style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.regular14.copyWith(
+                    color: AppColors.grey,
+                    fontSize: SizeConfig.getResponsiveFontSize(
+                      context,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -46,6 +59,10 @@ class LoginForm extends StatelessWidget {
                 'Email / Phone',
                 style: AppTextStyle.semiBold14.copyWith(
                   color: const Color(0xFF334155),
+                  fontSize: SizeConfig.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -67,6 +84,10 @@ class LoginForm extends StatelessWidget {
                 'Password',
                 style: AppTextStyle.semiBold14.copyWith(
                   color: const Color(0xFF334155),
+                  fontSize: SizeConfig.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -111,7 +132,9 @@ class LoginForm extends StatelessWidget {
             backgroundColor: Colors.white,
             textColor: const Color(0xFF334155),
             borderColor: const Color(0xFFE2E8F0),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pushNamed(context, AuthView.routeName);
+            },
           ),
         ],
       ),

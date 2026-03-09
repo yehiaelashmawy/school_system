@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/widgets/custom_button.dart';
 import 'package:school_system/features/Auth/presentation/views/login_view.dart';
 import 'package:svg_flutter/svg.dart';
@@ -17,13 +18,18 @@ class ScusseViewBody extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 132),
+              const Spacer(flex: 3),
               Text(
                 'Success',
-                style: AppTextStyle.bold24.copyWith(color: AppColors.darkBlue),
+                style: AppTextStyle.bold24.copyWith(
+                  color: AppColors.darkBlue,
+                  fontSize: SizeConfig.getResponsiveFontSize(
+                    context,
+                    fontSize: 24,
+                  ),
+                ),
               ),
-              const SizedBox(height: 48),
-
+              const Spacer(flex: 1),
               Container(
                 width: 128,
                 height: 128,
@@ -31,19 +37,37 @@ class ScusseViewBody extends StatelessWidget {
                   color: Color(0xFFE6F7EF),
                   shape: CircleBorder(),
                 ),
-                child: SvgPicture.asset('assets/images/success.svg'),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/images/success.svg',
+                    width: 80,
+                    height: 80,
+                  ),
+                ),
               ),
-              const SizedBox(height: 50),
+              const Spacer(flex: 1),
               Text(
                 'Password Reset Successful!',
                 textAlign: TextAlign.center,
-                style: AppTextStyle.bold24.copyWith(color: AppColors.darkBlue),
+                style: AppTextStyle.bold24.copyWith(
+                  color: AppColors.darkBlue,
+                  fontSize: SizeConfig.getResponsiveFontSize(
+                    context,
+                    fontSize: 24,
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 'Your password has been updated. You can now log in with your new credentials.',
                 textAlign: TextAlign.center,
-                style: AppTextStyle.regular16.copyWith(color: AppColors.grey),
+                style: AppTextStyle.regular16.copyWith(
+                  color: AppColors.grey,
+                  fontSize: SizeConfig.getResponsiveFontSize(
+                    context,
+                    fontSize: 16,
+                  ),
+                ),
               ),
               const SizedBox(height: 50),
               CustomButton(
@@ -56,7 +80,7 @@ class ScusseViewBody extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 24),
+              const Spacer(flex: 4),
             ],
           ),
         ),

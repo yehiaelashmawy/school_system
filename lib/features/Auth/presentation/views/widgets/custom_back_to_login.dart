@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/Auth/presentation/views/login_view.dart';
 
 class CustomBackToLogin extends StatelessWidget {
   const CustomBackToLogin({super.key, this.showArrow = true});
@@ -16,7 +17,7 @@ class CustomBackToLogin extends StatelessWidget {
           const SizedBox(width: 8),
         ],
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: () => Navigator.pushNamed(context, LoginView.routeName),
           child: Text(
             'Back to Login',
             style: AppTextStyle.semiBold14.copyWith(
