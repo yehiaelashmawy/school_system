@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/teacher_home_view_body.dart';
 
 class TeacherHomeView extends StatelessWidget {
   const TeacherHomeView({super.key});
@@ -6,6 +7,6 @@ class TeacherHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Teacher Home View')));
+    return const Scaffold(body: TeacherHomeViewBody());
   }
 }
