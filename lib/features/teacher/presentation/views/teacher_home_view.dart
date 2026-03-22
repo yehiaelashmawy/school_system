@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/classes-view_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_home_view_body.dart';
 
 class TeacherHomeView extends StatefulWidget {
@@ -13,16 +14,23 @@ class TeacherHomeView extends StatefulWidget {
 class _TeacherHomeViewState extends State<TeacherHomeView> {
   int _currentIndex = 0;
 
+  final List<Widget> _views = const [
+    TeacherHomeViewBody(),
+    ClassesViewBody(),
+    Center(child: Text('Messages View')),
+    Center(child: Text('Alerts View')),
+    Center(child: Text('Profile View')),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      body: const TeacherHomeViewBody(),
+      body: _views[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.04),
               blurRadius: 10,
               offset: const Offset(0, -2),
@@ -39,7 +47,6 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           selectedItemColor: AppColors.primaryColor,
-          // ignore: deprecated_member_use
           unselectedItemColor: AppColors.grey.withOpacity(0.6),
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
