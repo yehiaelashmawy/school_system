@@ -10,6 +10,8 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.initialValue,
     this.controller,
+    this.obscureText = false,
+    this.validator,
   });
 
   final String hintText;
@@ -17,12 +19,16 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? initialValue;
   final TextEditingController? controller;
+  final bool obscureText;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       initialValue: initialValue,
+      obscureText: obscureText,
+      validator: validator,
       maxLines: maxLines,
       style: AppTextStyle.regular14.copyWith(color: AppColors.darkBlue),
       decoration: InputDecoration(
