@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
-import 'package:school_system/features/teacher/presentation/views/widgets/custom_text_field.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/personal_information_action_buttons.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/profile_avatar_section.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/profile_field_section.dart';
 
 class PersonalInformationViewBody extends StatefulWidget {
   const PersonalInformationViewBody({super.key});
@@ -75,59 +76,11 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar Section
-          Center(
-            child: Column(
-              children: [
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    CircleAvatar(
-                      radius: 65,
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: _pickedImagePath != null
-                          ? FileImage(File(_pickedImagePath!)) as ImageProvider
-                          : const AssetImage('assets/images/profile_photo.png'),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 4,
-                      child: GestureDetector(
-                        onTap: _pickPhoto,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Alex Johnson',
-                  style: AppTextStyle.bold16.copyWith(
-                    color: AppColors.darkBlue,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Senior Mathematics Educator',
-                  style: AppTextStyle.regular14.copyWith(
-                    color: AppColors.grey,
-                  ),
-                ),
-              ],
-            ),
+          ProfileAvatarSection(
+            name: 'Alex Johnson',
+            title: 'Senior Mathematics Educator',
+            pickedImagePath: _pickedImagePath,
+            onPickPhoto: _pickPhoto,
           ),
           
           const SizedBox(height: 32),
@@ -142,7 +95,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 20),
           
-          _buildFieldSection(
+          ProfileFieldSection(
             label: 'Full Name',
             controller: _nameController,
             suffixIcon: Icons.edit_outlined,
@@ -150,7 +103,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 16),
           
-          _buildFieldSection(
+          ProfileFieldSection(
             label: 'Email Address',
             controller: _emailController,
             suffixIcon: Icons.mail_outline,
@@ -158,7 +111,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 16),
           
-          _buildFieldSection(
+          ProfileFieldSection(
             label: 'Phone Number',
             controller: _phoneController,
             suffixIcon: Icons.phone_outlined,
@@ -166,7 +119,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 16),
           
-          _buildFieldSection(
+          ProfileFieldSection(
             label: 'Main Subject',
             controller: _subjectController,
             suffixIcon: Icons.school_outlined,
@@ -174,7 +127,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 16),
           
-          _buildFieldSection(
+          ProfileFieldSection(
             label: 'Years of Experience',
             controller: _experienceController,
             suffixIcon: Icons.badge_outlined,
@@ -182,75 +135,18 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           
           const SizedBox(height: 32),
           
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _saveChanges,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Save Changes',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
+          PersonalInformationActionButtons(
+            onSave: _saveChanges,
+            onReset: () {
+              setState(() {
+                _resetDefaults();
+              });
+            },
           ),
           
-          const SizedBox(height: 12),
-          
-          Center(
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  _resetDefaults();
-                });
-              },
-              child: Text(
-                'Reset to Default',
-                style: AppTextStyle.semiBold14.copyWith(
-                  color: AppColors.primaryColor,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
           const SizedBox(height: 24),
         ],
       ),
-    );
-  }
-
-  Widget _buildFieldSection({
-    required String label,
-    required TextEditingController controller,
-    required IconData suffixIcon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTextStyle.semiBold14.copyWith(
-            color: const Color(0xff475569), // Slate 600
-            fontSize: 12, 
-          ),
-        ),
-        const SizedBox(height: 8),
-        CustomTextField(
-          controller: controller,
-          hintText: '',
-          suffixIcon: Icon(suffixIcon, color: const Color(0xff94A3B8), size: 20),
-        ),
-      ],
     );
   }
 }
