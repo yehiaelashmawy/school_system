@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/presentation/views/homework_details_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_item.dart';
 
 class HomeworkListBody extends StatelessWidget {
@@ -33,11 +34,15 @@ class HomeworkListBody extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.lightGrey.withOpacity(0.5)),
+                  borderSide: BorderSide(
+                    color: AppColors.lightGrey.withOpacity(0.5),
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.lightGrey.withOpacity(0.5)),
+                  borderSide: BorderSide(
+                    color: AppColors.lightGrey.withOpacity(0.5),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -64,7 +69,14 @@ class HomeworkListBody extends StatelessWidget {
                   buttonColor: AppColors.primaryColor,
                   buttonTextColor: Colors.white,
                   isOverdue: false,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeworkDetailsView(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 HomeworkItemCard(
@@ -80,7 +92,14 @@ class HomeworkListBody extends StatelessWidget {
                   buttonColor: const Color(0xFFEFF6FF),
                   buttonTextColor: AppColors.primaryColor,
                   isOverdue: false,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeworkDetailsView(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 HomeworkItemCard(
@@ -95,7 +114,14 @@ class HomeworkListBody extends StatelessWidget {
                   buttonColor: const Color(0xFFF1F5F9),
                   buttonTextColor: const Color(0xFF475569),
                   isOverdue: true,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeworkDetailsView(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
               ],
