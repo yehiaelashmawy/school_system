@@ -59,7 +59,7 @@ class SettingsLinkTile extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.grey, size: 20),
+            Icon(Icons.chevron_right, color: AppColors.grey, size: 20),
           ],
         ),
       ),

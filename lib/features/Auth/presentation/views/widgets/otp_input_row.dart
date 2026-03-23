@@ -38,7 +38,7 @@ class OtpInputItem extends StatelessWidget {
         ],
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color(0xFFF8FAFC),
+          fillColor: AppColors.backgroundColor,
           contentPadding: EdgeInsets.zero,
           border: buildBorder(),
           enabledBorder: buildBorder(),
@@ -51,7 +51,7 @@ class OtpInputItem extends StatelessWidget {
   OutlineInputBorder buildBorder([Color? color]) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide(width: 1, color: color ?? const Color(0xFFE2E8F0)),
+      borderSide: BorderSide(width: 1, color: color ?? AppColors.lightGrey),
     );
   }
 }

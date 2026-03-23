@@ -69,11 +69,11 @@ class TodaysClassesSection extends StatelessWidget {
       width: 260,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppColors.black.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -109,7 +109,7 @@ class TodaysClassesSection extends StatelessWidget {
           const SizedBox(height: 20),
           Row(
             children: [
-              const Icon(Icons.access_time, size: 18, color: AppColors.grey),
+              Icon(Icons.access_time, size: 18, color: AppColors.grey),
               const SizedBox(width: 8),
               Text(time, style: AppTextStyle.regular14.copyWith(color: AppColors.grey)),
             ],
@@ -117,7 +117,7 @@ class TodaysClassesSection extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 18, color: AppColors.grey),
+              Icon(Icons.location_on_outlined, size: 18, color: AppColors.grey),
               const SizedBox(width: 8),
               Text(location, style: AppTextStyle.regular14.copyWith(color: AppColors.grey)),
             ],

@@ -26,7 +26,7 @@ class CustomAppBar extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 onPressed: onBackPressed ?? () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
+                icon: Icon(Icons.arrow_back, color: AppColors.darkBlue),
               ),
             ),
           Text(

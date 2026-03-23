@@ -1,3 +1,4 @@
+import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/auth_view_body.dart';
 
@@ -7,8 +8,8 @@ class AuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xffF6F7F8),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       body: AuthViewBody(),
     );
   }

@@ -180,11 +180,11 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.upload, color: Colors.white, size: 20),
-              label: const Text(
+              icon: Icon(Icons.upload, color: AppColors.white, size: 20),
+              label: Text(
                 'Publish Lesson',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),

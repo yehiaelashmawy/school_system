@@ -10,16 +10,16 @@ class TeacherClassesAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-      color: Colors.white,
+      color: AppColors.white,
       child: Row(
         children: [
           SvgPicture.asset('assets/images/my_classes_icon.svg'),
           const SizedBox(width: 12),
           const Text('My Classes', style: AppTextStyle.bold20),
           const Spacer(),
-          const Icon(Icons.search, color: AppColors.darkBlue, size: 28),
+          Icon(Icons.search, color: AppColors.darkBlue, size: 28),
           const SizedBox(width: 16),
-          const Icon(Icons.filter_list, color: AppColors.darkBlue, size: 28),
+          Icon(Icons.filter_list, color: AppColors.darkBlue, size: 28),
         ],
       ),
     );

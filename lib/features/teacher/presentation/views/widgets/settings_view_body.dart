@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/utils/theme_manager.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/settings_link_tile.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/settings_switch_tile.dart';
+import 'package:flutter/material.dart';
+import 'package:school_system/core/utils/app_text_style.dart';
 
 class SettingsViewBody extends StatefulWidget {
   const SettingsViewBody({super.key});
@@ -13,7 +14,6 @@ class SettingsViewBody extends StatefulWidget {
 class _SettingsViewBodyState extends State<SettingsViewBody> {
   bool _pushNotifications = true;
   bool _emailAlerts = false;
-  bool _darkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +49,18 @@ class _SettingsViewBodyState extends State<SettingsViewBody> {
           SettingsSwitchTile(
             title: 'Dark Mode',
             icon: Icons.nightlight_round,
-            value: _darkMode,
+            value: ThemeManager.isDarkMode,
             onChanged: (value) {
               setState(() {
-                _darkMode = value;
+                ThemeManager.themeNotifier.value = 
+                    value ? ThemeMode.dark : ThemeMode.light;
               });
+              
+              // Force the whole app to rebuild seamlessly to pick up AppColors
+              // without destroying the current navigation stack!
+              ThemeManager.forceAppRebuild(
+                context.findAncestorStateOfType<NavigatorState>()!.context
+              );
             },
           ),
           SettingsLinkTile(

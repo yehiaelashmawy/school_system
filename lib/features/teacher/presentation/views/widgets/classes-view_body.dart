@@ -15,12 +15,12 @@ class ClassesViewBody extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            color: Colors.white,
+            color: AppColors.white,
             child: const SafeArea(bottom: false, child: TeacherClassesAppBar()),
           ),
           Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: const TabBar(
+            decoration: BoxDecoration(color: AppColors.white),
+            child: TabBar(
               labelColor: AppColors.primaryColor,
               unselectedLabelColor: AppColors.grey,
               indicatorColor: AppColors.primaryColor,

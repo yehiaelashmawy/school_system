@@ -72,7 +72,7 @@ class AuthViewBody extends StatelessWidget {
                     Text(
                       'Need help? ',
                       style: AppTextStyle.regular16.copyWith(
-                        color: Color(0xff64748B),
+                        color: AppColors.grey,
                       ),
                     ),
                     TextButton(
@@ -85,7 +85,7 @@ class AuthViewBody extends StatelessWidget {
                       child: Text(
                         'Contact Support',
                         style: AppTextStyle.regular16.copyWith(
-                          color: Color(0xff0F52BD),
+                          color: AppColors.secondaryColor,
                         ),
                       ),
                     ),

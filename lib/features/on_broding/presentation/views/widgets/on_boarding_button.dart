@@ -32,11 +32,11 @@ class OnBoardingButton extends StatelessWidget {
           children: [
             Text(
               text,
-              style: AppTextStyle.bold18.copyWith(color: Colors.white),
+              style: AppTextStyle.bold18.copyWith(color: AppColors.white),
             ),
             if (showArrow) ...[
               const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+              Icon(Icons.arrow_forward, color: AppColors.white, size: 20),
             ],
           ],
         ),

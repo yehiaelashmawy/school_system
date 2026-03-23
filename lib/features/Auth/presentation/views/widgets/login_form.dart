@@ -61,7 +61,7 @@ class LoginForm extends StatelessWidget {
               Text(
                 'Email / Phone',
                 style: AppTextStyle.semiBold14.copyWith(
-                  color: const Color(0xFF334155),
+                  color: AppColors.darkBlue,
                   fontSize: SizeConfig.getResponsiveFontSize(
                     context,
                     fontSize: 14,
@@ -69,11 +69,11 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const CustomTextField(
+              CustomTextField(
                 hintText: 'student@edusmart.edu',
                 prefixIcon: Icon(
                   Icons.mail_outline,
-                  color: Color(0xFF94A3B8),
+                  color: AppColors.lightGrey,
                   size: 20,
                 ),
               ),
@@ -86,7 +86,7 @@ class LoginForm extends StatelessWidget {
               Text(
                 'Password',
                 style: AppTextStyle.semiBold14.copyWith(
-                  color: const Color(0xFF334155),
+                  color: AppColors.darkBlue,
                   fontSize: SizeConfig.getResponsiveFontSize(
                     context,
                     fontSize: 14,
@@ -94,11 +94,11 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const CustomTextField(
+              CustomTextField(
                 hintText: '******************',
                 prefixIcon: Icon(
                   Icons.lock_outline,
-                  color: Color(0xFF94A3B8),
+                  color: AppColors.lightGrey,
                   size: 20,
                 ),
                 obscureText: true,
@@ -111,22 +111,23 @@ class LoginForm extends StatelessWidget {
           const SizedBox(height: 32),
           CustomButton(
             text: 'Login',
-            shadows: const [
+            shadows: [
               BoxShadow(
-                color: Color(0x330F52BD),
+                color: AppColors.secondaryColor.withOpacity(0.2),
                 blurRadius: 6,
                 offset: Offset(0, 4),
                 spreadRadius: -4,
               ),
               BoxShadow(
-                color: Color(0x330F52BD),
+                color: AppColors.secondaryColor.withOpacity(0.2),
                 blurRadius: 15,
                 offset: Offset(0, 10),
                 spreadRadius: -3,
               ),
             ],
             onPressed: () {
-              final role = ModalRoute.of(context)?.settings.arguments as String?;
+              final role =
+                  ModalRoute.of(context)?.settings.arguments as String?;
               if (role == 'student') {
                 Navigator.pushNamed(context, StudentHomeView.routeName);
               } else if (role == 'parent') {
@@ -137,13 +138,13 @@ class LoginForm extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          const Divider(color: Color(0xFFE2E8F0)),
+          Divider(color: AppColors.lightGrey),
           const SizedBox(height: 16),
           CustomButton(
             text: 'Back To Role',
-            backgroundColor: Colors.white,
-            textColor: const Color(0xFF334155),
-            borderColor: const Color(0xFFE2E8F0),
+            backgroundColor: AppColors.white,
+            textColor: AppColors.darkBlue,
+            borderColor: AppColors.lightGrey,
             onPressed: () {
               Navigator.pushNamed(context, AuthView.routeName);
             },

@@ -20,7 +20,7 @@ class CustomDropdownField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xffE2E8F0)),
       ),
@@ -33,7 +33,7 @@ class CustomDropdownField extends StatelessWidget {
             hintText,
             style: AppTextStyle.regular14.copyWith(color: AppColors.darkBlue),
           ),
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_arrow_down,
             color: AppColors.primaryColor,
           ),

@@ -1,3 +1,4 @@
+import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/login_form.dart';
 import 'package:school_system/features/Auth/presentation/views/widgets/login_header.dart';
@@ -15,30 +16,30 @@ class LoginViewBody extends StatelessWidget {
           ),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(color: Color(0xFFF6F7F8)),
+            decoration: BoxDecoration(color: AppColors.backgroundColor),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Container(
                   clipBehavior: Clip.antiAlias,
                   decoration: ShapeDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     shape: RoundedRectangleBorder(
-                      side: const BorderSide(
+                      side: BorderSide(
                         width: 1,
-                        color: Color(0x190F52BD),
+                        color: AppColors.secondaryColor.withOpacity(0.1),
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    shadows: const [
+                    shadows: [
                       BoxShadow(
-                        color: Color(0x19000000),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 10,
                         offset: Offset(0, 8),
                         spreadRadius: -6,
                       ),
                       BoxShadow(
-                        color: Color(0x19000000),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 25,
                         offset: Offset(0, 20),
                         spreadRadius: -5,

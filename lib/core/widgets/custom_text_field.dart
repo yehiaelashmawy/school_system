@@ -46,7 +46,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       decoration: InputDecoration(
         hintText: widget.hintText,
         hintStyle: AppTextStyle.regular16.copyWith(
-          color: const Color(0x4C0F172A),
+          color: AppColors.grey.withOpacity(0.7),
         ),
         prefixIcon: widget.prefixIcon != null
             ? Padding(
@@ -67,7 +67,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   isObscure
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
-                  color: const Color(0xFF94A3B8),
+                  color: AppColors.grey,
                   size: 20,
                 ),
               )
@@ -79,7 +79,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   : null),
         suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
         filled: true,
-        fillColor: const Color(0xFFF8FAFC),
+        fillColor: AppColors.backgroundColor,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 17,
@@ -94,7 +94,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   OutlineInputBorder buildBorder([Color? color]) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(24),
-      borderSide: BorderSide(width: 1, color: color ?? const Color(0xFFE2E8F0)),
+      borderSide: BorderSide(width: 1, color: color ?? AppColors.lightGrey),
     );
   }
 }

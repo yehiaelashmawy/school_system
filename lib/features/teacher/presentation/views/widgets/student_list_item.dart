@@ -18,7 +18,7 @@ class StudentListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: AppColors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
@@ -31,7 +31,11 @@ class StudentListItem extends StatelessWidget {
                   color: avatarColor,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.person, color: Colors.black54, size: 28),
+                child: Icon(
+                  Icons.person,
+                  color: AppColors.black.withOpacity(0.54),
+                  size: 28,
+                ),
               ),
               if (isOnline)
                 Positioned(
@@ -43,7 +47,7 @@ class StudentListItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.green,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: AppColors.white, width: 2),
                     ),
                   ),
                 ),
@@ -56,27 +60,21 @@ class StudentListItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: AppColors.black,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'ID: $id',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.grey,
-                  ),
+                  style: TextStyle(fontSize: 14, color: AppColors.grey),
                 ),
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            color: AppColors.lightGrey,
-          ),
+          Icon(Icons.chevron_right, color: AppColors.lightGrey),
         ],
       ),
     );

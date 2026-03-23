@@ -42,11 +42,11 @@ class ProfileAvatarSection extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.secondaryColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
+                      border: Border.all(color: AppColors.white, width: 3),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.camera_alt_outlined,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 20,
                     ),
                   ),
@@ -65,9 +65,7 @@ class ProfileAvatarSection extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: AppTextStyle.regular14.copyWith(
-              color: AppColors.grey,
-            ),
+            style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
           ),
         ],
       ),

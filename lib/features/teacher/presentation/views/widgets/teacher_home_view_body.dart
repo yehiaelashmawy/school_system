@@ -12,7 +12,7 @@ class TeacherHomeViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white, // Forces the safe area status bar to be white
+      color: AppColors.white, // Forces the safe area status bar to be white
       child: SafeArea(
         bottom: false,
         child: Container(
@@ -22,7 +22,7 @@ class TeacherHomeViewBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  color: Colors.white,
+                  color: AppColors.white,
                   child: const TeacherCustomAppBar(),
                 ),
                 Padding(

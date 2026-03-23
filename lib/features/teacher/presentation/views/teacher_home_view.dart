@@ -105,7 +105,7 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: AppColors.black.withOpacity(0.04),
                 blurRadius: 10,
                 offset: const Offset(0, -2),
               ),
@@ -132,7 +132,7 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
               });
             },
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.white,
             selectedItemColor: AppColors.primaryColor,
             unselectedItemColor: AppColors.grey.withOpacity(0.6),
             selectedLabelStyle: const TextStyle(

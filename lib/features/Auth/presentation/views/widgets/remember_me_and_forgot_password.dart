@@ -33,26 +33,26 @@ class _RememberMeAndForgotPasswordState
                 width: 16,
                 height: 16,
                 decoration: ShapeDecoration(
-                  color: isChecked ? AppColors.primaryColor : Colors.white,
+                  color: isChecked ? AppColors.primaryColor : AppColors.white,
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
                       width: 1,
                       color: isChecked
                           ? AppColors.primaryColor
-                          : const Color(0xFFCBD5E1),
+                          : AppColors.lightGrey,
                     ),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 child: isChecked
-                    ? const Icon(Icons.check, color: Colors.white, size: 12)
+                    ? Icon(Icons.check, color: AppColors.white, size: 12)
                     : null,
               ),
               const SizedBox(width: 8),
               Text(
                 'Remember me',
                 style: AppTextStyle.regular14.copyWith(
-                  color: const Color(0xFF475569),
+                  color: AppColors.grey,
                 ),
               ),
             ],
@@ -65,7 +65,7 @@ class _RememberMeAndForgotPasswordState
           child: Text(
             'Forgot Password?',
             style: AppTextStyle.semiBold14.copyWith(
-              color: const Color(0xFF0F52BD),
+              color: AppColors.secondaryColor,
             ),
           ),
         ),

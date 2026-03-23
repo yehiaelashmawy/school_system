@@ -17,8 +17,8 @@ class LessonDetailsHeader extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => Container(
               color: AppColors.darkBlue,
-              child: const Center(
-                child: Icon(Icons.image, color: Colors.white, size: 40),
+              child: Center(
+                child: Icon(Icons.image, color: AppColors.white, size: 40),
               ),
             ),
           ),
@@ -27,8 +27,8 @@ class LessonDetailsHeader extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.black.withOpacity(0.0),
-                  Colors.black.withOpacity(0.8),
+                  AppColors.black.withOpacity(0.0),
+                  AppColors.black.withOpacity(0.8),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -42,15 +42,18 @@ class LessonDetailsHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xff0F52BD),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Text(
+                  child: Text(
                     'MATHEMATICS',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -58,10 +61,10 @@ class LessonDetailsHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Introduction to\nCalculus',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     height: 1.2,

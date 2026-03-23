@@ -19,14 +19,14 @@ class TeacherCustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: const BoxDecoration(color: Colors.white),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(color: AppColors.white),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 24,
             backgroundColor: Color(0xFF8B9272),
-            child: Icon(Icons.person, color: Colors.white, size: 28),
+            child: Icon(Icons.person, color: AppColors.white, size: 28),
           ),
           const SizedBox(width: 12),
           Expanded(

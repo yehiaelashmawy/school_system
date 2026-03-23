@@ -24,9 +24,7 @@ class TeacherProfileAvatar extends StatelessWidget {
             const CircleAvatar(
               radius: 65,
               backgroundColor: Colors.transparent,
-              backgroundImage: AssetImage(
-                'assets/images/profile_photo.png',
-              ),
+              backgroundImage: AssetImage('assets/images/profile_photo.png'),
             ),
             Positioned(
               bottom: 0,
@@ -38,11 +36,11 @@ class TeacherProfileAvatar extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3),
+                    border: Border.all(color: AppColors.white, width: 3),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.edit_outlined,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: 20,
                   ),
                 ),
@@ -61,9 +59,7 @@ class TeacherProfileAvatar extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           title,
-          style: AppTextStyle.regular14.copyWith(
-            color: AppColors.grey,
-          ),
+          style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
         ),
       ],
     );

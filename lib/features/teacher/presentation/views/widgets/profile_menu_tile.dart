@@ -22,11 +22,11 @@ class ProfileMenuTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: AppColors.black.withOpacity(0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -51,7 +51,7 @@ class ProfileMenuTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.grey, size: 20),
+            Icon(Icons.chevron_right, color: AppColors.grey, size: 20),
           ],
         ),
       ),

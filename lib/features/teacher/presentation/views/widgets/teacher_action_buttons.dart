@@ -16,8 +16,8 @@ class TeacherActionButtons extends StatelessWidget {
                 title: 'Take Attendance',
                 icon: Icons.how_to_reg,
                 backgroundColor: AppColors.primaryColor,
-                textColor: Colors.white,
-                iconColor: Colors.white,
+                textColor: AppColors.white,
+                iconColor: AppColors.white,
               ),
             ),
             const SizedBox(width: 16),
@@ -25,8 +25,8 @@ class TeacherActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 title: 'Add Lesson',
                 icon: Icons.library_books,
-                backgroundColor: Colors.white,
-                textColor: Colors.black,
+                backgroundColor: AppColors.white,
+                textColor: AppColors.black,
                 iconColor: AppColors.primaryColor,
                 onTap: () {
                   Navigator.pushNamed(context, '/add_new_lesson');
@@ -42,8 +42,8 @@ class TeacherActionButtons extends StatelessWidget {
               child: _buildActionButton(
                 title: 'Add Homework',
                 icon: Icons.assignment_add,
-                backgroundColor: Colors.white,
-                textColor: Colors.black,
+                backgroundColor: AppColors.white,
+                textColor: AppColors.black,
                 iconColor: AppColors.primaryColor,
                 isDashed: true,
               ),
@@ -54,8 +54,8 @@ class TeacherActionButtons extends StatelessWidget {
                 title: 'SmartTutor AI',
                 icon: Icons.psychology,
                 backgroundColor: AppColors.darkBlue,
-                textColor: Colors.white,
-                iconColor: Colors.white,
+                textColor: AppColors.white,
+                iconColor: AppColors.white,
               ),
             ),
           ],
@@ -90,7 +90,7 @@ class TeacherActionButtons extends StatelessWidget {
               ? []
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.black.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

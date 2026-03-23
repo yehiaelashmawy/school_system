@@ -53,7 +53,7 @@ class SchoolAnnouncementsSection extends StatelessWidget {
           margin: const EdgeInsets.only(top: 6),
           width: 8,
           height: 8,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.primaryColor,
             shape: BoxShape.circle,
           ),

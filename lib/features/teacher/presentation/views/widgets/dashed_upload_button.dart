@@ -22,7 +22,7 @@ class DashedUploadButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xffBFDBFE), width: 1.5),
         ),

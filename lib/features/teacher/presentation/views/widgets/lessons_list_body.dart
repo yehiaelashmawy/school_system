@@ -1,3 +1,4 @@
+import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lesson_list_item.dart';
 
@@ -7,7 +8,7 @@ class LessonsListBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xffF8FAFC),
+      color: AppColors.backgroundColor,
       child: Column(
         children: [
           const SizedBox(height: 16),

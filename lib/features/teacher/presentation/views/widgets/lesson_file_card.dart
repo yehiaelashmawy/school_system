@@ -23,7 +23,7 @@ class LessonFileCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xffE2E8F0)),
       ),
@@ -65,7 +65,7 @@ class LessonFileCard extends StatelessWidget {
               color: Color(0xffF1F5F9),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.file_download_outlined,
               color: AppColors.darkBlue,
               size: 18,

@@ -28,19 +28,19 @@ class PersonalInformationActionButtons extends StatelessWidget {
               ),
               elevation: 0,
             ),
-            child: const Text(
+            child: Text(
               'Save Changes',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         Center(
           child: TextButton(
             onPressed: onReset,

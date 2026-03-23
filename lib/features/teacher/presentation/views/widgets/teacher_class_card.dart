@@ -56,12 +56,12 @@ class TeacherClassCard extends StatelessWidget {
 
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: AppColors.white,
       borderRadius: BorderRadius.circular(24),
       border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: AppColors.black.withOpacity(0.04),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
@@ -71,10 +71,7 @@ class TeacherClassCard extends StatelessWidget {
 }
 
 class _ClassImageBanner extends StatelessWidget {
-  const _ClassImageBanner({
-    required this.image,
-    required this.badgeText,
-  });
+  const _ClassImageBanner({required this.image, required this.badgeText});
 
   final String image;
   final String badgeText;
@@ -105,7 +102,7 @@ class _ClassImageBanner extends StatelessWidget {
                 child: Text(
                   badgeText.toUpperCase(),
                   style: AppTextStyle.bold14.copyWith(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 10,
                     letterSpacing: 1.2,
                   ),
@@ -120,10 +117,7 @@ class _ClassImageBanner extends StatelessWidget {
 }
 
 class _ClassHeaderInfo extends StatelessWidget {
-  const _ClassHeaderInfo({
-    required this.title,
-    required this.subtitle,
-  });
+  const _ClassHeaderInfo({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -142,24 +136,19 @@ class _ClassHeaderInfo extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 subtitle,
-                style: AppTextStyle.regular14.copyWith(
-                  color: AppColors.grey,
-                ),
+                style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
               ),
             ],
           ),
         ),
-        const Icon(Icons.more_vert, color: AppColors.lightGrey),
+        Icon(Icons.more_vert, color: AppColors.lightGrey),
       ],
     );
   }
 }
 
 class _ClassDetailsRow extends StatelessWidget {
-  const _ClassDetailsRow({
-    required this.numStudents,
-    required this.schedule,
-  });
+  const _ClassDetailsRow({required this.numStudents, required this.schedule});
 
   final String numStudents;
   final String schedule;
@@ -168,11 +157,7 @@ class _ClassDetailsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(
-          Icons.people_outline,
-          size: 18,
-          color: AppColors.grey,
-        ),
+        Icon(Icons.people_outline, size: 18, color: AppColors.grey),
         const SizedBox(width: 8),
         Text(
           '$numStudents Students',
@@ -182,11 +167,7 @@ class _ClassDetailsRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 16),
-        const Icon(
-          Icons.calendar_today_outlined,
-          size: 18,
-          color: AppColors.grey,
-        ),
+        Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.grey),
         const SizedBox(width: 8),
         Text(
           schedule,
@@ -219,20 +200,14 @@ class _ClassActionRow extends StatelessWidget {
           onPressed: onViewClass,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff0F52BD),
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.white,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          child: const Text(
-            'View Class',
-            style: AppTextStyle.semiBold14,
-          ),
+          child: const Text('View Class', style: AppTextStyle.semiBold14),
         ),
       ],
     );
@@ -255,13 +230,13 @@ class _ClassActionRow extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.darkBlue,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: AppColors.white, width: 2),
               ),
               child: Center(
                 child: Text(
                   '+$extraStudentsCount',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: AppColors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
@@ -281,10 +256,13 @@ class _ClassActionRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(color: AppColors.white, width: 2),
       ),
-      child: const Icon(Icons.person, size: 20, color: Colors.black54),
+      child: Icon(
+        Icons.person,
+        size: 20,
+        color: AppColors.black.withOpacity(0.54),
+      ),
     );
   }
 }
-

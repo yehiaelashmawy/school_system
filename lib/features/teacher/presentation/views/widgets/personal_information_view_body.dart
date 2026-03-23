@@ -49,10 +49,10 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
 
   void _saveChanges() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Changes saved successfully!'),
+      SnackBar(
+        content: const Text('Changes saved successfully!'),
         backgroundColor: AppColors.secondaryColor,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

@@ -54,7 +54,7 @@ class _VerificationViewBodyState extends State<VerificationViewBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -128,7 +128,7 @@ class _VerificationViewBodyState extends State<VerificationViewBody> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time,
                           size: 16,
                           color: AppColors.lightGrey,

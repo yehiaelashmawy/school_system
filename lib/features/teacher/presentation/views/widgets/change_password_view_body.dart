@@ -34,10 +34,10 @@ class _ChangePasswordViewBodyState extends State<ChangePasswordViewBody> {
   void _updatePassword() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password updated successfully!'),
+        SnackBar(
+          content: const Text('Password updated successfully!'),
           backgroundColor: AppColors.secondaryColor,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       _currentPasswordController.clear();

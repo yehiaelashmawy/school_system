@@ -1,3 +1,4 @@
+import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/size_config.dart';
@@ -20,7 +21,7 @@ class PasswordRequirementsBox extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: ShapeDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: AppColors.backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Column(
@@ -52,7 +53,7 @@ class RequirementItem extends StatelessWidget {
         Icon(
           isValid ? Icons.check_circle_outline : Icons.circle_outlined,
           size: 18,
-          color: isValid ? const Color(0xFF22C55E) : const Color(0xFFCBD5E1),
+          color: isValid ? const Color(0xFF22C55E) : AppColors.lightGrey,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -61,8 +62,8 @@ class RequirementItem extends StatelessWidget {
             style: AppTextStyle.medium18.copyWith(
               fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 14),
               color: isValid
-                  ? const Color(0xFF475569)
-                  : const Color(0xFF94A3B8),
+                  ? AppColors.grey
+                  : AppColors.lightGrey,
             ),
           ),
         ),

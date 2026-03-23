@@ -18,7 +18,7 @@ class LessonListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xffE2E8F0)),
       ),
@@ -28,7 +28,7 @@ class LessonListItem extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.darkBlue,
@@ -37,11 +37,11 @@ class LessonListItem extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 14, color: AppColors.grey),
+              Icon(Icons.calendar_today, size: 14, color: AppColors.grey),
               const SizedBox(width: 6),
               Text(
                 dateInfo,
-                style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                style: TextStyle(fontSize: 12, color: AppColors.grey),
               ),
             ],
           ),
@@ -62,7 +62,7 @@ class LessonListItem extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: const Color(0xffE2E8F0),
-                  child: const Center(
+                  child: Center(
                     child: Icon(Icons.image_outlined, color: AppColors.grey),
                   ),
                 ),
@@ -78,7 +78,7 @@ class LessonListItem extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff0F52BD),
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,

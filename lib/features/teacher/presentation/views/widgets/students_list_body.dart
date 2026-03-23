@@ -16,7 +16,7 @@ class StudentsListBody extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'ENROLLED STUDENTS (24)',
                   style: TextStyle(
                     fontSize: 14,
@@ -27,8 +27,8 @@ class StudentsListBody extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.filter_list, size: 18, color: AppColors.primaryColor),
-                  label: const Text(
+                  icon: Icon(Icons.filter_list, size: 18, color: AppColors.primaryColor),
+                  label: Text(
                     'Filter',
                     style: TextStyle(
                       color: AppColors.primaryColor,

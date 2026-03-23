@@ -44,7 +44,7 @@ class LessonDetailsViewBody extends StatelessWidget {
                 const SizedBox(height: 32),
 
                 // Lesson Files Section
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(

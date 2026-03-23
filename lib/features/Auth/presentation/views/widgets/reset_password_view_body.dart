@@ -16,7 +16,7 @@ class ResetPasswordViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: AppColors.backgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -29,23 +29,23 @@ class ResetPasswordViewBody extends StatelessWidget {
                   vertical: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 1, color: Color(0xFFE2E8F0)),
+                    side: BorderSide(width: 1, color: AppColors.lightGrey),
                     borderRadius: BorderRadius.circular(32),
                   ),
                 ),
                 child: Column(
                   children: [
                     const CustomAppBar(title: 'Reset Password'),
-                    const Divider(thickness: 0, color: AppColors.lightGrey),
+                    Divider(thickness: 0, color: AppColors.lightGrey),
                     const SizedBox(height: 24),
                     Container(
                       width: 64,
                       height: 64,
-                      decoration: const ShapeDecoration(
-                        color: Color(0xFFE0E7FF),
-                        shape: CircleBorder(),
+                      decoration: ShapeDecoration(
+                        color: AppColors.lightGrey,
+                        shape: const CircleBorder(),
                       ),
                       child: SvgPicture.asset(
                         'assets/images/reset_password.svg',

@@ -19,11 +19,11 @@ class ChangePasswordActionButtons extends StatelessWidget {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: onUpdatePassword,
-            icon: const Icon(Icons.key, color: Colors.white, size: 20),
-            label: const Text(
+            icon: Icon(Icons.key, color: AppColors.white, size: 20),
+            label: Text(
               'Update Password',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),

@@ -13,7 +13,7 @@ class CustomBackToLogin extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (showArrow) ...[
-          const Icon(Icons.arrow_back, size: 20, color: AppColors.primaryColor),
+          Icon(Icons.arrow_back, size: 20, color: AppColors.primaryColor),
           const SizedBox(width: 8),
         ],
         GestureDetector(
@@ -21,7 +21,7 @@ class CustomBackToLogin extends StatelessWidget {
           child: Text(
             'Back to Login',
             style: AppTextStyle.semiBold14.copyWith(
-              color: const Color(0xFF0F52BD),
+              color: AppColors.secondaryColor,
             ),
           ),
         ),

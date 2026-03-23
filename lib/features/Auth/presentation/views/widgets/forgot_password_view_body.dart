@@ -30,12 +30,9 @@ class ForgotPasswordViewBody extends StatelessWidget {
                     vertical: 40,
                   ),
                   decoration: ShapeDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     shape: RoundedRectangleBorder(
-                      side: const BorderSide(
-                        width: 1,
-                        color: Color(0xFFE2E8F0),
-                      ),
+                      side: BorderSide(width: 1, color: AppColors.lightGrey),
                       borderRadius: BorderRadius.circular(32),
                     ),
                   ),

@@ -15,7 +15,7 @@ class LearningObjectivesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(
                 Icons.fact_check_outlined,
@@ -64,7 +64,7 @@ class LearningObjectivesSection extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.grey,
               fontSize: 13,
               height: 1.4,

@@ -12,21 +12,21 @@ class StudentList extends StatelessWidget {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        backgroundColor: Color(0xffF8FAFC),
+        backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: AppColors.black),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const Column(
+          title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Grade 10-A - Mathematics',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -40,15 +40,15 @@ class StudentList extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
+              icon: Icon(Icons.search, color: AppColors.black),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.black),
+              icon: Icon(Icons.more_vert, color: AppColors.black),
               onPressed: () {},
             ),
           ],
-          bottom: const TabBar(
+          bottom: TabBar(
             labelColor: AppColors.primaryColor,
             unselectedLabelColor: AppColors.grey,
             indicatorColor: AppColors.primaryColor,
