@@ -65,15 +65,14 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
 
           const FieldLabel(label: 'Homework Title'),
           const SizedBox(height: 8),
-          const CustomTextField(
-            hintText: 'e.g. Quadratic Equations Practice',
-          ),
+          const CustomTextField(hintText: 'e.g. Quadratic Equations Practice'),
           const SizedBox(height: 20),
 
           const FieldLabel(label: 'Description'),
           const SizedBox(height: 8),
           const CustomTextField(
-            hintText: 'Enter homework instructions, references, or specific requirements...',
+            hintText:
+                'Enter homework instructions, references, or specific requirements...',
             minLines: 4,
             maxLines: 6,
           ),
@@ -95,7 +94,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
           HomeworkAttachmentsSection(onTap: _pickFiles),
 
           HomeworkFileList(attachedFiles: _attachedFiles),
-          
+
           const SizedBox(height: 40),
 
           _buildCreateButton(),
@@ -109,9 +108,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.pop(context);
-        },
+        onPressed: () {},
         icon: Icon(Icons.send_outlined, color: AppColors.white, size: 20),
         label: Text(
           'Create Homework',
