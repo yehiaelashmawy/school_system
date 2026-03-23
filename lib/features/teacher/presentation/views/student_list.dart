@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lessons_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/students_list_body.dart';
 
@@ -73,7 +74,7 @@ class StudentList extends StatelessWidget {
           children: [
             StudentsListBody(),
             LessonsListBody(),
-            Center(child: Text('Homework')),
+            HomeworkListBody(),
             Center(child: Text('Exams')),
             Center(child: Text('Attendance')),
           ],
