@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
     this.textColor,
     this.borderColor,
     this.shadows,
+    this.icon,
   });
 
   final String text;
@@ -18,6 +19,7 @@ class CustomButton extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final List<BoxShadow>? shadows;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +40,29 @@ class CustomButton extends StatelessWidget {
           shadows: shadows,
         ),
         child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: textColor ?? AppColors.white,
-              fontSize: 16,
-
-              fontWeight: borderColor != null
-                  ? FontWeight.w500
-                  : FontWeight.w700,
-              height: 1.50,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  color: textColor ?? AppColors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                text,
+                style: TextStyle(
+                  color: textColor ?? AppColors.white,
+                  fontSize: 16,
+                  fontWeight: borderColor != null
+                      ? FontWeight.w500
+                      : FontWeight.w700,
+                  height: 1.50,
+                ),
+              ),
+            ],
           ),
         ),
       ),

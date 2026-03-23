@@ -7,11 +7,13 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.hintText,
     this.maxLines = 1,
+    this.minLines,
     this.suffixIcon,
     this.initialValue,
     this.controller,
     this.obscureText = false,
     this.validator,
+    this.keyboardType,
   });
 
   final String hintText;
@@ -21,6 +23,8 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final int? minLines;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,8 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       maxLines: maxLines,
+      minLines: minLines,
+      keyboardType: keyboardType,
       style: AppTextStyle.regular14.copyWith(color: AppColors.darkBlue),
       decoration: InputDecoration(
         hintText: hintText,

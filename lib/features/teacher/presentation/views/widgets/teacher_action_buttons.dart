@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/presentation/views/add_homework_view.dart';
 
 class TeacherActionButtons extends StatelessWidget {
   const TeacherActionButtons({super.key});
@@ -46,6 +47,9 @@ class TeacherActionButtons extends StatelessWidget {
                 textColor: AppColors.black,
                 iconColor: AppColors.primaryColor,
                 isDashed: true,
+                onTap: () {
+                  Navigator.pushNamed(context, AddHomeworkView.routeName);
+                },
               ),
             ),
             const SizedBox(width: 16),
@@ -115,4 +119,3 @@ class TeacherActionButtons extends StatelessWidget {
     );
   }
 }
-

@@ -12,6 +12,8 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType,
     this.onChanged,
     this.controller,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   final String hintText;
@@ -21,6 +23,8 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final Function(String)? onChanged;
   final TextEditingController? controller;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -42,6 +46,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       obscureText: isObscure,
       keyboardType: widget.keyboardType,
       onChanged: widget.onChanged,
+      maxLines: isObscure ? 1 : widget.maxLines,
+      minLines: widget.minLines,
       style: AppTextStyle.regular16.copyWith(color: AppColors.darkBlue),
       decoration: InputDecoration(
         hintText: widget.hintText,
