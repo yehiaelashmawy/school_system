@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/views/homework_details_view.dart';
+import 'package:school_system/features/teacher/presentation/views/review_submissions_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_item.dart';
 
 class HomeworkListBody extends StatelessWidget {
@@ -118,7 +119,7 @@ class HomeworkListBody extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HomeworkDetailsView(),
+                        builder: (context) => const ReviewSubmissionsView(),
                       ),
                     );
                   },
