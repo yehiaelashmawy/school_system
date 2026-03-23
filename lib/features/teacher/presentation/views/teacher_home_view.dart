@@ -5,6 +5,7 @@ import 'package:school_system/features/teacher/presentation/views/lesson_details
 import 'package:school_system/features/teacher/presentation/views/student_list.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/classes-view_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_home_view_body.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/teacher_profile_view_body.dart';
 
 class TeacherHomeView extends StatefulWidget {
   const TeacherHomeView({super.key});
@@ -16,8 +17,10 @@ class TeacherHomeView extends StatefulWidget {
 
 class _TeacherHomeViewState extends State<TeacherHomeView> {
   int _currentIndex = 0;
-  final GlobalKey<NavigatorState> _homeNavigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<NavigatorState> _classesNavigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _homeNavigatorKey =
+      GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _classesNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   late final List<Widget> _views = [
     Navigator(
@@ -48,19 +51,23 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
     ),
     const Center(child: Text('Messages View')),
     const Center(child: Text('Alerts View')),
-    const Center(child: Text('Profile View')),
+    const TeacherProfileViewBody(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: _currentIndex == 0 && !(_homeNavigatorKey.currentState?.canPop() ?? false),
+      canPop:
+          _currentIndex == 0 &&
+          !(_homeNavigatorKey.currentState?.canPop() ?? false),
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        
-        if (_currentIndex == 0 && _homeNavigatorKey.currentState?.canPop() == true) {
+
+        if (_currentIndex == 0 &&
+            _homeNavigatorKey.currentState?.canPop() == true) {
           _homeNavigatorKey.currentState?.pop();
-        } else if (_currentIndex == 1 && _classesNavigatorKey.currentState?.canPop() == true) {
+        } else if (_currentIndex == 1 &&
+            _classesNavigatorKey.currentState?.canPop() == true) {
           _classesNavigatorKey.currentState?.pop();
         } else {
           setState(() {
@@ -70,10 +77,7 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _views,
-        ),
+        body: IndexedStack(index: _currentIndex, children: _views),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             boxShadow: [
@@ -88,9 +92,13 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
             currentIndex: _currentIndex,
             onTap: (index) {
               if (index == _currentIndex && index == 0) {
-                _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                _homeNavigatorKey.currentState?.popUntil(
+                  (route) => route.isFirst,
+                );
               } else if (index == _currentIndex && index == 1) {
-                _classesNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                _classesNavigatorKey.currentState?.popUntil(
+                  (route) => route.isFirst,
+                );
               }
               setState(() {
                 _currentIndex = index;
