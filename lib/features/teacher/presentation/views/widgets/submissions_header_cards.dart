@@ -78,7 +78,7 @@ class SubmissionsHeaderCards extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.inventory_2_outlined,
                       size: 16,
                       color: Color(0xFFF97316),

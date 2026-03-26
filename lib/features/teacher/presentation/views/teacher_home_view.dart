@@ -10,6 +10,8 @@ import 'package:school_system/features/teacher/presentation/views/widgets/teache
 import 'package:school_system/features/teacher/presentation/views/personal_information_view.dart';
 import 'package:school_system/features/teacher/presentation/views/change_password_view.dart';
 import 'package:school_system/features/teacher/presentation/views/settings_view.dart';
+import 'package:school_system/core/widgets/notifications/notifications_view.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/teacher_bottom_nav_bar.dart';
 
 class TeacherHomeView extends StatefulWidget {
   const TeacherHomeView({super.key});
@@ -26,6 +28,8 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
   final GlobalKey<NavigatorState> _classesNavigatorKey =
       GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> _profileNavigatorKey =
+      GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _alertsNavigatorKey =
       GlobalKey<NavigatorState>();
 
   late final List<Widget> _views = [
@@ -58,7 +62,13 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
       },
     ),
     const Center(child: Text('Messages View')),
-    const Center(child: Text('Alerts View')),
+    Navigator(
+      key: _alertsNavigatorKey,
+      onGenerateRoute: (settings) => MaterialPageRoute(
+        builder: (_) => const NotificationsView(),
+        settings: settings,
+      ),
+    ),
     Navigator(
       key: _profileNavigatorKey,
       onGenerateRoute: (settings) {
@@ -77,6 +87,19 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
     ),
   ];
 
+  void _handleNavTap(int index) {
+    if (index == _currentIndex) {
+      final keys = {
+        0: _homeNavigatorKey,
+        1: _classesNavigatorKey,
+        3: _alertsNavigatorKey,
+        4: _profileNavigatorKey,
+      };
+      keys[index]?.currentState?.popUntil((route) => route.isFirst);
+    }
+    setState(() => _currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -85,125 +108,25 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
           !(_homeNavigatorKey.currentState?.canPop() ?? false),
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-
-        if (_currentIndex == 0 &&
-            _homeNavigatorKey.currentState?.canPop() == true) {
-          _homeNavigatorKey.currentState?.pop();
-        } else if (_currentIndex == 1 &&
-            _classesNavigatorKey.currentState?.canPop() == true) {
-          _classesNavigatorKey.currentState?.pop();
-        } else if (_currentIndex == 4 &&
-            _profileNavigatorKey.currentState?.canPop() == true) {
-          _profileNavigatorKey.currentState?.pop();
+        final navigatorKeys = {
+          0: _homeNavigatorKey,
+          1: _classesNavigatorKey,
+          3: _alertsNavigatorKey,
+          4: _profileNavigatorKey,
+        };
+        final key = navigatorKeys[_currentIndex];
+        if (key?.currentState?.canPop() == true) {
+          key!.currentState!.pop();
         } else {
-          setState(() {
-            _currentIndex = 0;
-          });
+          setState(() => _currentIndex = 0);
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         body: IndexedStack(index: _currentIndex, children: _views),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withOpacity(0.04),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              if (index == _currentIndex && index == 0) {
-                _homeNavigatorKey.currentState?.popUntil(
-                  (route) => route.isFirst,
-                );
-              } else if (index == _currentIndex && index == 1) {
-                _classesNavigatorKey.currentState?.popUntil(
-                  (route) => route.isFirst,
-                );
-              } else if (index == _currentIndex && index == 4) {
-                _profileNavigatorKey.currentState?.popUntil(
-                  (route) => route.isFirst,
-                );
-              }
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.white,
-            selectedItemColor: AppColors.primaryColor,
-            unselectedItemColor: AppColors.grey.withOpacity(0.6),
-            selectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 11,
-            ),
-            unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 11,
-            ),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.home_outlined),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.home),
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.school_outlined),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.school),
-                ),
-                label: 'Classes',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.chat_bubble_outline),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.chat_bubble),
-                ),
-                label: 'Messages',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.notifications_none),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.notifications),
-                ),
-                label: 'Alerts',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person_outline),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person),
-                ),
-                label: 'Profile',
-              ),
-            ],
-          ),
+        bottomNavigationBar: TeacherBottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: _handleNavTap,
         ),
       ),
     );
