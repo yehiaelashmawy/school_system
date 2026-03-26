@@ -4,6 +4,7 @@ import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 import 'message_model.dart';
+import 'chat/chat_view.dart';
 
 class MessageItem extends StatelessWidget {
   final MessageModel message;
@@ -13,17 +14,22 @@ class MessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isUnread = message.unreadCount > 0;
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context, rootNavigator: true)
+            .pushNamed(ChatView.routeName);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: ThemeManager.isDarkMode 
+        color: ThemeManager.isDarkMode
             ? (isUnread ? const Color(0xFF1E293B) : Colors.transparent)
             : (isUnread ? const Color(0xFFF8FAFC) : Colors.white),
         border: Border(
           bottom: BorderSide(
-            color: ThemeManager.isDarkMode 
-                ? AppColors.lightGrey.withOpacity(0.2) 
+            color: ThemeManager.isDarkMode
+                ? AppColors.lightGrey.withOpacity(0.2)
                 : const Color(0xffF1F5F9),
           ),
         ),
@@ -50,7 +56,9 @@ class MessageItem extends StatelessWidget {
                       color: const Color(0xFF10B981), // Green
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: ThemeManager.isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+                        color: ThemeManager.isDarkMode
+                            ? const Color(0xFF1E293B)
+                            : Colors.white,
                         width: 2,
                       ),
                     ),
@@ -74,7 +82,10 @@ class MessageItem extends StatelessWidget {
                               message.name,
                               style: AppTextStyle.bold16.copyWith(
                                 color: AppColors.darkBlue,
-                                fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 16),
+                                fontSize: SizeConfig.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 16,
+                                ),
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -84,7 +95,10 @@ class MessageItem extends StatelessWidget {
                             message.role,
                             style: AppTextStyle.regular14.copyWith(
                               color: AppColors.grey.withOpacity(0.6),
-                              fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 12),
+                              fontSize: SizeConfig.getResponsiveFontSize(
+                                context,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -94,8 +108,13 @@ class MessageItem extends StatelessWidget {
                     Text(
                       message.time,
                       style: AppTextStyle.semiBold14.copyWith(
-                        color: isUnread ? AppColors.primaryColor : AppColors.grey.withOpacity(0.7),
-                        fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 12),
+                        color: isUnread
+                            ? AppColors.primaryColor
+                            : AppColors.grey.withOpacity(0.7),
+                        fontSize: SizeConfig.getResponsiveFontSize(
+                          context,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -109,11 +128,17 @@ class MessageItem extends StatelessWidget {
                         style: isUnread
                             ? AppTextStyle.bold14.copyWith(
                                 color: AppColors.darkBlue.withOpacity(0.9),
-                                fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 14),
+                                fontSize: SizeConfig.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 14,
+                                ),
                               )
                             : AppTextStyle.regular14.copyWith(
                                 color: AppColors.grey,
-                                fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 14),
+                                fontSize: SizeConfig.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 14,
+                                ),
                               ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -144,6 +169,6 @@ class MessageItem extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }

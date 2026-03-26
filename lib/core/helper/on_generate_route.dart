@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/widgets/messages/messages_view.dart';
+import 'package:school_system/core/widgets/messages/chat/chat_view.dart';
 import 'package:school_system/core/widgets/notifications/notifications_view.dart';
 import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/Auth/presentation/views/forgot_password_view.dart';
@@ -85,6 +86,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const NotificationsView());
     case MessagesView.routeName:
       return MaterialPageRoute(builder: (context) => const MessagesView());
+    case ChatView.routeName:
+      return MaterialPageRoute(builder: (context) => const ChatView());
     case GradeSubmissionView.routeName:
       return MaterialPageRoute(
         builder: (context) => const GradeSubmissionView(),

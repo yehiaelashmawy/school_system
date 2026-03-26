@@ -59,31 +59,40 @@ class MessagesViewBody extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Container(
             decoration: BoxDecoration(
-              color: ThemeManager.isDarkMode ? AppColors.darkBlue : Colors.white,
+              color: ThemeManager.isDarkMode
+                  ? AppColors.darkBlue
+                  : Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: ThemeManager.isDarkMode 
-                  ? Border.all(color: AppColors.lightGrey.withOpacity(0.5)) 
+              border: ThemeManager.isDarkMode
+                  ? Border.all(color: AppColors.lightGrey.withOpacity(0.5))
                   : Border.all(color: const Color(0xffE2E8F0)),
-              boxShadow: ThemeManager.isDarkMode ? [] : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: ThemeManager.isDarkMode
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search conversations',
-                hintStyle: AppTextStyle.regular14.copyWith(color: AppColors.grey),
+                hintStyle: AppTextStyle.regular14.copyWith(
+                  color: AppColors.grey,
+                ),
                 prefixIcon: Icon(Icons.search, color: AppColors.grey),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
               ),
             ),
           ),
         ),
-        
+
         // TabBar
         TabBar(
           labelColor: AppColors.primaryColor,
@@ -92,14 +101,16 @@ class MessagesViewBody extends StatelessWidget {
           unselectedLabelStyle: AppTextStyle.semiBold16,
           indicatorColor: AppColors.primaryColor,
           indicatorWeight: 3,
-          dividerColor: ThemeManager.isDarkMode ? AppColors.lightGrey : const Color(0xffE2E8F0),
+          dividerColor: ThemeManager.isDarkMode
+              ? AppColors.lightGrey
+              : const Color(0xffE2E8F0),
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Students'),
             Tab(text: 'Parents'),
           ],
         ),
-        
+
         // Lists
         Expanded(
           child: TabBarView(
@@ -108,23 +119,32 @@ class MessagesViewBody extends StatelessWidget {
               ListView.builder(
                 padding: EdgeInsets.zero,
                 itemCount: allMessages.length,
-                itemBuilder: (context, index) => MessageItem(message: allMessages[index]),
+                itemBuilder: (context, index) =>
+                    MessageItem(message: allMessages[index]),
               ),
               // Students
               ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: allMessages.where((m) => m.role == '(Student)').length,
+                itemCount: allMessages
+                    .where((m) => m.role == '(Student)')
+                    .length,
                 itemBuilder: (context, index) {
-                  final students = allMessages.where((m) => m.role == '(Student)').toList();
+                  final students = allMessages
+                      .where((m) => m.role == '(Student)')
+                      .toList();
                   return MessageItem(message: students[index]);
                 },
               ),
               // Parents
               ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: allMessages.where((m) => m.role == '(Parent)').length,
+                itemCount: allMessages
+                    .where((m) => m.role == '(Parent)')
+                    .length,
                 itemBuilder: (context, index) {
-                  final parents = allMessages.where((m) => m.role == '(Parent)').toList();
+                  final parents = allMessages
+                      .where((m) => m.role == '(Parent)')
+                      .toList();
                   return MessageItem(message: parents[index]);
                 },
               ),
