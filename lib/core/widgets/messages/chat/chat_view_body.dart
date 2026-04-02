@@ -4,6 +4,7 @@ import 'models/chat_message_model.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/chat_input_field.dart';
 import 'widgets/date_separator.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ChatViewBody extends StatefulWidget {
   const ChatViewBody({super.key});
@@ -48,13 +49,22 @@ class _ChatViewBodyState extends State<ChatViewBody> {
     ),
   ];
 
-  void _sendMessage(String text) {
+  void _sendMessage(String text, {PlatformFile? attachedFile}) {
+    bool isImage = false;
+    if (attachedFile != null) {
+      isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+          .contains(attachedFile.extension?.toLowerCase());
+    }
+
     setState(() {
       _messages.add(
         ChatMessageModel(
           text: text,
           time: TimeOfDay.now().format(context),
           isSender: true,
+          attachedFileName: attachedFile?.name,
+          attachedFilePath: attachedFile?.path,
+          imageUrl: isImage ? attachedFile?.path : null,
         ),
       );
     });

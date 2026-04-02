@@ -4,6 +4,8 @@ class ChatMessageModel {
   final bool isSender;
   final String? imageUrl;
   final String? avatarUrl;
+  final String? attachedFileName;
+  final String? attachedFilePath;
 
   const ChatMessageModel({
     required this.text,
@@ -11,5 +13,7 @@ class ChatMessageModel {
     this.isSender = false,
     this.imageUrl,
     this.avatarUrl,
+    this.attachedFileName,
+    this.attachedFilePath,
   });
 }

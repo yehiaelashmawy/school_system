@@ -7,6 +7,7 @@ import '../messages/chat/models/chat_message_model.dart';
 import '../messages/chat/widgets/chat_bubble.dart';
 import '../messages/chat/widgets/chat_input_field.dart';
 import '../messages/chat/widgets/date_separator.dart';
+import 'package:file_picker/file_picker.dart';
 
 class SmartTutorViewBody extends StatefulWidget {
   const SmartTutorViewBody({super.key});
@@ -29,8 +30,14 @@ class _SmartTutorViewBodyState extends State<SmartTutorViewBody> {
 
   bool _isLoading = false;
 
-  Future<void> _sendMessage(String text) async {
-    if (text.trim().isEmpty) return;
+  Future<void> _sendMessage(String text, {PlatformFile? attachedFile}) async {
+    if (text.trim().isEmpty && attachedFile == null) return;
+
+    bool isImage = false;
+    if (attachedFile != null) {
+      isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+          .contains(attachedFile.extension?.toLowerCase());
+    }
 
     setState(() {
       _messages.add(
@@ -38,6 +45,9 @@ class _SmartTutorViewBodyState extends State<SmartTutorViewBody> {
           text: text,
           time: TimeOfDay.now().format(context),
           isSender: true,
+          attachedFileName: attachedFile?.name,
+          attachedFilePath: attachedFile?.path,
+          imageUrl: isImage ? attachedFile?.path : null,
         ),
       );
       _isLoading = true;
