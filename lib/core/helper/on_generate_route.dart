@@ -25,6 +25,7 @@ import 'package:school_system/features/teacher/presentation/views/change_passwor
 import 'package:school_system/features/teacher/presentation/views/settings_view.dart';
 import 'package:school_system/features/teacher/presentation/views/grade_submission_view.dart';
 import 'package:school_system/features/teacher/presentation/views/take_attendance_view.dart';
+import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -70,6 +71,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case TakeAttendanceView.routeName:
       return MaterialPageRoute(
         builder: (context) => const TakeAttendanceView(),
+      );
+    case AttendanceMethodView.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const AttendanceMethodView(),
       );
 
     case TeacherProfileView.routeName:

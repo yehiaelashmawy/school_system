@@ -31,7 +31,10 @@ class TakeAttendanceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.lightGrey.withOpacity(0.5), width: 1),
+        border: Border.all(
+          color: AppColors.lightGrey.withOpacity(0.5),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -46,7 +49,9 @@ class TakeAttendanceCard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(19)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(19),
+                ),
                 child: Image.asset(
                   imagePath,
                   height: 140,
@@ -58,14 +63,20 @@ class TakeAttendanceCard extends StatelessWidget {
                 left: 16,
                 bottom: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     statusText,
-                    style: AppTextStyle.bold12.copyWith(color: Colors.white, fontSize: 10),
+                    style: AppTextStyle.bold12.copyWith(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ),
@@ -85,18 +96,25 @@ class TakeAttendanceCard extends StatelessWidget {
                         children: [
                           Text(
                             grade,
-                            style: AppTextStyle.bold18.copyWith(color: AppColors.black),
+                            style: AppTextStyle.bold18.copyWith(
+                              color: AppColors.black,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             subject,
-                            style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
+                            style: AppTextStyle.medium14.copyWith(
+                              color: AppColors.grey,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
@@ -104,11 +122,17 @@ class TakeAttendanceCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.people_alt_outlined, size: 14, color: AppColors.primaryColor),
+                          Icon(
+                            Icons.people_alt_outlined,
+                            size: 14,
+                            color: AppColors.primaryColor,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             '$studentsCount Students',
-                            style: AppTextStyle.semiBold12.copyWith(color: AppColors.primaryColor),
+                            style: AppTextStyle.semiBold12.copyWith(
+                              color: AppColors.primaryColor,
+                            ),
                           ),
                         ],
                       ),
@@ -130,7 +154,9 @@ class TakeAttendanceCard extends StatelessWidget {
                         ),
                         child: Text(
                           'View Reports',
-                          style: AppTextStyle.semiBold14.copyWith(color: AppColors.primaryColor),
+                          style: AppTextStyle.semiBold14.copyWith(
+                            color: AppColors.primaryColor,
+                          ),
                         ),
                       ),
                     ),
@@ -139,7 +165,7 @@ class TakeAttendanceCard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: onTakeAttendance,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
+                          backgroundColor: AppColors.secondaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -148,7 +174,9 @@ class TakeAttendanceCard extends StatelessWidget {
                         ),
                         child: Text(
                           'Take Attendance',
-                          style: AppTextStyle.semiBold14.copyWith(color: Colors.white),
+                          style: AppTextStyle.semiBold14.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

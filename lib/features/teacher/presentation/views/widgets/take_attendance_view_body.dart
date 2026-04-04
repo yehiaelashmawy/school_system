@@ -3,6 +3,8 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/take_attendance_card.dart';
 
+import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
+
 class TakeAttendanceViewBody extends StatelessWidget {
   const TakeAttendanceViewBody({super.key});
 
@@ -37,7 +39,10 @@ class TakeAttendanceViewBody extends StatelessWidget {
           subject: 'Mathematics',
           studentsCount: 24,
           onViewReports: () {},
-          onTakeAttendance: () {},
+          onTakeAttendance: () {
+            Navigator.of(context, rootNavigator: true)
+                .pushNamed(AttendanceMethodView.routeName);
+          },
         ),
         TakeAttendanceCard(
           imagePath: 'assets/images/lesson2.png',
@@ -47,7 +52,10 @@ class TakeAttendanceViewBody extends StatelessWidget {
           subject: 'Advanced Calculus',
           studentsCount: 18,
           onViewReports: () {},
-          onTakeAttendance: () {},
+          onTakeAttendance: () {
+            Navigator.of(context, rootNavigator: true)
+                .pushNamed(AttendanceMethodView.routeName);
+          },
         ),
         TakeAttendanceCard(
           imagePath: 'assets/images/lesson3.png',
@@ -57,7 +65,10 @@ class TakeAttendanceViewBody extends StatelessWidget {
           subject: 'Algebra Basics',
           studentsCount: 30,
           onViewReports: () {},
-          onTakeAttendance: () {},
+          onTakeAttendance: () {
+            Navigator.of(context, rootNavigator: true)
+                .pushNamed(AttendanceMethodView.routeName);
+          },
         ),
         const SizedBox(height: 24),
       ],
