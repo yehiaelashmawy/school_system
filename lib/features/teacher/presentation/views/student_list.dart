@@ -3,6 +3,9 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lessons_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/students_list_body.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/take_attendance_card.dart';
+import 'package:school_system/features/teacher/presentation/views/attendance_report_view.dart';
+import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
 
 class StudentList extends StatelessWidget {
   const StudentList({super.key});
@@ -70,13 +73,37 @@ class StudentList extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            StudentsListBody(),
-            LessonsListBody(),
-            HomeworkListBody(),
-            Center(child: Text('Exams')),
-            Center(child: Text('Attendance')),
+            const StudentsListBody(),
+            const LessonsListBody(),
+            const HomeworkListBody(),
+            const Center(child: Text('Exams')),
+            ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              children: [
+                TakeAttendanceCard(
+                  imagePath: 'assets/images/lesson1.png',
+                  statusText: 'NEXT SESSION: 09:00 AM',
+                  statusColor: AppColors.primaryColor,
+                  grade: 'Grade 10-A',
+                  subject: 'Mathematics',
+                  studentsCount: 24,
+                  onViewReports: () {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(AttendanceReportView.routeName);
+                  },
+                  onTakeAttendance: () {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(AttendanceMethodView.routeName);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
