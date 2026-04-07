@@ -14,6 +14,8 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.keyboardType,
+    this.readOnly = false,
+    this.onTap,
   });
 
   final String hintText;
@@ -25,6 +27,8 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int? minLines;
   final TextInputType? keyboardType;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,8 @@ class CustomTextField extends StatelessWidget {
       validator: validator,
       maxLines: maxLines,
       minLines: minLines,
+      readOnly: readOnly,
+      onTap: onTap,
       keyboardType: keyboardType,
       style: AppTextStyle.regular14.copyWith(color: AppColors.darkBlue),
       decoration: InputDecoration(

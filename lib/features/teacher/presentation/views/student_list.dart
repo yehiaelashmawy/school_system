@@ -136,7 +136,14 @@ class _StudentListState extends State<StudentList>
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
         child: FloatingActionButton(
-          onPressed: _isExamsTab ? () {} : null,
+          onPressed: _isExamsTab
+              ? () {
+                  Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pushNamed('/add_new_exam');
+                }
+              : null,
           backgroundColor: AppColors.secondaryColor,
           elevation: 4,
           shape: RoundedRectangleBorder(

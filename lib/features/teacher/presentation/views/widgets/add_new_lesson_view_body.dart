@@ -38,6 +38,35 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
     'Class 12B',
   ];
 
+  final TextEditingController _dateTimeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dateTimeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDateTime() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+    if (date != null && mounted) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (time != null) {
+        setState(() {
+          _dateTimeController.text =
+              "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}, ${time.format(context)}";
+        });
+      }
+    }
+  }
+
   Future<void> _pickPDFs() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -112,7 +141,12 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
 
           const FieldLabel(label: 'Scheduled Date & Time'),
           const SizedBox(height: 8),
-          const CustomTextField(hintText: 'mm/dd/yyyy, --:-- --'),
+          CustomTextField(
+            hintText: 'mm/dd/yyyy, --:-- --',
+            controller: _dateTimeController,
+            readOnly: true,
+            onTap: _pickDateTime,
+          ),
 
           const SizedBox(height: 20),
 

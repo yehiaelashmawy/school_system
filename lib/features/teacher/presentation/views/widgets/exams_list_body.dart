@@ -67,7 +67,9 @@ class _ExamsListBodyState extends State<ExamsListBody> {
                   statusColor: AppColors.secondaryColor,
                   isDraft: false,
                 ),
-                const SizedBox(height: 80), // Padding for the floating action button
+                const SizedBox(
+                  height: 80,
+                ), // Padding for the floating action button
               ],
             ),
           ),
