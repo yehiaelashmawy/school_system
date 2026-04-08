@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_images.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/on_broding/presentation/views/on_bording_view.dart';
+import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
+import 'package:school_system/features/student/presentation/views/student_home_view.dart';
+import 'package:school_system/features/teacher/presentation/views/teacher_home_view.dart';
+import 'package:school_system/features/parent/presentation/views/parent_home_view.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:svg_flutter/svg.dart';
 
 class SplashViewBody extends StatefulWidget {
@@ -39,8 +44,21 @@ class _SplashViewBodyState extends State<SplashViewBody> {
 
   void excuteNavigation() {
     Future.delayed(const Duration(seconds: 3), () {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, OnBordingView.routeName);
+      if (!mounted) return;
+      if (SharedPrefsHelper.isAuthenticated) {
+        final role = SharedPrefsHelper.userRole;
+        if (role == 'student') {
+          Navigator.pushReplacementNamed(context, StudentHomeView.routeName);
+        } else if (role == 'parent') {
+          Navigator.pushReplacementNamed(context, ParentHomeView.routeName);
+        } else {
+          Navigator.pushReplacementNamed(context, TeacherHomeView.routeName);
+        }
+      } else if (SharedPrefsHelper.hasSeenOnboarding) {
+        Navigator.pushReplacementNamed(context, AuthView.routeName);
+      } else {
+        Navigator.pushReplacementNamed(context, OnBordingView.routeName);
+      }
     });
   }
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/helper/on_generate_route.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/features/splash/presentation/views/splash_view.dart';
 
 import 'package:school_system/core/utils/theme_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefsHelper.init();
   runApp(const SchoolSystemApp());
 }
 

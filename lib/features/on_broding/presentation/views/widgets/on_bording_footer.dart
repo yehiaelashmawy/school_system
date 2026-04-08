@@ -1,7 +1,8 @@
-    import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/custom_dot_indicator.dart';
 import 'package:school_system/features/on_broding/presentation/views/widgets/on_boarding_button.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 
 class OnBoardingFooter extends StatelessWidget {
   const OnBoardingFooter({
@@ -41,6 +42,7 @@ class OnBoardingFooter extends StatelessWidget {
                       curve: Curves.easeInOut,
                     );
                   } else {
+                    SharedPrefsHelper.setHasSeenOnboarding(true);
                     Navigator.pushReplacementNamed(context, AuthView.routeName);
                   }
                 },

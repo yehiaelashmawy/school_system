@@ -9,6 +9,7 @@ import 'package:school_system/features/Auth/presentation/views/widgets/remember_
 import 'package:school_system/features/teacher/presentation/views/teacher_home_view.dart';
 import 'package:school_system/features/student/presentation/views/student_home_view.dart';
 import 'package:school_system/features/parent/presentation/views/parent_home_view.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -125,15 +126,32 @@ class LoginForm extends StatelessWidget {
                 spreadRadius: -3,
               ),
             ],
-            onPressed: () {
+            onPressed: () async {
               final role =
                   ModalRoute.of(context)?.settings.arguments as String?;
+
+              await SharedPrefsHelper.setIsAuthenticated(true);
+              if (role != null) {
+                await SharedPrefsHelper.setUserRole(role);
+              }
+
+              if (!context.mounted) return;
+
               if (role == 'student') {
-                Navigator.pushNamed(context, StudentHomeView.routeName);
+                Navigator.pushReplacementNamed(
+                  context,
+                  StudentHomeView.routeName,
+                );
               } else if (role == 'parent') {
-                Navigator.pushNamed(context, ParentHomeView.routeName);
+                Navigator.pushReplacementNamed(
+                  context,
+                  ParentHomeView.routeName,
+                );
               } else {
-                Navigator.pushNamed(context, TeacherHomeView.routeName);
+                Navigator.pushReplacementNamed(
+                  context,
+                  TeacherHomeView.routeName,
+                );
               }
             },
           ),
