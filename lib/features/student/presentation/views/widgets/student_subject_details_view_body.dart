@@ -5,6 +5,7 @@ import 'package:school_system/features/student/data/models/student_subject_model
 import 'package:school_system/features/student/presentation/views/widgets/subject_details_hero_card.dart';
 import 'package:school_system/features/student/presentation/views/student_lesson_details_view.dart';
 import 'package:school_system/features/student/presentation/views/widgets/student_assignments_tab.dart';
+import 'package:school_system/features/student/presentation/views/widgets/student_exams_tab.dart';
 import 'package:school_system/features/student/presentation/views/widgets/subject_details_tabs.dart';
 import 'package:school_system/features/student/presentation/views/widgets/course_material_item_card.dart';
 
@@ -81,6 +82,8 @@ class _StudentSubjectDetailsViewBodyState
           ),
         ] else if (_selectedTab == 1) ...[
           const StudentAssignmentsTab(),
+        ] else if (_selectedTab == 2) ...[
+          const StudentExamsTab(),
         ] else ...[
           Center(
             child: Padding(
