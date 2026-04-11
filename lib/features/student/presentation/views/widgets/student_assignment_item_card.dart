@@ -247,5 +247,4 @@ class StudentAssignmentItemCard extends StatelessWidget {
       ),
     );
   }
-
 }

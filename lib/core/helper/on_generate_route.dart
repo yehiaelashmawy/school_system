@@ -16,6 +16,7 @@ import 'package:school_system/features/student/presentation/views/student_home_v
 import 'package:school_system/features/student/presentation/views/weekly_schedule_view.dart';
 import 'package:school_system/features/student/presentation/views/student_subject_details_view.dart';
 import 'package:school_system/features/student/presentation/views/student_lesson_details_view.dart';
+import 'package:school_system/features/student/presentation/views/student_assignment_details_view.dart';
 import 'package:school_system/features/student/data/models/student_subject_model.dart';
 import 'package:school_system/features/teacher/presentation/views/add_new_exam_view.dart';
 import 'package:school_system/features/teacher/presentation/views/exam_details_view.dart';
@@ -75,6 +76,21 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       final title = settings.arguments as String;
       return MaterialPageRoute(
         builder: (context) => StudentLessonDetailsView(lessonTitle: title),
+      );
+    case StudentAssignmentDetailsView.routeName:
+      final args = settings.arguments as StudentAssignmentDetailsArgs;
+      return MaterialPageRoute(
+        builder: (context) => StudentAssignmentDetailsView(
+          subjectName: args.subjectName,
+          title: args.title,
+          dueTime: args.dueTime,
+          points: args.points,
+          dateDay: args.dateDay,
+          dateMonth: args.dateMonth,
+          description: args.description,
+          teacherName: args.teacherName,
+          teacherInstructions: args.teacherInstructions,
+        ),
       );
     case ParentHomeView.routeName:
       return MaterialPageRoute(builder: (context) => const ParentHomeView());
