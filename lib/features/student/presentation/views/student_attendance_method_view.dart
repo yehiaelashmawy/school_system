@@ -129,7 +129,12 @@ class StudentAttendanceMethodView extends StatelessWidget {
                 description:
                     'Enter the unique 6-digit session pin provided by your instructor.',
                 actionText: 'Enter Manually',
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    'student_select_code_view',
+                  );
+                },
               ),
             ],
           ),
