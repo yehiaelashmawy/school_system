@@ -103,7 +103,13 @@ class StudentAttendanceMethodView extends StatelessWidget {
                 description:
                     'Instantly check-in by scanning the digital code displayed in class.',
                 actionText: 'Open Camera',
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    'student_scan_qr_view',
+                    arguments: subject,
+                  );
+                },
               ),
 
               const SizedBox(height: 20),
