@@ -38,15 +38,22 @@ class StudentTodaySchedule extends StatelessWidget {
             ),
             OutlinedButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed('weekly_schedule_view');
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushNamed('weekly_schedule_view');
               },
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.primaryColor.withValues(alpha: 0.3)),
+                side: BorderSide(
+                  color: AppColors.primaryColor.withValues(alpha: 0.3),
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
               child: Text(
                 'VIEW WEEK\nSCHEDULE',
@@ -65,7 +72,9 @@ class StudentTodaySchedule extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.lightGrey.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: AppColors.lightGrey.withValues(alpha: 0.3),
+            ),
           ),
           child: const Column(
             children: [
@@ -192,9 +201,14 @@ class _ScheduleItem extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: isActive ? AppColors.primaryColor : AppColors.grey.withValues(alpha: 0.1),
+                          color: isActive
+                              ? AppColors.primaryColor
+                              : AppColors.grey.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -208,15 +222,32 @@ class _ScheduleItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       isActive
-                          ? Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(8),
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  'student_attendance_method_view',
+                                  arguments: subject,
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
                               ),
-                              child: const Icon(Icons.person, color: Colors.white, size: 16),
                             )
-                          : const Icon(Icons.more_vert, color: Colors.grey, size: 24),
+                          : const Icon(
+                              Icons.more_vert,
+                              color: Colors.grey,
+                              size: 24,
+                            ),
                     ],
                   ),
                   const SizedBox(height: 20),

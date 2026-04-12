@@ -20,6 +20,7 @@ import 'package:school_system/features/student/presentation/views/student_assign
 import 'package:school_system/features/student/presentation/views/student_exam_details_view.dart';
 import 'package:school_system/features/student/presentation/views/student_homework_view.dart';
 import 'package:school_system/features/student/presentation/views/student_grades_view.dart';
+import 'package:school_system/features/student/presentation/views/student_attendance_method_view.dart';
 import 'package:school_system/features/student/data/models/student_subject_model.dart';
 import 'package:school_system/features/teacher/presentation/views/add_new_exam_view.dart';
 import 'package:school_system/features/teacher/presentation/views/exam_details_view.dart';
@@ -95,6 +96,12 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
           teacherInstructions: args.teacherInstructions,
         ),
       );
+    case StudentAttendanceMethodView.routeName:
+      final subject = settings.arguments as String;
+      return MaterialPageRoute(
+        builder: (context) => StudentAttendanceMethodView(subject: subject),
+      );
+
     case StudentExamDetailsView.routeName:
       final args = settings.arguments as StudentExamDetailsArgs;
       return MaterialPageRoute(
@@ -109,7 +116,9 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
         ),
       );
     case StudentHomeworkView.routeName:
-      return MaterialPageRoute(builder: (context) => const StudentHomeworkView());
+      return MaterialPageRoute(
+        builder: (context) => const StudentHomeworkView(),
+      );
     case StudentGradesView.routeName:
       return MaterialPageRoute(builder: (context) => const StudentGradesView());
     case ParentHomeView.routeName:
