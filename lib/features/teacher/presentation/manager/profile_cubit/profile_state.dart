@@ -1,0 +1,21 @@
+import 'package:flutter/foundation.dart';
+import '../../../data/models/profile_model.dart';
+
+@immutable
+abstract class ProfileState {}
+
+class ProfileInitial extends ProfileState {}
+
+class ProfileLoading extends ProfileState {}
+
+class ProfileSuccess extends ProfileState {
+  final ProfileModel profile;
+
+  ProfileSuccess(this.profile);
+}
+
+class ProfileFailure extends ProfileState {
+  final String errMessage;
+
+  ProfileFailure(this.errMessage);
+}
