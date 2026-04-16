@@ -21,4 +21,34 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileFailure(errorMsg));
     }
   }
+
+  Future<void> updateProfile({
+    required String fullName,
+    required String phone,
+    required String department,
+    required String position,
+    String? avatar,
+  }) async {
+    emit(ProfileUpdateLoading());
+    try {
+      final successMsg = await profileRepo.updateProfile(
+        fullName: fullName,
+        phone: phone,
+        department: department,
+        position: position,
+        avatar: avatar,
+      );
+      emit(ProfileUpdateSuccess(successMsg));
+      // Re-fetch profile to update local state if needed
+      await fetchProfile();
+    } catch (e) {
+      String errorMsg = e.toString();
+      if (errorMsg.startsWith('Exception: ')) {
+        errorMsg = errorMsg.substring('Exception: '.length);
+      }
+      emit(ProfileUpdateFailure(errorMsg));
+      // Re-fetch to return to the original loaded state instead of being stuck in a failure that doesn't hold the profile model
+      await fetchProfile();
+    }
+  }
 }

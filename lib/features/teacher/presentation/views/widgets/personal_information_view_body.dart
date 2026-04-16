@@ -56,12 +56,12 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
   }
 
   void _saveChanges() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Changes saved successfully!'),
-        backgroundColor: AppColors.secondaryColor,
-        duration: const Duration(seconds: 2),
-      ),
+    context.read<ProfileCubit>().updateProfile(
+      fullName: _nameController.text,
+      phone: _phoneController.text,
+      department: _subjectController.text,
+      position: _displayTitle,
+      avatar: _pickedImagePath,
     );
   }
 
@@ -88,6 +88,20 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
               backgroundColor: Colors.red,
             ),
           );
+        } else if (state is ProfileUpdateFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is ProfileUpdateSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.successMessage),
+              backgroundColor: AppColors.secondaryColor,
+            ),
+          );
         } else if (state is ProfileSuccess) {
           final profile = state.profile;
           _nameController.text = profile.fullName ?? '';
@@ -103,7 +117,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
         }
       },
       builder: (context, state) {
-        if (state is ProfileLoading) {
+        if (state is ProfileLoading || state is ProfileUpdateLoading) {
            return const Center(child: CircularProgressIndicator());
         }
         

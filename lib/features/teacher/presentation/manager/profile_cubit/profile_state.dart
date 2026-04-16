@@ -19,3 +19,17 @@ class ProfileFailure extends ProfileState {
 
   ProfileFailure(this.errMessage);
 }
+
+class ProfileUpdateLoading extends ProfileState {}
+
+class ProfileUpdateSuccess extends ProfileState {
+  final String successMessage;
+
+  ProfileUpdateSuccess(this.successMessage);
+}
+
+class ProfileUpdateFailure extends ProfileState {
+  final String errMessage;
+
+  ProfileUpdateFailure(this.errMessage);
+}
