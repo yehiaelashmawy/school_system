@@ -7,8 +7,13 @@ import 'package:school_system/features/teacher/presentation/views/change_passwor
 import 'package:school_system/features/teacher/presentation/views/settings_view.dart';
 import 'package:school_system/core/widgets/profile/profile_logout_button.dart';
 import 'package:school_system/core/widgets/profile/profile_menu_tile.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/widgets/profile/profile_avatar.dart';
 import 'package:school_system/core/helper/shared_prefs_helper.dart';
+
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_state.dart';
+import 'package:school_system/features/teacher/data/repos/profile_repo.dart';
 
 class ProfileViewBody extends StatelessWidget {
   const ProfileViewBody({
@@ -47,15 +52,35 @@ class ProfileViewBody extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  ProfileAvatar(
-                    name: name,
-                    title: roleTitle,
-                    onEditTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        PersonalInformationView.routeName,
-                      );
-                    },
+                  BlocProvider(
+                    create: (context) =>
+                        ProfileCubit(ProfileRepo())..fetchProfile(),
+                    child: BlocBuilder<ProfileCubit, ProfileState>(
+                      builder: (context, state) {
+                        String displayAvatarName = name;
+                        String displayAvatarTitle = roleTitle;
+
+                        if (state is ProfileLoading) {
+                          displayAvatarName = 'Loading...';
+                          displayAvatarTitle = 'Loading...';
+                        } else if (state is ProfileSuccess) {
+                          displayAvatarName = state.profile.fullName ?? name;
+                          displayAvatarTitle =
+                              state.profile.position ?? roleTitle;
+                        }
+
+                        return ProfileAvatar(
+                          name: displayAvatarName,
+                          title: displayAvatarTitle,
+                          onEditTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              PersonalInformationView.routeName,
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: 40),
@@ -96,8 +121,10 @@ class ProfileViewBody extends StatelessWidget {
                     onTap: () async {
                       await SharedPrefsHelper.clearAuth();
                       if (!context.mounted) return;
-                      Navigator.of(context, rootNavigator: true)
-                          .pushNamedAndRemoveUntil(
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamedAndRemoveUntil(
                         AuthView.routeName,
                         (route) => false,
                       );
