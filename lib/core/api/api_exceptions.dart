@@ -15,7 +15,8 @@ class ApiExceptions {
       case DioExceptionType.badCertificate:
         return ApiErrors(errorMessage: 'Bad certificate');
       case DioExceptionType.badResponse:
-        return ApiErrors(errorMessage: 'Bad response');
+        String extractedMsg = 'Invalid email or password';
+        return ApiErrors(errorMessage: extractedMsg);
       case DioExceptionType.connectionError:
         return ApiErrors(errorMessage: 'Connection error');
       case DioExceptionType.unknown:

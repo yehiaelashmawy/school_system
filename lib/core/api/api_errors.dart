@@ -4,6 +4,6 @@ class ApiErrors {
   ApiErrors({required this.errorMessage});
   @override
   String toString() {
-    return 'error message : $errorMessage';
+    return errorMessage;
   }
 }
