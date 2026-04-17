@@ -45,94 +45,101 @@ class ProfileViewBody extends StatelessWidget {
           ),
 
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 12.0,
-              ),
-              child: Column(
-                children: [
-                  BlocProvider(
-                    create: (context) =>
-                        ProfileCubit(ProfileRepo())..fetchProfile(),
-                    child: BlocBuilder<ProfileCubit, ProfileState>(
-                      builder: (context, state) {
-                        String displayAvatarName = name;
-                        String displayAvatarTitle = roleTitle;
+            child: BlocProvider(
+              create: (context) => ProfileCubit(ProfileRepo())..fetchProfile(),
+              child: Builder(
+                builder: (context) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 12.0,
+                    ),
+                    child: Column(
+                      children: [
+                        BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            String displayAvatarName = name;
+                            String displayAvatarTitle = roleTitle;
 
-                        if (state is ProfileLoading) {
-                          displayAvatarName = 'Loading...';
-                          displayAvatarTitle = 'Loading...';
-                        } else if (state is ProfileSuccess) {
-                          displayAvatarName = state.profile.fullName ?? name;
-                          displayAvatarTitle =
-                              state.profile.position ?? roleTitle;
-                        }
+                            if (state is ProfileLoading) {
+                              displayAvatarName = 'Loading...';
+                              displayAvatarTitle = 'Loading...';
+                            } else if (state is ProfileSuccess) {
+                              displayAvatarName = state.profile.fullName ?? name;
+                              displayAvatarTitle =
+                                  state.profile.position ?? roleTitle;
+                            }
 
-                        return ProfileAvatar(
-                          name: displayAvatarName,
-                          title: displayAvatarTitle,
-                          onEditTap: () {
+                            return ProfileAvatar(
+                              name: displayAvatarName,
+                              title: displayAvatarTitle,
+                              onEditTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  PersonalInformationView.routeName,
+                                ).then((_) {
+                                  context.read<ProfileCubit>().fetchProfile();
+                                });
+                              },
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        ProfileMenuTile(
+                          title: 'Personal Information',
+                          icon: Icons.person_outline,
+                          onTap: () {
                             Navigator.pushNamed(
                               context,
                               PersonalInformationView.routeName,
+                            ).then((_) {
+                              context.read<ProfileCubit>().fetchProfile();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ProfileMenuTile(
+                          title: 'Settings',
+                          icon: Icons.settings_outlined,
+                          onTap: () {
+                            Navigator.pushNamed(context, SettingsView.routeName);
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ProfileMenuTile(
+                          title: 'Change Password',
+                          icon: Icons.lock_outline,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              ChangePasswordView.routeName,
                             );
                           },
-                        );
-                      },
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        ProfileLogoutButton(
+                          onTap: () async {
+                            await SharedPrefsHelper.clearAuth();
+                            if (!context.mounted) return;
+                            Navigator.of(
+                              context,
+                              rootNavigator: true,
+                            ).pushNamedAndRemoveUntil(
+                              AuthView.routeName,
+                              (route) => false,
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  ProfileMenuTile(
-                    title: 'Personal Information',
-                    icon: Icons.person_outline,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        PersonalInformationView.routeName,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ProfileMenuTile(
-                    title: 'Settings',
-                    icon: Icons.settings_outlined,
-                    onTap: () {
-                      Navigator.pushNamed(context, SettingsView.routeName);
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ProfileMenuTile(
-                    title: 'Change Password',
-                    icon: Icons.lock_outline,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        ChangePasswordView.routeName,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  ProfileLogoutButton(
-                    onTap: () async {
-                      await SharedPrefsHelper.clearAuth();
-                      if (!context.mounted) return;
-                      Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamedAndRemoveUntil(
-                        AuthView.routeName,
-                        (route) => false,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
+                  );
+                }
               ),
             ),
           ),
