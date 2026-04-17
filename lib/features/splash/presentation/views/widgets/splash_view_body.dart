@@ -47,9 +47,9 @@ class _SplashViewBodyState extends State<SplashViewBody> {
       if (!mounted) return;
       if (SharedPrefsHelper.isAuthenticated) {
         final role = SharedPrefsHelper.userRole;
-        if (role == 'student') {
+        if (role == '3') {
           Navigator.pushReplacementNamed(context, StudentHomeView.routeName);
-        } else if (role == 'parent') {
+        } else if (role == '4') {
           Navigator.pushReplacementNamed(context, ParentHomeView.routeName);
         } else {
           Navigator.pushReplacementNamed(context, TeacherHomeView.routeName);
