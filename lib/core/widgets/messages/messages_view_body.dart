@@ -1,51 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
+import 'package:school_system/core/widgets/messages/manager/messages_cubit.dart';
+import 'package:school_system/core/widgets/messages/manager/messages_state.dart';
 import 'message_item.dart';
-import 'message_model.dart';
-
-const List<MessageModel> allMessages = [
-  MessageModel(
-    name: 'Sarah Jenkins',
-    role: '(Parent)',
-    preview: 'Hello, will the field trip next week...',
-    time: '10:45 AM',
-    unreadCount: 2,
-    isOnline: true,
-  ),
-  MessageModel(
-    name: 'David Miller',
-    role: '(Student)',
-    preview: "I've submitted my essay for the English...",
-    time: '9:20 AM',
-  ),
-  MessageModel(
-    name: 'Robert Wilson',
-    role: '(Parent)',
-    preview: "Thank you for the update on Leo's...",
-    time: 'Yesterday',
-    unreadCount: 1,
-  ),
-  MessageModel(
-    name: 'Emma Thompson',
-    role: '(Student)',
-    preview: 'Can we reschedule the extra tutoring...',
-    time: 'Yesterday',
-  ),
-  MessageModel(
-    name: 'Lisa Garcia',
-    role: '(Parent)',
-    preview: 'Is the permission slip required for the loc...',
-    time: 'Oct 24',
-  ),
-  MessageModel(
-    name: 'Kevin Adams',
-    role: '(Student)',
-    preview: 'I forgot my textbook in the locker. Can I...',
-    time: 'Oct 23',
-  ),
-];
 
 class MessagesViewBody extends StatelessWidget {
   const MessagesViewBody({super.key});
@@ -108,6 +68,7 @@ class MessagesViewBody extends StatelessWidget {
               : const Color(0xffE2E8F0),
           tabs: const [
             Tab(text: 'All'),
+            Tab(text: 'Teachers'),
             Tab(text: 'Students'),
             Tab(text: 'Parents'),
           ],
@@ -115,42 +76,73 @@ class MessagesViewBody extends StatelessWidget {
 
         // Lists
         Expanded(
-          child: TabBarView(
-            children: [
-              // All
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: allMessages.length,
-                itemBuilder: (context, index) =>
-                    MessageItem(message: allMessages[index]),
-              ),
-              // Students
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: allMessages
-                    .where((m) => m.role == '(Student)')
-                    .length,
-                itemBuilder: (context, index) {
-                  final students = allMessages
-                      .where((m) => m.role == '(Student)')
-                      .toList();
-                  return MessageItem(message: students[index]);
-                },
-              ),
-              // Parents
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: allMessages
-                    .where((m) => m.role == '(Parent)')
-                    .length,
-                itemBuilder: (context, index) {
-                  final parents = allMessages
-                      .where((m) => m.role == '(Parent)')
-                      .toList();
-                  return MessageItem(message: parents[index]);
-                },
-              ),
-            ],
+          child: BlocBuilder<MessagesCubit, MessagesState>(
+            builder: (context, state) {
+              if (state is MessagesLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is MessagesFailure) {
+                return Center(
+                  child: Text(
+                    state.errMessage,
+                    style: AppTextStyle.bold16.copyWith(color: Colors.red),
+                  ),
+                );
+              } else if (state is MessagesSuccess) {
+                final allMessages = state.messages;
+
+                return TabBarView(
+                  children: [
+                    // All
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: allMessages.length,
+                      itemBuilder: (context, index) =>
+                          MessageItem(message: allMessages[index]),
+                    ),
+                    // Teachers
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: allMessages
+                          .where((m) => m.role == '(Teacher)')
+                          .length,
+                      itemBuilder: (context, index) {
+                        final teachers = allMessages
+                            .where((m) => m.role == '(Teacher)')
+                            .toList();
+                        return MessageItem(message: teachers[index]);
+                      },
+                    ),
+                    // Students
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: allMessages
+                          .where((m) => m.role == '(Student)')
+                          .length,
+                      itemBuilder: (context, index) {
+                        final students = allMessages
+                            .where((m) => m.role == '(Student)')
+                            .toList();
+                        return MessageItem(message: students[index]);
+                      },
+                    ),
+                    // Parents
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: allMessages
+                          .where((m) => m.role == '(Parent)')
+                          .length,
+                      itemBuilder: (context, index) {
+                        final parents = allMessages
+                            .where((m) => m.role == '(Parent)')
+                            .toList();
+                        return MessageItem(message: parents[index]);
+                      },
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox();
+            },
           ),
         ),
       ],
