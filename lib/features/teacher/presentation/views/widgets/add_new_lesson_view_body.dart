@@ -1,6 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/custom_dropdown_field.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/custom_text_field.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/dashed_upload_button.dart';
@@ -19,24 +24,6 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
 
   String? _selectedSubject;
   String? _selectedClass;
-
-  final List<String> _subjects = [
-    'Mathematics',
-    'Science',
-    'Physics',
-    'Chemistry',
-    'English',
-    'History',
-  ];
-
-  final List<String> _classes = [
-    'Class 10A',
-    'Class 10B',
-    'Class 11A',
-    'Class 11B',
-    'Class 12A',
-    'Class 12B',
-  ];
 
   final TextEditingController _dateTimeController = TextEditingController();
 
@@ -111,32 +98,73 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
 
           const FieldLabel(label: 'Subject'),
           const SizedBox(height: 8),
-          CustomDropdownField(
-            hintText: 'Mathematics',
-            items: _subjects,
-            value: _selectedSubject,
-            onChanged: (val) {
-              setState(() {
-                _selectedSubject = val;
-              });
+          BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
+            builder: (context, subjectState) {
+              if (subjectState is TeacherSubjectsLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (subjectState is TeacherSubjectsFailure) {
+                return Text(
+                  subjectState.error.errorMessage,
+                  style: const TextStyle(color: Colors.red),
+                );
+              } else if (subjectState is TeacherSubjectsSuccess) {
+                final subjectNames =
+                    subjectState.subjects.map((e) => e.name).toList();
+
+                if (_selectedSubject != null &&
+                    !subjectNames.contains(_selectedSubject)) {
+                  _selectedSubject = null;
+                }
+
+                return CustomDropdownField(
+                  hintText: 'Choose a subject',
+                  items: subjectNames,
+                  value: _selectedSubject,
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedSubject = val;
+                    });
+                  },
+                );
+              }
+              return const SizedBox.shrink();
             },
           ),
-
           const SizedBox(height: 20),
 
           const FieldLabel(label: 'Class/Section'),
           const SizedBox(height: 8),
-          CustomDropdownField(
-            hintText: 'Select Class',
-            items: _classes,
-            value: _selectedClass,
-            onChanged: (val) {
-              setState(() {
-                _selectedClass = val;
-              });
+          BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
+            builder: (context, classState) {
+              if (classState is TeacherClassesLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (classState is TeacherClassesFailure) {
+                return Text(
+                  classState.error.errorMessage,
+                  style: const TextStyle(color: Colors.red),
+                );
+              } else if (classState is TeacherClassesSuccess) {
+                final classNames = classState.classes.map((e) => e.name).toList();
+
+                if (_selectedClass != null &&
+                    !classNames.contains(_selectedClass)) {
+                  _selectedClass = null;
+                }
+
+                return CustomDropdownField(
+                  hintText: 'Choose a class',
+                  items: classNames,
+                  value: _selectedClass,
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedClass = val;
+                    });
+                  },
+                );
+              }
+              return const SizedBox.shrink();
             },
           ),
-
           const SizedBox(height: 20),
 
           const FieldLabel(label: 'Scheduled Date & Time'),

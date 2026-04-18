@@ -1,6 +1,12 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_classes_repo.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_subjects_repo.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/add_new_lesson_view_body.dart';
 
 class AddNewLessonView extends StatelessWidget {
@@ -26,7 +32,22 @@ class AddNewLessonView extends StatelessWidget {
           ),
         ),
       ),
-      body: const AddNewLessonViewBody(),
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => TeacherClassesCubit(
+              TeacherClassesRepo(ApiService()),
+            )..fetchClasses(),
+          ),
+          BlocProvider(
+            create: (context) => TeacherSubjectsCubit(
+              TeacherSubjectsRepo(ApiService()),
+            )..fetchSubjects(),
+          ),
+        ],
+        child: const AddNewLessonViewBody(),
+      ),
     );
   }
 }
+

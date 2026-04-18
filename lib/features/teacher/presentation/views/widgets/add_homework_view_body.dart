@@ -11,6 +11,8 @@ import 'package:school_system/features/teacher/presentation/views/widgets/homewo
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_file_list.dart';
 
 class AddHomeworkViewBody extends StatefulWidget {
@@ -24,6 +26,8 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
   final List<PlatformFile> _attachedFiles = [];
   String? _selectedClass;
   String? _selectedClassId;
+  String? _selectedSubject;
+  String? _selectedSubjectId;
   String? _dueDate;
 
   final TextEditingController _titleController = TextEditingController();
@@ -57,6 +61,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
         _descController.text.isEmpty ||
         _pointsController.text.isEmpty ||
         _selectedClassId == null ||
+        _selectedSubjectId == null ||
         _dueDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
@@ -84,7 +89,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
       dueDate: _dueDate!,
       totalMarks: points,
       classId: _selectedClassId!,
-      subjectId: "1a89e17b-e9d5-4afc-8a94-02bf5b0ef889", // Mocked as requested
+      subjectId: _selectedSubjectId!,
       submissionType: "file",
       allowLateSubmissions: true,
       notifyParents: true,
@@ -157,6 +162,48 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
                           _selectedClassId = selectedModel.oid;
                         });
                       },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Select Subject'),
+              const SizedBox(height: 8),
+              BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
+                builder: (context, subjectState) {
+                  if (subjectState is TeacherSubjectsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (subjectState is TeacherSubjectsFailure) {
+                    return Text(
+                      subjectState.error.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    );
+                  } else if (subjectState is TeacherSubjectsSuccess) {
+                    final subjectNames = subjectState.subjects
+                        .map((e) => e.name)
+                        .toList();
+
+                    if (_selectedSubject != null &&
+                        !subjectNames.contains(_selectedSubject)) {
+                      _selectedSubject = null;
+                      _selectedSubjectId = null;
+                    }
+
+                    return CustomDropdownField(
+                       hintText: 'Choose a subject',
+                       items: subjectNames,
+                       value: _selectedSubject,
+                       onChanged: (val) {
+                         setState(() {
+                           _selectedSubject = val;
+                           final selectedModel = subjectState.subjects.firstWhere(
+                             (e) => e.name == val,
+                           );
+                           _selectedSubjectId = selectedModel.oid;
+                         });
+                       },
                     );
                   }
                   return const SizedBox.shrink();

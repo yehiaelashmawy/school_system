@@ -5,8 +5,10 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/repos/add_homework_repo.dart';
 import 'package:school_system/features/teacher/data/repos/teacher_classes_repo.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_subjects_repo.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/add_homework_view_body.dart';
 
 class AddHomeworkView extends StatelessWidget {
@@ -39,6 +41,11 @@ class AddHomeworkView extends StatelessWidget {
             create: (context) => TeacherClassesCubit(
               TeacherClassesRepo(ApiService()),
             )..fetchClasses(),
+          ),
+          BlocProvider(
+            create: (context) => TeacherSubjectsCubit(
+              TeacherSubjectsRepo(ApiService()),
+            )..fetchSubjects(),
           ),
           BlocProvider(
             create: (context) =>
