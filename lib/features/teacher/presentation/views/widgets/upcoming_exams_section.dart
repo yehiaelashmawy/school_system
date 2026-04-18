@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_exams_cubit/teacher_exams_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_exams_cubit/teacher_exams_state.dart';
 
 class UpcomingExamsSection extends StatelessWidget {
   const UpcomingExamsSection({super.key});
+
+  String _computeStatusText(String dateStr) {
+    try {
+      final examDate = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      final diff = examDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+      if (diff < 0) return 'Past';
+      if (diff == 0) return 'Today';
+      if (diff == 1) return 'Tomorrow';
+      return 'In $diff Days';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Color _computeStatusColor(String dateStr) {
+    try {
+      final examDate = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      final diff = examDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+      if (diff <= 2) return const Color(0xFFF97316); // Orange — urgent
+      if (diff <= 5) return AppColors.primaryColor;
+      return AppColors.grey;
+    } catch (_) {
+      return AppColors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,22 +42,57 @@ class UpcomingExamsSection extends StatelessWidget {
       children: [
         const Text('Upcoming Exams', style: AppTextStyle.bold20),
         const SizedBox(height: 16),
-        _buildExamCard(
-          month: 'OCT',
-          day: '12',
-          title: 'Mid-Term Math',
-          subtitle: 'Grade 10 • 45 Students',
-          statusText: 'In 2 Days',
-          statusColor: const Color(0xFFF97316), // Orange
-        ),
-        const SizedBox(height: 16),
-        _buildExamCard(
-          month: 'OCT',
-          day: '15',
-          title: 'Physics Quiz',
-          subtitle: 'Grade 12 • 28 Students',
-          statusText: 'In 5 Days',
-          statusColor: AppColors.grey,
+        BlocBuilder<TeacherExamsCubit, TeacherExamsState>(
+          builder: (context, state) {
+            if (state is TeacherExamsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is TeacherExamsFailure) {
+              return Text(
+                state.error.errorMessage,
+                style: const TextStyle(color: Colors.red, fontSize: 13),
+              );
+            } else if (state is TeacherExamsSuccess) {
+              if (state.exams.isEmpty) {
+                return Text(
+                  'No upcoming exams.',
+                  style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
+                );
+              }
+              return Column(
+                children: state.exams.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final exam = entry.value;
+
+                  String month = '';
+                  String day = '';
+                  try {
+                    final date = DateTime.parse(exam.date);
+                    const months = [
+                      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+                      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+                    ];
+                    month = months[date.month - 1];
+                    day = date.day.toString();
+                  } catch (_) {}
+
+                  return Column(
+                    children: [
+                      if (i > 0) const SizedBox(height: 16),
+                      _buildExamCard(
+                        month: month,
+                        day: day,
+                        title: exam.name,
+                        subtitle: '${exam.className} • ${exam.studentsCount} Students',
+                        statusText: _computeStatusText(exam.date),
+                        statusColor: _computeStatusColor(exam.date),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ],
     );

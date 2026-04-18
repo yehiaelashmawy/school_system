@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/features/teacher/data/repos/announcements_repo.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_exams_repo.dart';
 import 'package:school_system/features/teacher/presentation/manager/announcements_cubit/announcements_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_exams_cubit/teacher_exams_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/school_announcements_section.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_action_buttons.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_custom_app_bar.dart';
@@ -15,10 +17,19 @@ class TeacherHomeViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AnnouncementsCubit(
-        AnnouncementsRepo(ApiService()),
-      )..fetchHighPriorityAnnouncements(take: 2),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AnnouncementsCubit(
+            AnnouncementsRepo(ApiService()),
+          )..fetchHighPriorityAnnouncements(take: 2),
+        ),
+        BlocProvider(
+          create: (context) => TeacherExamsCubit(
+            TeacherExamsRepo(ApiService()),
+          )..fetchExams(),
+        ),
+      ],
       child: Container(
         color: AppColors.white,
         child: SafeArea(

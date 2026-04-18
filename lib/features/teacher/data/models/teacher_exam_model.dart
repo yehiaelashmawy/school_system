@@ -1,0 +1,52 @@
+class TeacherExamModel {
+  final String oid;
+  final String name;
+  final String description;
+  final String type;
+  final String subjectName;
+  final String className;
+  final String date;
+  final String startTime;
+  final String duration;
+  final int maxScore;
+  final int passingScore;
+  final String status;
+  final String room;
+  final int studentsCount;
+
+  TeacherExamModel({
+    required this.oid,
+    required this.name,
+    required this.description,
+    required this.type,
+    required this.subjectName,
+    required this.className,
+    required this.date,
+    required this.startTime,
+    required this.duration,
+    required this.maxScore,
+    required this.passingScore,
+    required this.status,
+    required this.room,
+    required this.studentsCount,
+  });
+
+  factory TeacherExamModel.fromJson(Map<String, dynamic> json) {
+    return TeacherExamModel(
+      oid: json['oid'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      type: json['type'] ?? '',
+      subjectName: json['subjectName'] ?? '',
+      className: json['className'] ?? '',
+      date: json['date'] ?? '',
+      startTime: json['startTime'] ?? '',
+      duration: json['duration'] ?? '',
+      maxScore: json['maxScore'] ?? 0,
+      passingScore: json['passingScore'] ?? 0,
+      status: json['status'] ?? '',
+      room: json['room'] ?? '',
+      studentsCount: json['studentsCount'] ?? 0,
+    );
+  }
+}
