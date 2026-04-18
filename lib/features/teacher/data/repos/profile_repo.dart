@@ -95,4 +95,54 @@ class ProfileRepo {
       rethrow;
     }
   }
+
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final response = await ApiService().post(
+        '/api/Profile/change-password',
+        data: {
+          "currentPassword": currentPassword,
+          "newPassword": newPassword,
+          "confirmPassword": confirmPassword,
+        },
+      );
+
+      if (response['success'] == true) {
+        String successMsg = 'Password changed successfully';
+        if (response is Map && response['messages'] is Map) {
+          final msgs = response['messages'] as Map;
+          if (msgs['EN'] != null) {
+            successMsg = msgs['EN'].toString();
+          }
+        }
+        return successMsg;
+      } else {
+        String errMsg = 'Failed to change password';
+        if (response is Map) {
+          final errors = response['errors'];
+          if (errors is List && errors.isNotEmpty) {
+            errMsg = errors.first.toString();
+          } else if (response['messages'] is Map) {
+            final msgs = response['messages'] as Map;
+            if (msgs['EN'] != null) {
+              errMsg = msgs['EN'].toString();
+            } else if (msgs['error'] != null) {
+              errMsg = msgs['error'].toString();
+            } else if (msgs.isNotEmpty) {
+              errMsg = msgs.values.first.toString();
+            }
+          }
+        }
+        throw Exception(errMsg);
+      }
+    } on DioException catch (e) {
+      throw ApiExceptions.handleException(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

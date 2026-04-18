@@ -51,4 +51,29 @@ class ProfileCubit extends Cubit<ProfileState> {
       await fetchProfile();
     }
   }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    emit(ChangePasswordLoading());
+    try {
+      final successMsg = await profileRepo.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      emit(ChangePasswordSuccess(successMsg));
+      // Re-fetch in case we want to reset to generic loaded state
+      await fetchProfile();
+    } catch (e) {
+      String errorMsg = e.toString();
+      if (errorMsg.startsWith('Exception: ')) {
+        errorMsg = errorMsg.substring('Exception: '.length);
+      }
+      emit(ChangePasswordFailure(errorMsg));
+      await fetchProfile();
+    }
+  }
 }

@@ -33,3 +33,17 @@ class ProfileUpdateFailure extends ProfileState {
 
   ProfileUpdateFailure(this.errMessage);
 }
+
+class ChangePasswordLoading extends ProfileState {}
+
+class ChangePasswordSuccess extends ProfileState {
+  final String successMessage;
+
+  ChangePasswordSuccess(this.successMessage);
+}
+
+class ChangePasswordFailure extends ProfileState {
+  final String errMessage;
+
+  ChangePasswordFailure(this.errMessage);
+}

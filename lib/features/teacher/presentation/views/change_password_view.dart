@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/change_password_view_body.dart';
+import '../manager/profile_cubit/profile_cubit.dart';
+import '../../data/repos/profile_repo.dart';
 
 class ChangePasswordView extends StatelessWidget {
   const ChangePasswordView({super.key});
@@ -27,7 +30,10 @@ class ChangePasswordView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: const ChangePasswordViewBody(),
+      body: BlocProvider(
+        create: (context) => ProfileCubit(ProfileRepo()),
+        child: const ChangePasswordViewBody(),
+      ),
     );
   }
 }
