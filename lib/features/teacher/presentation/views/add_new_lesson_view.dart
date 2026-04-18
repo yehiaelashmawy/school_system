@@ -3,8 +3,10 @@ import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/repos/add_lesson_repo.dart';
 import 'package:school_system/features/teacher/data/repos/teacher_classes_repo.dart';
 import 'package:school_system/features/teacher/data/repos/teacher_subjects_repo.dart';
+import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/add_new_lesson_view_body.dart';
@@ -43,6 +45,10 @@ class AddNewLessonView extends StatelessWidget {
             create: (context) => TeacherSubjectsCubit(
               TeacherSubjectsRepo(ApiService()),
             )..fetchSubjects(),
+          ),
+          BlocProvider(
+            create: (context) =>
+                AddLessonCubit(AddLessonRepo(ApiService())),
           ),
         ],
         child: const AddNewLessonViewBody(),

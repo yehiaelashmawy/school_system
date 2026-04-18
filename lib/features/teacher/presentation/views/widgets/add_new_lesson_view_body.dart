@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_state.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
@@ -23,12 +25,19 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
   final List<PlatformFile> _attachedFiles = [];
 
   String? _selectedSubject;
+  String? _selectedSubjectId;
   String? _selectedClass;
+  String? _selectedClassId;
+  String? _selectedDateIso;
 
   final TextEditingController _dateTimeController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
 
   @override
   void dispose() {
+    _titleController.dispose();
+    _descController.dispose();
     _dateTimeController.dispose();
     super.dispose();
   }
@@ -46,9 +55,17 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
         initialTime: TimeOfDay.now(),
       );
       if (time != null) {
+        final combined = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+        );
         setState(() {
           _dateTimeController.text =
               "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}, ${time.format(context)}";
+          _selectedDateIso = combined.toUtc().toIso8601String();
         });
       }
     }
@@ -81,16 +98,77 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
     }
   }
 
+  void _submitLesson() {
+    if (_titleController.text.isEmpty ||
+        _descController.text.isEmpty ||
+        _selectedClassId == null ||
+        _selectedSubjectId == null ||
+        _selectedDateIso == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    final List<Map<String, dynamic>> materials = _attachedFiles.map((f) {
+      return {
+        "name": f.name,
+        "fileUrl": "https://example.com/files/${f.name}",
+        "fileType": f.extension ?? "pdf",
+        "fileSize": f.size,
+      };
+    }).toList();
+
+    final parsedStart = DateTime.parse(_selectedDateIso!);
+    final endTime = parsedStart.add(const Duration(hours: 1)).toUtc().toIso8601String();
+
+    context.read<AddLessonCubit>().createLesson(
+      title: _titleController.text,
+      description: _descController.text,
+      date: _selectedDateIso!,
+      startTime: _selectedDateIso!,
+      endTime: endTime,
+      classOid: _selectedClassId!,
+      subjectOid: _selectedSubjectId!,
+      type: 1,
+      objectives: _descController.text.split('\n').where((s) => s.trim().isNotEmpty).toList(),
+      materials: materials,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return BlocConsumer<AddLessonCubit, AddLessonState>(
+      listener: (context, state) {
+        if (state is AddLessonSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        } else if (state is AddLessonFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is AddLessonLoading;
+
+        return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const FieldLabel(label: 'Lesson Title'),
           const SizedBox(height: 8),
-          const CustomTextField(
+          CustomTextField(
+            controller: _titleController,
             hintText: 'e.g., Introduction to Quadratic Equations',
           ),
 
@@ -114,6 +192,7 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
                 if (_selectedSubject != null &&
                     !subjectNames.contains(_selectedSubject)) {
                   _selectedSubject = null;
+                  _selectedSubjectId = null;
                 }
 
                 return CustomDropdownField(
@@ -123,6 +202,10 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
                   onChanged: (val) {
                     setState(() {
                       _selectedSubject = val;
+                      final selectedModel = subjectState.subjects.firstWhere(
+                        (e) => e.name == val,
+                      );
+                      _selectedSubjectId = selectedModel.oid;
                     });
                   },
                 );
@@ -149,6 +232,7 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
                 if (_selectedClass != null &&
                     !classNames.contains(_selectedClass)) {
                   _selectedClass = null;
+                  _selectedClassId = null;
                 }
 
                 return CustomDropdownField(
@@ -158,6 +242,10 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
                   onChanged: (val) {
                     setState(() {
                       _selectedClass = val;
+                      final selectedModel = classState.classes.firstWhere(
+                        (e) => e.name == val,
+                      );
+                      _selectedClassId = selectedModel.oid;
                     });
                   },
                 );
@@ -180,7 +268,8 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
 
           const FieldLabel(label: 'Lesson Description/Objectives'),
           const SizedBox(height: 8),
-          const CustomTextField(
+          CustomTextField(
+            controller: _descController,
             hintText: 'What will the students learn today?',
             maxLines: 4,
           ),
@@ -238,32 +327,36 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
 
           const SizedBox(height: 32),
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.upload, color: AppColors.white, size: 20),
-              label: Text(
-                'Publish Lesson',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _submitLesson,
+                    icon: Icon(Icons.upload, color: AppColors.white, size: 20),
+                    label: Text(
+                      'Publish Lesson',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 0,
-              ),
-            ),
-          ),
           const SizedBox(height: 32),
         ],
       ),
+    );
+      },
     );
   }
 }
