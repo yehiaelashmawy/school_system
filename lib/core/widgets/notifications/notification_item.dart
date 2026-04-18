@@ -19,7 +19,9 @@ class NotificationItem extends StatelessWidget {
         color: ThemeManager.isDarkMode ? Colors.transparent : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: ThemeManager.isDarkMode ? AppColors.lightGrey : const Color(0xffE2E8F0),
+          color: ThemeManager.isDarkMode
+              ? AppColors.lightGrey
+              : const Color(0xffE2E8F0),
         ),
       ),
       child: Row(
@@ -33,7 +35,7 @@ class NotificationItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              notification.icon,
+              notification.iconData,
               color: notification.iconColor,
               size: 24,
             ),
@@ -52,7 +54,10 @@ class NotificationItem extends StatelessWidget {
                         notification.title,
                         style: AppTextStyle.bold16.copyWith(
                           color: AppColors.darkBlue,
-                          fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 16),
+                          fontSize: SizeConfig.getResponsiveFontSize(
+                            context,
+                            fontSize: 16,
+                          ),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -63,7 +68,10 @@ class NotificationItem extends StatelessWidget {
                       notification.timeAgo,
                       style: AppTextStyle.regular12.copyWith(
                         color: AppColors.grey,
-                        fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 10),
+                        fontSize: SizeConfig.getResponsiveFontSize(
+                          context,
+                          fontSize: 10,
+                        ),
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
@@ -76,18 +84,21 @@ class NotificationItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        notification.subtitle,
+                        notification.message,
                         style: AppTextStyle.regular14.copyWith(
                           color: AppColors.grey,
-                          fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 14),
+                          fontSize: SizeConfig.getResponsiveFontSize(
+                            context,
+                            fontSize: 14,
+                          ),
                           height: 1.5,
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Icon(
-                      Icons.more_vert,
-                      color: AppColors.grey,
+                      Icons.delete_outline,
+                      color: Colors.red.withValues(alpha: 0.5),
                       size: 20,
                     ),
                   ],
