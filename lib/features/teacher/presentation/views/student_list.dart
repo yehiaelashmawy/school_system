@@ -9,7 +9,8 @@ import 'package:school_system/features/teacher/presentation/views/attendance_rep
 import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
 
 class StudentList extends StatefulWidget {
-  const StudentList({super.key});
+  final String className;
+  const StudentList({super.key, this.className = 'Grade 10-A - Mathematics'});
   static const String routeName = '/student_list';
 
   @override
@@ -51,7 +52,7 @@ class _StudentListState extends State<StudentList>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Grade 10-A - Mathematics',
+              widget.className,
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: 18,

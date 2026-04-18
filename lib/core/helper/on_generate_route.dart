@@ -142,7 +142,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case ParentHomeView.routeName:
       return MaterialPageRoute(builder: (context) => const ParentHomeView());
     case StudentList.routeName:
-      return MaterialPageRoute(builder: (context) => const StudentList());
+      final className = settings.arguments as String? ?? 'Grade 10-A - Mathematics';
+      return MaterialPageRoute(builder: (context) => StudentList(className: className));
     case LessonDetailsView.routeName:
       return MaterialPageRoute(builder: (context) => const LessonDetailsView());
     case AddNewLessonView.routeName:
