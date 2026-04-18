@@ -62,7 +62,7 @@ class NotificationsListTab extends StatelessWidget {
           );
         } else if (state is NotificationsSuccess) {
           final filteredList = state.notifications.where((n) {
-            return isAlerts ? n.type == 'Warning' : n.type != 'Warning';
+            return isAlerts ? n.type != 'Info' : n.type == 'Info';
           }).toList();
 
           if (filteredList.isEmpty) {
@@ -84,9 +84,7 @@ class NotificationsListTab extends StatelessWidget {
                 ),
                 itemCount: filteredList.length,
                 itemBuilder: (context, index) {
-                  return NotificationItem(
-                    notification: filteredList[index],
-                  );
+                  return NotificationItem(notification: filteredList[index]);
                 },
               ),
             ),
