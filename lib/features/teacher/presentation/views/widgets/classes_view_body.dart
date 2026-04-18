@@ -1,27 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
 import 'package:school_system/features/teacher/presentation/views/student_list.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_class_card.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_classes_app_bar.dart';
-
-class ClassModel {
-  final String title;
-  final String subtitle;
-  final String schedule;
-  final String numStudents;
-  final int extraStudentsCount;
-  final String badgeText;
-
-  ClassModel({
-    required this.title,
-    required this.subtitle,
-    required this.schedule,
-    required this.numStudents,
-    required this.extraStudentsCount,
-    required this.badgeText,
-  });
-}
 
 class ClassesViewBody extends StatefulWidget {
   const ClassesViewBody({super.key});
@@ -32,33 +18,6 @@ class ClassesViewBody extends StatefulWidget {
 
 class _ClassesViewBodyState extends State<ClassesViewBody> {
   String? _selectedFilter;
-
-  final List<ClassModel> _allClasses = [
-    ClassModel(
-      title: 'Grade 10-A - Mathematics',
-      subtitle: 'Advanced Algebra & Trigonometry',
-      schedule: 'Mon, Wed, Fri',
-      numStudents: '32',
-      extraStudentsCount: 29,
-      badgeText: 'Mathematics',
-    ),
-    ClassModel(
-      title: 'Grade 11-B - Mathematics',
-      subtitle: 'Advanced Algebra',
-      schedule: 'Tue, Thu',
-      numStudents: '28',
-      extraStudentsCount: 25,
-      badgeText: 'Mathematics',
-    ),
-    ClassModel(
-      title: 'Grade 12-C - Mathematics',
-      subtitle: 'Trigonometry & Calculus',
-      schedule: 'Monday to Friday',
-      numStudents: '24',
-      extraStudentsCount: 21,
-      badgeText: 'Mathematics',
-    ),
-  ];
 
   void _showFilterSheet() {
     showModalBottomSheet(
@@ -126,59 +85,71 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _allClasses.where((cls) {
-      if (_selectedFilter == null) return true;
-      return cls.title.contains(_selectedFilter!);
-    }).toList();
+    return BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
+      builder: (context, state) {
+        if (state is TeacherClassesLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TeacherClassesFailure) {
+          return Center(child: Text(state.error.errorMessage));
+        } else if (state is TeacherClassesSuccess) {
+          final allClasses = state.classes;
+          final filtered = allClasses.where((cls) {
+            if (_selectedFilter == null) return true;
+            return cls.name.contains(_selectedFilter!);
+          }).toList();
 
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        children: [
-          Container(
-            color: AppColors.white,
-            child: SafeArea(
-              bottom: false,
-              child: TeacherClassesAppBar(onFilterTap: _showFilterSheet),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(color: AppColors.white),
-            child: TabBar(
-              labelColor: AppColors.primaryColor,
-              unselectedLabelColor: AppColors.grey,
-              indicatorColor: AppColors.primaryColor,
-              labelStyle: AppTextStyle.bold14,
-              unselectedLabelStyle: AppTextStyle.medium18,
-              indicatorWeight: 3,
-              indicatorSize: TabBarIndicatorSize.tab,
-              tabs: const [
-                Tab(text: 'Active'),
-                Tab(text: 'Archived'),
-                Tab(text: 'Upcoming'),
+          return DefaultTabController(
+            length: 3,
+            child: Column(
+              children: [
+                Container(
+                  color: AppColors.white,
+                  child: SafeArea(
+                    bottom: false,
+                    child: TeacherClassesAppBar(onFilterTap: _showFilterSheet),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(color: AppColors.white),
+                  child: TabBar(
+                    labelColor: AppColors.primaryColor,
+                    unselectedLabelColor: AppColors.grey,
+                    indicatorColor: AppColors.primaryColor,
+                    labelStyle: AppTextStyle.bold14,
+                    unselectedLabelStyle: AppTextStyle.medium18,
+                    indicatorWeight: 3,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    tabs: const [
+                      Tab(text: 'Active'),
+                      Tab(text: 'Archived'),
+                      Tab(text: 'Upcoming'),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: AppColors.backgroundColor,
+                    child: TabBarView(
+                      children: [
+                        _ActiveClassesTab(classes: filtered),
+                        const Center(child: Text('Archived Classes')),
+                        const Center(child: Text('Upcoming Classes')),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-          Expanded(
-            child: Container(
-              color: AppColors.backgroundColor,
-              child: TabBarView(
-                children: [
-                  _ActiveClassesTab(classes: filtered),
-                  const Center(child: Text('Archived Classes Component')),
-                  const Center(child: Text('Upcoming Classes Component')),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
 
 class _ActiveClassesTab extends StatelessWidget {
-  final List<ClassModel> classes;
+  final List<TeacherClassModel> classes;
   const _ActiveClassesTab({required this.classes});
 
   @override
@@ -200,12 +171,12 @@ class _ActiveClassesTab extends StatelessWidget {
         final c = classes[index];
         return TeacherClassCard(
           image: 'assets/images/class_image.png',
-          badgeText: c.badgeText,
-          title: c.title,
-          subtitle: c.subtitle,
-          numStudents: c.numStudents,
-          schedule: c.schedule,
-          extraStudentsCount: c.extraStudentsCount,
+          badgeText: 'Level ${c.level}',
+          title: c.name,
+          subtitle: 'Level ${c.level}',
+          numStudents: c.studentsCount.toString(),
+          schedule: 'Sections: ${c.sectionsCount}',
+          extraStudentsCount: 0,
           onViewClass: () {
             Navigator.pushNamed(context, StudentList.routeName);
           },

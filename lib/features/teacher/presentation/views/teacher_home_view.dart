@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/helper/on_generate_route.dart';
-import 'package:school_system/features/teacher/presentation/views/widgets/classes_view_body.dart';
+import 'package:school_system/features/teacher/presentation/views/teacher_classes_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_home_view_body.dart';
 import 'package:school_system/core/widgets/profile/profile_view_body.dart';
 import 'package:school_system/core/widgets/notifications/notifications_view.dart';
@@ -43,7 +43,7 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
       key: _classesNavigatorKey,
       onGenerateRoute: (settings) {
         if (settings.name == '/' || settings.name == null) {
-          return MaterialPageRoute(builder: (_) => const ClassesViewBody());
+          return MaterialPageRoute(builder: (_) => const TeacherClassesView());
         }
         return onGenerateRoute(settings);
       },
