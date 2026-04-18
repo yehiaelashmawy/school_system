@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/Auth/presentation/views/auth_view.dart';
 import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/change_password_action_buttons.dart';
@@ -60,10 +62,17 @@ class _ChangePasswordViewBodyState extends State<ChangePasswordViewBody> {
           _newPasswordController.clear();
           _confirmPasswordController.clear();
 
+          SharedPrefsHelper.clearAuth();
+
           Future.delayed(const Duration(seconds: 1), () {
             if (context.mounted) {
-              // Return to Profile View
-              Navigator.pop(context);
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushNamedAndRemoveUntil(
+                AuthView.routeName,
+                (route) => false,
+              );
             }
           });
         } else if (state is ChangePasswordFailure) {
