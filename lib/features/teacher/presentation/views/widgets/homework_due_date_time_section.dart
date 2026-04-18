@@ -4,7 +4,8 @@ import 'package:school_system/features/teacher/presentation/views/widgets/custom
 import 'package:school_system/features/teacher/presentation/views/widgets/field_label.dart';
 
 class HomeworkDueDateTimeSection extends StatefulWidget {
-  const HomeworkDueDateTimeSection({super.key});
+  final ValueChanged<String>? onDateTimeStringChanged;
+  const HomeworkDueDateTimeSection({super.key, this.onDateTimeStringChanged});
 
   @override
   State<HomeworkDueDateTimeSection> createState() =>
@@ -15,12 +16,30 @@ class _HomeworkDueDateTimeSectionState
     extends State<HomeworkDueDateTimeSection> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
     _dateController.dispose();
     _timeController.dispose();
     super.dispose();
+  }
+
+  void _updateDateTimeString() {
+    if (_selectedDate != null &&
+        _selectedTime != null &&
+        widget.onDateTimeStringChanged != null) {
+      final dt = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+      // Format as ISO8601 string in UTC, as in example: "2026-04-25T23:59:00Z"
+      widget.onDateTimeStringChanged!(dt.toUtc().toIso8601String());
+    }
   }
 
   Future<void> _pickDate() async {
@@ -32,9 +51,11 @@ class _HomeworkDueDateTimeSectionState
     );
     if (date != null) {
       setState(() {
+        _selectedDate = date;
         _dateController.text =
             "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}";
       });
+      _updateDateTimeString();
     }
   }
 
@@ -45,8 +66,10 @@ class _HomeworkDueDateTimeSectionState
     );
     if (time != null && mounted) {
       setState(() {
+        _selectedTime = time;
         _timeController.text = time.format(context);
       });
+      _updateDateTimeString();
     }
   }
 

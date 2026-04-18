@@ -1,11 +1,16 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/custom_dropdown_field.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/custom_text_field.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/field_label.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_attachments_section.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_due_date_time_section.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_file_list.dart';
 
 class AddHomeworkViewBody extends StatefulWidget {
@@ -18,15 +23,20 @@ class AddHomeworkViewBody extends StatefulWidget {
 class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
   final List<PlatformFile> _attachedFiles = [];
   String? _selectedClass;
+  String? _selectedClassId;
+  String? _dueDate;
 
-  final List<String> _classes = [
-    'Class 10A',
-    'Class 10B',
-    'Class 11A',
-    'Class 11B',
-    'Class 12A',
-    'Class 12B',
-  ];
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  final TextEditingController _pointsController = TextEditingController();
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descController.dispose();
+    _pointsController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -42,65 +52,169 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
     }
   }
 
+  void _submitHomework() {
+    if (_titleController.text.isEmpty ||
+        _descController.text.isEmpty ||
+        _pointsController.text.isEmpty ||
+        _selectedClassId == null ||
+        _dueDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    final points = int.tryParse(_pointsController.text) ?? 0;
+
+    // Attachments will be omitted or mapped to mock URLs since we don't have file upload API right now.
+    // In a real app, you would upload files first.
+    final List<Map<String, dynamic>> attachments = _attachedFiles.map((f) {
+      return {
+        "fileName": f.name,
+        "fileUrl": "https://example.com/files/${f.name}",
+        "fileType": f.extension ?? "pdf",
+        "fileSize": f.size,
+      };
+    }).toList();
+
+    context.read<AddHomeworkCubit>().createHomework(
+      title: _titleController.text,
+      description: _descController.text,
+      instructions: _descController.text, // Sending same for now
+      dueDate: _dueDate!,
+      totalMarks: points,
+      classId: _selectedClassId!,
+      subjectId: "1a89e17b-e9d5-4afc-8a94-02bf5b0ef889", // Mocked as requested
+      submissionType: "file",
+      allowLateSubmissions: true,
+      notifyParents: true,
+      attachments: attachments,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const FieldLabel(label: 'Select Class'),
-          const SizedBox(height: 8),
-          CustomDropdownField(
-            hintText: 'Choose a class',
-            items: _classes,
-            value: _selectedClass,
-            onChanged: (val) {
-              setState(() {
-                _selectedClass = val;
-              });
-            },
+    return BlocConsumer<AddHomeworkCubit, AddHomeworkState>(
+      listener: (context, state) {
+        if (state is AddHomeworkSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context); // Go back after success
+        } else if (state is AddHomeworkFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is AddHomeworkLoading;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const FieldLabel(label: 'Select Class'),
+              const SizedBox(height: 8),
+              BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
+                builder: (context, classState) {
+                  if (classState is TeacherClassesLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (classState is TeacherClassesFailure) {
+                    return Text(
+                      classState.error.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    );
+                  } else if (classState is TeacherClassesSuccess) {
+                    final classNames = classState.classes
+                        .map((e) => e.name)
+                        .toList();
+
+                    // Reset _selectedClass if it's not in the new list
+                    if (_selectedClass != null &&
+                        !classNames.contains(_selectedClass)) {
+                      _selectedClass = null;
+                      _selectedClassId = null;
+                    }
+
+                    return CustomDropdownField(
+                      hintText: 'Choose a class',
+                      items: classNames,
+                      value: _selectedClass,
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedClass = val;
+                          final selectedModel = classState.classes.firstWhere(
+                            (e) => e.name == val,
+                          );
+                          _selectedClassId = selectedModel.oid;
+                        });
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Homework Title'),
+              const SizedBox(height: 8),
+              CustomTextField(
+                controller: _titleController,
+                hintText: 'e.g. Quadratic Equations Practice',
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Description'),
+              const SizedBox(height: 8),
+              CustomTextField(
+                controller: _descController,
+                hintText:
+                    'Enter homework instructions, references, or specific requirements...',
+                minLines: 4,
+                maxLines: 6,
+              ),
+              const SizedBox(height: 20),
+
+              HomeworkDueDateTimeSection(
+                onDateTimeStringChanged: (val) {
+                  _dueDate = val;
+                },
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Points / Max Grade'),
+              const SizedBox(height: 8),
+              CustomTextField(
+                controller: _pointsController,
+                hintText: '100',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Attachments'),
+              const SizedBox(height: 12),
+              HomeworkAttachmentsSection(onTap: _pickFiles),
+
+              HomeworkFileList(attachedFiles: _attachedFiles),
+
+              const SizedBox(height: 40),
+
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildCreateButton(),
+              const SizedBox(height: 32),
+            ],
           ),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Homework Title'),
-          const SizedBox(height: 8),
-          const CustomTextField(hintText: 'e.g. Quadratic Equations Practice'),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Description'),
-          const SizedBox(height: 8),
-          const CustomTextField(
-            hintText:
-                'Enter homework instructions, references, or specific requirements...',
-            minLines: 4,
-            maxLines: 6,
-          ),
-          const SizedBox(height: 20),
-
-          const HomeworkDueDateTimeSection(),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Points / Max Grade'),
-          const SizedBox(height: 8),
-          const CustomTextField(
-            hintText: '100',
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Attachments'),
-          const SizedBox(height: 12),
-          HomeworkAttachmentsSection(onTap: _pickFiles),
-
-          HomeworkFileList(attachedFiles: _attachedFiles),
-
-          const SizedBox(height: 40),
-
-          _buildCreateButton(),
-          const SizedBox(height: 32),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -108,7 +222,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: _submitHomework,
         icon: Icon(Icons.send_outlined, color: AppColors.white, size: 20),
         label: Text(
           'Create Homework',
