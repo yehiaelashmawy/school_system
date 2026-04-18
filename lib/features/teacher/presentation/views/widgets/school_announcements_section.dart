@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/presentation/manager/announcements_cubit/announcements_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/announcements_cubit/announcements_state.dart';
 
 class SchoolAnnouncementsSection extends StatelessWidget {
   const SchoolAnnouncementsSection({super.key});
@@ -28,14 +31,41 @@ class SchoolAnnouncementsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _buildAnnouncementItem(
-            title: 'Staff Meeting at 3 PM',
-            subtitle: 'Subject: Annual Sports Day Planning',
-          ),
-          const SizedBox(height: 16),
-          _buildAnnouncementItem(
-            title: 'Grades Submission Deadline',
-            subtitle: 'Quarterly reports due by Friday 5 PM',
+          BlocBuilder<AnnouncementsCubit, AnnouncementsState>(
+            builder: (context, state) {
+              if (state is AnnouncementsLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is AnnouncementsFailure) {
+                return Text(
+                  state.error.errorMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 13),
+                );
+              } else if (state is AnnouncementsSuccess) {
+                if (state.announcements.isEmpty) {
+                  return Text(
+                    'No announcements at this time.',
+                    style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
+                  );
+                }
+                return Column(
+                  children: state.announcements.asMap().entries.map((entry) {
+                    final i = entry.key;
+                    final announcement = entry.value;
+                    return Column(
+                      children: [
+                        if (i > 0) const SizedBox(height: 16),
+                        _buildAnnouncementItem(
+                          title: announcement.title,
+                          subtitle: announcement.contentEn,
+                          timeAgo: announcement.timeAgo,
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ],
       ),
@@ -45,6 +75,7 @@ class SchoolAnnouncementsSection extends StatelessWidget {
   Widget _buildAnnouncementItem({
     required String title,
     required String subtitle,
+    String? timeAgo,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,8 +103,20 @@ class SchoolAnnouncementsSection extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
               ),
+              if (timeAgo != null && timeAgo.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  timeAgo,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppColors.grey.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

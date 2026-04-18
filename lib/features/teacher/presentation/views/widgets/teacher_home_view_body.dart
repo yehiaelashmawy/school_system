@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/data/repos/announcements_repo.dart';
+import 'package:school_system/features/teacher/presentation/manager/announcements_cubit/announcements_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/school_announcements_section.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_action_buttons.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_custom_app_bar.dart';
@@ -11,37 +15,42 @@ class TeacherHomeViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.white, // Forces the safe area status bar to be white
-      child: SafeArea(
-        bottom: false,
-        child: Container(
-          color: AppColors.backgroundColor, // Restores grey background for body
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  color: AppColors.white,
-                  child: const TeacherCustomAppBar(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      TeacherActionButtons(),
-                      SizedBox(height: 32),
-                      TodaysClassesSection(),
-                      SizedBox(height: 32),
-                      SchoolAnnouncementsSection(),
-                      SizedBox(height: 32),
-                      UpcomingExamsSection(),
-                      SizedBox(height: 32),
-                    ],
+    return BlocProvider(
+      create: (context) => AnnouncementsCubit(
+        AnnouncementsRepo(ApiService()),
+      )..fetchHighPriorityAnnouncements(take: 2),
+      child: Container(
+        color: AppColors.white,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            color: AppColors.backgroundColor,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: AppColors.white,
+                    child: const TeacherCustomAppBar(),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        TeacherActionButtons(),
+                        SizedBox(height: 32),
+                        TodaysClassesSection(),
+                        SizedBox(height: 32),
+                        SchoolAnnouncementsSection(),
+                        SizedBox(height: 32),
+                        UpcomingExamsSection(),
+                        SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
