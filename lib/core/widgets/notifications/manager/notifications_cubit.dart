@@ -20,4 +20,25 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       emit(NotificationsFailure(errorMsg));
     }
   }
+
+  Future<void> deleteNotification(String oid) async {
+    final currentState = state;
+    if (currentState is! NotificationsSuccess) return;
+
+    try {
+      // Optimistic update
+      final currentList = currentState.notifications.toList();
+      currentList.removeWhere((n) => n.oid == oid);
+      emit(NotificationsSuccess(currentList));
+
+      // Attempt backend delete
+      await notificationsRepo.deleteNotification(oid);
+    } catch (e) {
+      // Revert if it fails
+      emit(currentState);
+      // Since we don't have context to show a Snackbar, we'll silently fail or we can add a way to dispatch it later.
+      // Fetching fresh ensures we are completely synced.
+      await fetchNotifications();
+    }
+  }
 }

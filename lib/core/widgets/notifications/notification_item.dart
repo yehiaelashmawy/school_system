@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 import 'package:school_system/core/utils/size_config.dart';
+import 'package:school_system/core/widgets/notifications/manager/notifications_cubit.dart';
 import 'notification_model.dart';
 
 class NotificationItem extends StatelessWidget {
@@ -96,10 +98,19 @@ class NotificationItem extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Icon(
-                      Icons.delete_outline,
-                      color: Colors.red.withValues(alpha: 0.5),
-                      size: 20,
+                    InkWell(
+                      onTap: () {
+                        context.read<NotificationsCubit>().deleteNotification(notification.oid);
+                      
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red.withValues(alpha: 0.5),
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ],
                 ),
