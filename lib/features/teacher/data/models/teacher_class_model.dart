@@ -71,15 +71,20 @@ class TeacherStudentModel {
 class TeacherStudentDetailsModel {
   final List<TeacherLessonModel> lessons;
   final List<TeacherHomeworkModel> homeworks;
+  final List<TeacherExamModel> exams;
+  final TeacherAttendanceModel attendance;
 
   const TeacherStudentDetailsModel({
     this.lessons = const [],
     this.homeworks = const [],
+    this.exams = const [],
+    this.attendance = const TeacherAttendanceModel(),
   });
 
   factory TeacherStudentDetailsModel.fromJson(Map<String, dynamic> json) {
     final lessonsRaw = json['lessons'];
     final homeworksRaw = json['homeworks'];
+    final examsRaw = json['exams'];
     return TeacherStudentDetailsModel(
       lessons: lessonsRaw is List
           ? lessonsRaw
@@ -101,6 +106,19 @@ class TeacherStudentDetailsModel {
                 )
                 .toList()
           : const [],
+      exams: examsRaw is List
+          ? examsRaw
+                .whereType<Map>()
+                .map(
+                  (exam) => TeacherExamModel.fromJson(
+                    exam.cast<String, dynamic>(),
+                  ),
+                )
+                .toList()
+          : const [],
+      attendance: TeacherAttendanceModel.fromJson(
+        (json['attendance'] as Map?)?.cast<String, dynamic>() ?? const {},
+      ),
     );
   }
 }
@@ -150,6 +168,88 @@ class TeacherHomeworkModel {
       dueDate: (json['dueDate'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
       grade: (json['grade'] as num?)?.toDouble(),
+    );
+  }
+}
+
+class TeacherExamModel {
+  final String oid;
+  final String name;
+  final String date;
+  final double? score;
+  final double? grade;
+
+  const TeacherExamModel({
+    required this.oid,
+    required this.name,
+    required this.date,
+    this.score,
+    this.grade,
+  });
+
+  factory TeacherExamModel.fromJson(Map<String, dynamic> json) {
+    return TeacherExamModel(
+      oid: (json['oid'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      date: (json['date'] ?? '').toString(),
+      score: (json['score'] as num?)?.toDouble(),
+      grade: (json['grade'] as num?)?.toDouble(),
+    );
+  }
+}
+
+class TeacherAttendanceModel {
+  final int presentCount;
+  final int absentCount;
+  final int lateCount;
+  final double attendancePercentage;
+  final List<TeacherAttendanceRecordModel> recentRecords;
+
+  const TeacherAttendanceModel({
+    this.presentCount = 0,
+    this.absentCount = 0,
+    this.lateCount = 0,
+    this.attendancePercentage = 0,
+    this.recentRecords = const [],
+  });
+
+  factory TeacherAttendanceModel.fromJson(Map<String, dynamic> json) {
+    final recordsRaw = json['recentRecords'];
+    return TeacherAttendanceModel(
+      presentCount: (json['presentCount'] as num?)?.toInt() ?? 0,
+      absentCount: (json['absentCount'] as num?)?.toInt() ?? 0,
+      lateCount: (json['lateCount'] as num?)?.toInt() ?? 0,
+      attendancePercentage: (json['attendancePercentage'] as num?)?.toDouble() ?? 0,
+      recentRecords: recordsRaw is List
+          ? recordsRaw
+                .whereType<Map>()
+                .map(
+                  (record) => TeacherAttendanceRecordModel.fromJson(
+                    record.cast<String, dynamic>(),
+                  ),
+                )
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class TeacherAttendanceRecordModel {
+  final String date;
+  final String status;
+  final String remarks;
+
+  const TeacherAttendanceRecordModel({
+    required this.date,
+    required this.status,
+    required this.remarks,
+  });
+
+  factory TeacherAttendanceRecordModel.fromJson(Map<String, dynamic> json) {
+    return TeacherAttendanceRecordModel(
+      date: (json['date'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
+      remarks: (json['remarks'] ?? '').toString(),
     );
   }
 }

@@ -76,6 +76,64 @@ class _StudentListState extends State<StudentList>
     return homeworks;
   }
 
+  List<TeacherExamModel> get _classExams {
+    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final map = <String, TeacherExamModel>{};
+    for (final student in students) {
+      for (final exam in student.details.exams) {
+        final key = exam.oid.isNotEmpty ? exam.oid : '${exam.name}-${exam.date}';
+        map.putIfAbsent(key, () => exam);
+      }
+    }
+    final exams = map.values.toList();
+    exams.sort((a, b) {
+      final aDate = DateTime.tryParse(a.date);
+      final bDate = DateTime.tryParse(b.date);
+      if (aDate == null && bDate == null) return 0;
+      if (aDate == null) return 1;
+      if (bDate == null) return -1;
+      return aDate.compareTo(bDate);
+    });
+    return exams;
+  }
+
+  TeacherAttendanceModel get _classAttendance {
+    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    int present = 0;
+    int absent = 0;
+    int late = 0;
+    double percentSum = 0;
+    int percentCount = 0;
+
+    for (final student in students) {
+      final attendance = student.details.attendance;
+      present += attendance.presentCount;
+      absent += attendance.absentCount;
+      late += attendance.lateCount;
+      percentSum += attendance.attendancePercentage;
+      percentCount += 1;
+    }
+
+    final avgPercent = percentCount == 0 ? 0.0 : (percentSum / percentCount).toDouble();
+    return TeacherAttendanceModel(
+      presentCount: present,
+      absentCount: absent,
+      lateCount: late,
+      attendancePercentage: avgPercent,
+    );
+  }
+
+  Color get _attendanceStatusColor {
+    final pct = _classAttendance.attendancePercentage;
+    if (pct >= 80) return AppColors.secondaryColor;
+    if (pct >= 60) return AppColors.primaryColor;
+    return Colors.red;
+  }
+
+  String get _attendanceStatusText {
+    return 'AVG ATTENDANCE: ${_classAttendance.attendancePercentage.toStringAsFixed(1)}%';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -156,17 +214,18 @@ class _StudentListState extends State<StudentList>
           StudentsListBody(students: widget.teacherClass?.students ?? const []),
           LessonsListBody(lessons: _classLessons),
           HomeworkListBody(homeworks: _classHomeworks),
-          const ExamsListBody(),
+          ExamsListBody(exams: _classExams),
           ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             children: [
               TakeAttendanceCard(
                 imagePath: 'assets/images/lesson1.png',
-                statusText: 'NEXT SESSION: 09:00 AM',
-                statusColor: AppColors.primaryColor,
-                grade: 'Grade 10-A',
-                subject: 'Mathematics',
-                studentsCount: 24,
+                statusText: _attendanceStatusText,
+                statusColor: _attendanceStatusColor,
+                grade: widget.teacherClass?.name ?? widget.className,
+                subject:
+                    'Present: ${_classAttendance.presentCount} • Absent: ${_classAttendance.absentCount} • Late: ${_classAttendance.lateCount}',
+                studentsCount: widget.teacherClass?.studentsCount ?? 0,
                 onViewReports: () {
                   Navigator.of(
                     context,
