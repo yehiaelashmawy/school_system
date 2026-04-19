@@ -70,11 +70,16 @@ class TeacherStudentModel {
 
 class TeacherStudentDetailsModel {
   final List<TeacherLessonModel> lessons;
+  final List<TeacherHomeworkModel> homeworks;
 
-  const TeacherStudentDetailsModel({this.lessons = const []});
+  const TeacherStudentDetailsModel({
+    this.lessons = const [],
+    this.homeworks = const [],
+  });
 
   factory TeacherStudentDetailsModel.fromJson(Map<String, dynamic> json) {
     final lessonsRaw = json['lessons'];
+    final homeworksRaw = json['homeworks'];
     return TeacherStudentDetailsModel(
       lessons: lessonsRaw is List
           ? lessonsRaw
@@ -82,6 +87,16 @@ class TeacherStudentDetailsModel {
                 .map(
                   (lesson) => TeacherLessonModel.fromJson(
                     lesson.cast<String, dynamic>(),
+                  ),
+                )
+                .toList()
+          : const [],
+      homeworks: homeworksRaw is List
+          ? homeworksRaw
+                .whereType<Map>()
+                .map(
+                  (homework) => TeacherHomeworkModel.fromJson(
+                    homework.cast<String, dynamic>(),
                   ),
                 )
                 .toList()
@@ -109,6 +124,32 @@ class TeacherLessonModel {
       title: (json['title'] ?? '').toString(),
       date: (json['date'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
+    );
+  }
+}
+
+class TeacherHomeworkModel {
+  final String oid;
+  final String title;
+  final String dueDate;
+  final String status;
+  final double? grade;
+
+  const TeacherHomeworkModel({
+    required this.oid,
+    required this.title,
+    required this.dueDate,
+    required this.status,
+    this.grade,
+  });
+
+  factory TeacherHomeworkModel.fromJson(Map<String, dynamic> json) {
+    return TeacherHomeworkModel(
+      oid: (json['oid'] ?? '').toString(),
+      title: (json['title'] ?? '').toString(),
+      dueDate: (json['dueDate'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
+      grade: (json['grade'] as num?)?.toDouble(),
     );
   }
 }

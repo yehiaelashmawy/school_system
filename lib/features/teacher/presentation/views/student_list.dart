@@ -53,6 +53,29 @@ class _StudentListState extends State<StudentList>
     return lessons;
   }
 
+  List<TeacherHomeworkModel> get _classHomeworks {
+    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final map = <String, TeacherHomeworkModel>{};
+    for (final student in students) {
+      for (final homework in student.details.homeworks) {
+        final key = homework.oid.isNotEmpty
+            ? homework.oid
+            : '${homework.title}-${homework.dueDate}';
+        map.putIfAbsent(key, () => homework);
+      }
+    }
+    final homeworks = map.values.toList();
+    homeworks.sort((a, b) {
+      final aDate = DateTime.tryParse(a.dueDate);
+      final bDate = DateTime.tryParse(b.dueDate);
+      if (aDate == null && bDate == null) return 0;
+      if (aDate == null) return 1;
+      if (bDate == null) return -1;
+      return aDate.compareTo(bDate);
+    });
+    return homeworks;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -132,7 +155,7 @@ class _StudentListState extends State<StudentList>
         children: [
           StudentsListBody(students: widget.teacherClass?.students ?? const []),
           LessonsListBody(lessons: _classLessons),
-          const HomeworkListBody(),
+          HomeworkListBody(homeworks: _classHomeworks),
           const ExamsListBody(),
           ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),

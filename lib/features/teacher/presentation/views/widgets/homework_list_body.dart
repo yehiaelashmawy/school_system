@@ -1,12 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/homework_details_view.dart';
 import 'package:school_system/features/teacher/presentation/views/review_submissions_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_item.dart';
 
 class HomeworkListBody extends StatelessWidget {
-  const HomeworkListBody({super.key});
+  final List<TeacherHomeworkModel> homeworks;
+
+  const HomeworkListBody({super.key, this.homeworks = const []});
+
+  String _formatDate(String rawDate) {
+    if (rawDate.trim().isEmpty) return 'Date unavailable';
+    final parsed = DateTime.tryParse(rawDate);
+    if (parsed == null) return rawDate;
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${months[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
+  }
+
+  _HomeworkUiState _mapStatus(String status, String dueDate) {
+    final normalized = status.trim().toLowerCase();
+    final parsedDue = DateTime.tryParse(dueDate);
+    final isPastDue = parsedDue != null && parsedDue.isBefore(DateTime.now());
+
+    if (normalized == 'grading') {
+      return _HomeworkUiState(
+        label: 'GRADING',
+        badgeColor: Color(0xFFDBEAFE),
+        badgeTextColor: Color(0xFF1E40AF),
+        buttonText: 'Review Submissions',
+        buttonColor: Color(0xFFF1F5F9),
+        buttonTextColor: Color(0xFF475569),
+        isOverdue: false,
+      );
+    }
+    if (normalized == 'completed') {
+      return _HomeworkUiState(
+        label: 'COMPLETED',
+        badgeColor: Color(0xFFE2E8F0),
+        badgeTextColor: Color(0xFF334155),
+        buttonText: 'View Details',
+        buttonColor: Color(0xFFEFF6FF),
+        buttonTextColor: AppColors.primaryColor,
+        isOverdue: false,
+      );
+    }
+    if (isPastDue) {
+      return _HomeworkUiState(
+        label: 'OVERDUE',
+        badgeColor: Color(0xFFFEE2E2),
+        badgeTextColor: Color(0xFF991B1B),
+        buttonText: 'Review Submissions',
+        buttonColor: Color(0xFFF1F5F9),
+        buttonTextColor: Color(0xFF475569),
+        isOverdue: true,
+      );
+    }
+    return _HomeworkUiState(
+      label: 'ACTIVE',
+      badgeColor: Color(0xFFD1FAE5),
+      badgeTextColor: Color(0xFF065F46),
+      buttonText: 'View Details',
+      buttonColor: AppColors.primaryColor,
+      buttonTextColor: Colors.white,
+      isOverdue: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,83 +126,77 @@ class HomeworkListBody extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                HomeworkItemCard(
-                  title: 'Quadratic Equations',
-                  subtitle: 'Grade 10-A • Mathematics',
-                  statusText: 'ACTIVE',
-                  badgeColor: const Color(0xFFD1FAE5),
-                  badgeTextColor: const Color(0xFF065F46),
-                  updatedTime: 'Updated 2h ago',
-                  dueDate: 'Oct 25, 2023',
-                  submissions: '24/32',
-                  progress: 0.75,
-                  buttonText: 'View Details >',
-                  buttonColor: AppColors.primaryColor,
-                  buttonTextColor: Colors.white,
-                  isOverdue: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeworkDetailsView(),
+            child: homeworks.isEmpty
+                ? Center(
+                    child: Text(
+                      'No homework found for this class.',
+                      style: AppTextStyle.semiBold16.copyWith(
+                        color: AppColors.grey,
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                HomeworkItemCard(
-                  title: 'Modern Literature Essay',
-                  subtitle: 'Grade 11-B • English',
-                  statusText: 'ACTIVE',
-                  badgeColor: const Color(0xFFDBEAFE),
-                  badgeTextColor: const Color(0xFF1E40AF),
-                  dueDate: 'Oct 28, 2023',
-                  submissions: '12/28',
-                  progress: 0.42,
-                  buttonText: 'View Details',
-                  buttonColor: const Color(0xFFEFF6FF),
-                  buttonTextColor: AppColors.primaryColor,
-                  isOverdue: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeworkDetailsView(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                HomeworkItemCard(
-                  title: 'Chemical Reactions Lab',
-                  subtitle: 'Grade 10-A • Science',
-                  statusText: 'OVERDUE',
-                  badgeColor: const Color(0xFFFEE2E2),
-                  badgeTextColor: const Color(0xFF991B1B),
-                  dueDate: 'Oct 20, 2023',
-                  submissions: '30/32',
-                  buttonText: 'Review Submissions',
-                  buttonColor: const Color(0xFFF1F5F9),
-                  buttonTextColor: const Color(0xFF475569),
-                  isOverdue: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ReviewSubmissionsView(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: homeworks.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final homework = homeworks[index];
+                      final ui = _mapStatus(homework.status, homework.dueDate);
+                      return HomeworkItemCard(
+                        title: homework.title.isNotEmpty
+                            ? homework.title
+                            : 'Untitled Homework',
+                        subtitle: 'Class ${homework.status}',
+                        statusText: ui.label,
+                        badgeColor: ui.badgeColor,
+                        badgeTextColor: ui.badgeTextColor,
+                        dueDate: _formatDate(homework.dueDate),
+                        submissions: homework.grade != null
+                            ? 'Grade: ${homework.grade!.toStringAsFixed(0)}'
+                            : '--',
+                        progress: homework.grade != null
+                            ? (homework.grade!.clamp(0, 100) / 100)
+                            : null,
+                        buttonText: ui.buttonText,
+                        buttonColor: ui.buttonColor,
+                        buttonTextColor: ui.buttonTextColor,
+                        isOverdue: ui.isOverdue,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ui.label == 'GRADING'
+                                  ? const ReviewSubmissionsView()
+                                  : const HomeworkDetailsView(),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
+}
+
+class _HomeworkUiState {
+  final String label;
+  final Color badgeColor;
+  final Color badgeTextColor;
+  final String buttonText;
+  final Color buttonColor;
+  final Color buttonTextColor;
+  final bool isOverdue;
+
+  const _HomeworkUiState({
+    required this.label,
+    required this.badgeColor,
+    required this.badgeTextColor,
+    required this.buttonText,
+    required this.buttonColor,
+    required this.buttonTextColor,
+    required this.isOverdue,
+  });
 }
