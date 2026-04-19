@@ -94,6 +94,12 @@ class _LoginFormState extends State<LoginForm> {
           await SharedPrefsHelper.setUserRole(state.user.role.toString());
           await SharedPrefsHelper.setToken(state.user.token);
           await SharedPrefsHelper.setFullName(state.user.fullName);
+          await SharedPrefsHelper.setUserId(state.user.userId);
+          await SharedPrefsHelper.setTeacherOid(
+            (state.user.teacherId?.trim().isNotEmpty ?? false)
+                ? state.user.teacherId!.trim()
+                : state.user.userId,
+          );
 
           if (!context.mounted) return;
 

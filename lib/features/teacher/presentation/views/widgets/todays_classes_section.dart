@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_timetable_entry_model.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_timetable_cubit/teacher_timetable_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_timetable_cubit/teacher_timetable_state.dart';
+import 'package:school_system/features/student/presentation/views/weekly_schedule_view.dart';
 
 class TodaysClassesSection extends StatelessWidget {
   const TodaysClassesSection({super.key});
@@ -16,7 +21,9 @@ class TodaysClassesSection extends StatelessWidget {
           children: [
             const Text('Today\'s Classes', style: AppTextStyle.bold20),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, WeeklyScheduleView.routeName);
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
@@ -32,38 +39,68 @@ class TodaysClassesSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 160,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            children: [
-              _buildClassCard(
-                subject: 'Mathematics',
-                grade: 'Grade 10 • A',
-                time: '08:30 AM - 09:45 AM',
-                location: 'Room 402, Block B',
-              ),
-              const SizedBox(width: 16),
-              _buildClassCard(
-                subject: 'Physics',
-                grade: 'Grade 12 • C',
-                time: '10:00 AM - 11:15 AM',
-                location: 'Room 405, Block A',
-              ),
-            ],
-          ),
+        BlocBuilder<TeacherTimetableCubit, TeacherTimetableState>(
+          builder: (context, state) {
+            if (state is TeacherTimetableLoading) {
+              return const SizedBox(
+                height: 160,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (state is TeacherTimetableFailure) {
+              return SizedBox(
+                height: 160,
+                child: Center(
+                  child: Text(
+                    state.error.errorMessage,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyle.regular14.copyWith(
+                      color: AppColors.grey,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            if (state is TeacherTimetableSuccess) {
+              if (state.classes.isEmpty) {
+                return SizedBox(
+                  height: 160,
+                  child: Center(
+                    child: Text(
+                      'No classes scheduled for today.',
+                      style: AppTextStyle.regular14.copyWith(
+                        color: AppColors.grey,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return SizedBox(
+                height: 160,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  clipBehavior: Clip.none,
+                  itemCount: state.classes.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 16),
+                  itemBuilder: (context, index) {
+                    final item = state.classes[index];
+                    return _buildClassCard(item);
+                  },
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
         ),
       ],
     );
   }
 
-  Widget _buildClassCard({
-    required String subject,
-    required String grade,
-    required String time,
-    required String location,
-  }) {
+  Widget _buildClassCard(TeacherTimetableEntryModel classItem) {
     return Container(
       width: 260,
       padding: const EdgeInsets.all(16),
@@ -90,7 +127,7 @@ class TodaysClassesSection extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Text(
-                  'Σ',
+                  '${classItem.subjectName[0]}',
                   style: AppTextStyle.bold20.copyWith(
                     color: AppColors.primaryColor,
                   ),
@@ -100,10 +137,10 @@ class TodaysClassesSection extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(subject, style: AppTextStyle.bold16),
+                  Text(classItem.subjectName, style: AppTextStyle.bold16),
                   const SizedBox(height: 2),
                   Text(
-                    grade,
+                    classItem.className,
                     style: AppTextStyle.regular14.copyWith(
                       color: AppColors.grey,
                     ),
@@ -118,7 +155,7 @@ class TodaysClassesSection extends StatelessWidget {
               Icon(Icons.access_time, size: 18, color: AppColors.grey),
               const SizedBox(width: 8),
               Text(
-                time,
+                classItem.time,
                 style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
               ),
             ],
@@ -129,7 +166,7 @@ class TodaysClassesSection extends StatelessWidget {
               Icon(Icons.location_on_outlined, size: 18, color: AppColors.grey),
               const SizedBox(width: 8),
               Text(
-                location,
+                classItem.room,
                 style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
               ),
             ],

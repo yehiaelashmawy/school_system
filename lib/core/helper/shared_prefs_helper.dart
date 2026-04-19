@@ -32,11 +32,16 @@ class SharedPrefsHelper {
   static Future<void> setUserId(String id) async =>
       await _prefs.setString('userId', id);
 
+  static String? get teacherOid => _prefs.getString('teacherOid');
+  static Future<void> setTeacherOid(String id) async =>
+      await _prefs.setString('teacherOid', id);
+
   static Future<void> clearAuth() async {
     await _prefs.remove('isAuthenticated');
     await _prefs.remove('userRole');
     await _prefs.remove('token');
     await _prefs.remove('fullName');
     await _prefs.remove('userId');
+    await _prefs.remove('teacherOid');
   }
 }
