@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 
@@ -18,6 +19,10 @@ class StudentHomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final studentName = (SharedPrefsHelper.fullName?.trim().isNotEmpty ?? false)
+        ? SharedPrefsHelper.fullName!.trim()
+        : 'Student';
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
       child: Row(
@@ -37,7 +42,7 @@ class StudentHomeHeader extends StatelessWidget {
                   style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
                 ),
                 Text(
-                  'Omar Ahmad',
+                  studentName,
                   style: AppTextStyle.bold16.copyWith(
                     color: AppColors.primaryColor,
                   ),

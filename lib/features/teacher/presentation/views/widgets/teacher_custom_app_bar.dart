@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_state.dart';
 
 class TeacherCustomAppBar extends StatelessWidget {
   const TeacherCustomAppBar({super.key});
@@ -37,10 +40,20 @@ class TeacherCustomAppBar extends StatelessWidget {
                   _getGreeting(),
                   style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
                 ),
-                const Text(
-                  'Prof. Sarah Anderson',
-                  style: AppTextStyle.bold16,
-                  overflow: TextOverflow.ellipsis,
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    final teacherName = state is ProfileSuccess
+                        ? (state.profile.fullName?.trim().isNotEmpty ?? false)
+                            ? state.profile.fullName!.trim()
+                            : 'Teacher'
+                        : 'Teacher';
+
+                    return Text(
+                      teacherName,
+                      style: AppTextStyle.bold16,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  },
                 ),
               ],
             ),
