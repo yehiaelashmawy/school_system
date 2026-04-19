@@ -9,10 +9,14 @@ class MessagesRepo {
       final response = await ApiService().get('/api/Messages/conversations');
 
       if (response['success'] == true && response['data'] != null) {
-        final data = response['data'] as List;
-        return data.map((e) => MessageModel.fromJson(e)).toList();
+        final messagesRaw = response['data'] as List<dynamic>? ?? <dynamic>[];
+
+        return messagesRaw
+            .whereType<Map>()
+            .map((e) => MessageModel.fromJson(e.cast<String, dynamic>()))
+            .toList();
       } else {
-        String errMsg = 'Failed to fetch conversations';
+        String errMsg = 'Failed to fetch messages';
         if (response is Map) {
           final errors = response['errors'];
           if (errors is List && errors.isNotEmpty) {

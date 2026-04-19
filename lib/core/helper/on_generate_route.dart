@@ -204,7 +204,11 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case MessagesView.routeName:
       return MaterialPageRoute(builder: (context) => const MessagesView());
     case ChatView.routeName:
-      return MaterialPageRoute(builder: (context) => const ChatView());
+      return MaterialPageRoute(
+        builder: (context) => ChatView(
+          conversation: settings.arguments,
+        ),
+      );
     case GradeSubmissionView.routeName:
       return MaterialPageRoute(
         builder: (context) => const GradeSubmissionView(),

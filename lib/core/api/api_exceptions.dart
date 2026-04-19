@@ -15,7 +15,29 @@ class ApiExceptions {
       case DioExceptionType.badCertificate:
         return ApiErrors(errorMessage: 'Bad certificate');
       case DioExceptionType.badResponse:
-        String extractedMsg = 'Invalid email or password';
+        final responseData = e.response?.data;
+        String extractedMsg = 'Request failed';
+
+        if (responseData is Map<String, dynamic>) {
+          final errors = responseData['errors'];
+          if (errors is List && errors.isNotEmpty) {
+            extractedMsg = errors.first.toString();
+          } else if (responseData['messages'] is Map) {
+            final msgs = responseData['messages'] as Map;
+            if (msgs['EN'] != null) {
+              extractedMsg = msgs['EN'].toString();
+            } else if (msgs['error'] != null) {
+              extractedMsg = msgs['error'].toString();
+            } else if (msgs.isNotEmpty) {
+              extractedMsg = msgs.values.first.toString();
+            }
+          } else if (responseData['message'] != null) {
+            extractedMsg = responseData['message'].toString();
+          }
+        } else if (responseData is String && responseData.trim().isNotEmpty) {
+          extractedMsg = responseData;
+        }
+
         return ApiErrors(errorMessage: extractedMsg);
       case DioExceptionType.connectionError:
         return ApiErrors(errorMessage: 'Connection error');

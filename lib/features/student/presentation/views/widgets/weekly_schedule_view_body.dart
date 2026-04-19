@@ -61,12 +61,16 @@ class _WeeklyScheduleViewBodyState extends State<WeeklyScheduleViewBody> {
     try {
       final response = await _apiService.get('/api/Timetable/teacher/$teacherId');
       final data = response['data'] as Map<String, dynamic>? ?? {};
-      final scheduleMap = data['weeklySchedule'] as Map<String, dynamic>? ?? {};
+      final scheduleMap = data['weeklySchedule'] as Map<dynamic, dynamic>? ?? {};
 
       setState(() {
-        _weeklySchedule = scheduleMap.map(
-          (key, value) => MapEntry(key, (value as List<dynamic>? ?? [])),
-        );
+        _weeklySchedule = {
+          for (final entry in scheduleMap.entries)
+            if (entry.key != null)
+              entry.key.toString(): (entry.value is List)
+                  ? (entry.value as List).where((e) => e != null).toList()
+                  : <dynamic>[],
+        };
         _isLoading = false;
       });
     } catch (e) {
@@ -186,8 +190,8 @@ class _WeeklyScheduleViewBodyState extends State<WeeklyScheduleViewBody> {
     final selectedKey = _dayKeyFromDate(selectedDate);
     final selectedClasses = _weeklySchedule[selectedKey] ?? [];
 
-    return selectedClasses.map((raw) {
-      final item = raw as Map<String, dynamic>;
+    return selectedClasses.whereType<Map>().map((raw) {
+      final item = raw.cast<String, dynamic>();
       final startTime = (item['startTime'] ?? '').toString();
       final endTime = (item['endTime'] ?? '').toString();
       final room = (item['room'] ?? '').toString();

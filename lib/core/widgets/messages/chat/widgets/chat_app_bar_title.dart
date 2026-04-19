@@ -5,7 +5,14 @@ import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 
 class ChatAppBarTitle extends StatelessWidget {
-  const ChatAppBarTitle({super.key});
+  final String title;
+  final String subtitle;
+
+  const ChatAppBarTitle({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +28,14 @@ class ChatAppBarTitle extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Alex Thompson',
+              title,
               style: AppTextStyle.bold16.copyWith(
                 color: ThemeManager.isDarkMode ? Colors.white : AppColors.darkBlue,
                 fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 16),
               ),
             ),
             Text(
-              'Online',
+              subtitle,
               style: AppTextStyle.semiBold14.copyWith(
                 color: const Color(0xFF10B981), // Green color
                 fontSize: SizeConfig.getResponsiveFontSize(context, fontSize: 12),

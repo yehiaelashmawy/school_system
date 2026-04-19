@@ -4,6 +4,7 @@ import 'messages_state.dart';
 
 class MessagesCubit extends Cubit<MessagesState> {
   final MessagesRepo messagesRepo;
+  final Set<String> _locallyReadConversationOids = {};
 
   MessagesCubit(this.messagesRepo) : super(MessagesInitial());
 
@@ -11,7 +12,13 @@ class MessagesCubit extends Cubit<MessagesState> {
     emit(MessagesLoading());
     try {
       final messages = await messagesRepo.fetchMessagesConversations();
-      emit(MessagesSuccess(messages: messages));
+      final mergedMessages = messages.map((message) {
+        if (_locallyReadConversationOids.contains(message.senderOid)) {
+          return message.copyWith(unreadCount: 0);
+        }
+        return message;
+      }).toList();
+      emit(MessagesSuccess(messages: mergedMessages));
     } catch (e) {
       String errMessage = e.toString();
       if (errMessage.startsWith('Exception: ')) {
@@ -19,5 +26,22 @@ class MessagesCubit extends Cubit<MessagesState> {
       }
       emit(MessagesFailure(errMessage: errMessage));
     }
+  }
+
+  void markConversationAsRead(String conversationUserOid) {
+    if (conversationUserOid.isEmpty) return;
+    _locallyReadConversationOids.add(conversationUserOid);
+
+    final current = state;
+    if (current is! MessagesSuccess) return;
+
+    final updated = current.messages.map((message) {
+      if (message.senderOid == conversationUserOid) {
+        return message.copyWith(unreadCount: 0);
+      }
+      return message;
+    }).toList();
+
+    emit(MessagesSuccess(messages: updated));
   }
 }

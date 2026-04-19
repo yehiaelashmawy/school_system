@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/size_config.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
+import 'package:school_system/core/widgets/messages/manager/messages_cubit.dart';
 import 'message_model.dart';
 import 'chat/chat_view.dart';
 
@@ -16,11 +18,16 @@ class MessageItem extends StatelessWidget {
     final bool isUnread = message.unreadCount > 0;
 
     return GestureDetector(
-      onTap: () {
-        Navigator.of(
+      onTap: () async {
+        context.read<MessagesCubit>().markConversationAsRead(message.senderOid);
+
+        await Navigator.of(
           context,
           rootNavigator: true,
-        ).pushNamed(ChatView.routeName);
+        ).pushNamed(ChatView.routeName, arguments: message);
+
+        if (!context.mounted) return;
+        context.read<MessagesCubit>().fetchMessagesConversations();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
