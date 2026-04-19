@@ -5,9 +5,7 @@ import 'package:school_system/features/teacher/presentation/views/widgets/exams_
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lessons_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/students_list_body.dart';
-import 'package:school_system/features/teacher/presentation/views/widgets/take_attendance_card.dart';
-import 'package:school_system/features/teacher/presentation/views/attendance_report_view.dart';
-import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
+import 'package:school_system/features/teacher/presentation/views/widgets/attendance_list_body.dart';
 
 class StudentList extends StatefulWidget {
   final String className;
@@ -134,6 +132,33 @@ class _StudentListState extends State<StudentList>
     return 'AVG ATTENDANCE: ${_classAttendance.attendancePercentage.toStringAsFixed(1)}%';
   }
 
+  /// Merges [details.attendance.recentRecords] from every student (same API payload).
+  List<TeacherAttendanceListEntry> get _attendanceRecentEntries {
+    final students =
+        widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final entries = <TeacherAttendanceListEntry>[];
+    for (final student in students) {
+      for (final record in student.details.attendance.recentRecords) {
+        entries.add(
+          TeacherAttendanceListEntry(
+            studentName:
+                student.fullName.trim().isNotEmpty ? student.fullName : 'Student',
+            record: record,
+          ),
+        );
+      }
+    }
+    entries.sort((a, b) {
+      final da = DateTime.tryParse(a.record.date);
+      final db = DateTime.tryParse(b.record.date);
+      if (da == null && db == null) return 0;
+      if (da == null) return 1;
+      if (db == null) return -1;
+      return db.compareTo(da);
+    });
+    return entries;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -215,31 +240,13 @@ class _StudentListState extends State<StudentList>
           LessonsListBody(lessons: _classLessons),
           HomeworkListBody(homeworks: _classHomeworks),
           ExamsListBody(exams: _classExams),
-          ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            children: [
-              TakeAttendanceCard(
-                imagePath: 'assets/images/lesson1.png',
-                statusText: _attendanceStatusText,
-                statusColor: _attendanceStatusColor,
-                grade: widget.teacherClass?.name ?? widget.className,
-                subject:
-                    'Present: ${_classAttendance.presentCount} • Absent: ${_classAttendance.absentCount} • Late: ${_classAttendance.lateCount}',
-                studentsCount: widget.teacherClass?.studentsCount ?? 0,
-                onViewReports: () {
-                  Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pushNamed(AttendanceReportView.routeName);
-                },
-                onTakeAttendance: () {
-                  Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pushNamed(AttendanceMethodView.routeName);
-                },
-              ),
-            ],
+          AttendanceListBody(
+            className: widget.teacherClass?.name ?? widget.className,
+            studentCount: widget.teacherClass?.studentsCount ?? 0,
+            summary: _classAttendance,
+            statusColor: _attendanceStatusColor,
+            statusText: _attendanceStatusText,
+            recentEntries: _attendanceRecentEntries,
           ),
         ],
       ),
