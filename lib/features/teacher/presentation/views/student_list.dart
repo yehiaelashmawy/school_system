@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/exams_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lessons_list_body.dart';
@@ -10,7 +11,12 @@ import 'package:school_system/features/teacher/presentation/views/attendance_met
 
 class StudentList extends StatefulWidget {
   final String className;
-  const StudentList({super.key, this.className = 'Grade 10-A - Mathematics'});
+  final TeacherClassModel? teacherClass;
+  const StudentList({
+    super.key,
+    this.className = 'Grade 10-A - Mathematics',
+    this.teacherClass,
+  });
   static const String routeName = '/student_list';
 
   @override
@@ -52,7 +58,7 @@ class _StudentListState extends State<StudentList>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.className,
+              widget.teacherClass?.name ?? widget.className,
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: 18,
@@ -101,7 +107,7 @@ class _StudentListState extends State<StudentList>
       body: TabBarView(
         controller: _tabController,
         children: [
-          const StudentsListBody(),
+          StudentsListBody(students: widget.teacherClass?.students ?? const []),
           const LessonsListBody(),
           const HomeworkListBody(),
           const ExamsListBody(),

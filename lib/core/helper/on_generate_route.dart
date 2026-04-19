@@ -32,6 +32,7 @@ import 'package:school_system/features/teacher/presentation/views/add_homework_v
 import 'package:school_system/features/teacher/presentation/views/add_new_lesson_view.dart';
 import 'package:school_system/features/teacher/presentation/views/lesson_details_view.dart';
 import 'package:school_system/features/teacher/presentation/views/student_list.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/teacher_classes_view.dart';
 import 'package:school_system/features/teacher/presentation/views/teacher_home_view.dart';
 import 'package:school_system/features/teacher/presentation/views/personal_information_view.dart';
@@ -142,8 +143,19 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case ParentHomeView.routeName:
       return MaterialPageRoute(builder: (context) => const ParentHomeView());
     case StudentList.routeName:
-      final className = settings.arguments as String? ?? 'Grade 10-A - Mathematics';
-      return MaterialPageRoute(builder: (context) => StudentList(className: className));
+      final args = settings.arguments;
+      if (args is TeacherClassModel) {
+        return MaterialPageRoute(
+          builder: (context) => StudentList(
+            className: args.name,
+            teacherClass: args,
+          ),
+        );
+      }
+      final className = args as String? ?? 'Grade 10-A - Mathematics';
+      return MaterialPageRoute(
+        builder: (context) => StudentList(className: className),
+      );
     case LessonDetailsView.routeName:
       return MaterialPageRoute(builder: (context) => const LessonDetailsView());
     case AddNewLessonView.routeName:
