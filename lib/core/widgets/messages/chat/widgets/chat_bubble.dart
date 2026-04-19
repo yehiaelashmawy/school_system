@@ -5,20 +5,24 @@ import 'receiver_chat_bubble.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMessageModel message;
+  final VoidCallback? onDoubleTap;
 
-  const ChatBubble({super.key, required this.message});
+  const ChatBubble({super.key, required this.message, this.onDoubleTap});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: 24.0,
-        left: message.isSender ? 64 : 16,
-        right: message.isSender ? 16 : 64,
+    return GestureDetector(
+      onDoubleTap: onDoubleTap,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: 24.0,
+          left: message.isSender ? 64 : 16,
+          right: message.isSender ? 16 : 64,
+        ),
+        child: message.isSender
+            ? SenderChatBubble(message: message)
+            : ReceiverChatBubble(message: message),
       ),
-      child: message.isSender
-          ? SenderChatBubble(message: message)
-          : ReceiverChatBubble(message: message),
     );
   }
 }

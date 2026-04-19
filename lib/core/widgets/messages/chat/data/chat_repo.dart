@@ -67,4 +67,14 @@ class ChatRepo {
       rethrow;
     }
   }
+
+  Future<void> deleteMessage(String oid) async {
+    try {
+      await ApiService().delete('/api/Messages/$oid');
+    } on DioException catch (e) {
+      throw ApiExceptions.handleException(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

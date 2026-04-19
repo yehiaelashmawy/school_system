@@ -162,15 +162,6 @@ class MessageItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => _confirmAndDelete(context),
-                        child: Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.grey.withValues(alpha: 0.8),
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 6),

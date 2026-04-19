@@ -1,4 +1,5 @@
 class ChatMessageModel {
+  final String oid;
   final String text;
   final String time;
   final bool isSender;
@@ -8,6 +9,7 @@ class ChatMessageModel {
   final String? attachedFilePath;
 
   const ChatMessageModel({
+    this.oid = '',
     required this.text,
     required this.time,
     this.isSender = false,

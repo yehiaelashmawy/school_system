@@ -74,6 +74,7 @@ class _ChatViewBodyState extends State<ChatViewBody> {
                   '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $suffix';
 
               return ChatMessageModel(
+                oid: message.oid,
                 text: message.content,
                 time: formattedTime,
                 isSender: message.senderOid == currentUserOid,
@@ -119,6 +120,7 @@ class _ChatViewBodyState extends State<ChatViewBody> {
     }
 
     final tempMessage = ChatMessageModel(
+      oid: '',
       text: content,
       time: TimeOfDay.now().format(context),
       isSender: true,
@@ -164,6 +166,94 @@ class _ChatViewBodyState extends State<ChatViewBody> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showDeleteMessageSheet(ChatMessageModel message) async {
+    final shouldDelete = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Message actions',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Double tap opened actions for this message.',
+                  style: TextStyle(color: Color(0xFF64748B)),
+                ),
+                const SizedBox(height: 20),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.delete_outline, color: Colors.red),
+                  title: const Text(
+                    'Delete message',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () => Navigator.pop(sheetContext, true),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (shouldDelete != true || !mounted) return;
+
+    if (message.oid.isEmpty) {
+      setState(() {
+        _messages.remove(message);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message removed')),
+      );
+      return;
+    }
+
+    try {
+      await _chatRepo.deleteMessage(message.oid);
+      if (!mounted) return;
+      setState(() {
+        _messages.remove(message);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message deleted')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+        ),
+      );
+    }
   }
 
   @override
@@ -226,7 +316,12 @@ class _ChatViewBodyState extends State<ChatViewBody> {
               children: [
                 const DateSeparator(dateText: 'TODAY'),
                 const SizedBox(height: 24),
-                ..._messages.map((msg) => ChatBubble(message: msg)),
+                ..._messages.map(
+                  (msg) => ChatBubble(
+                    message: msg,
+                    onDoubleTap: () => _showDeleteMessageSheet(msg),
+                  ),
+                ),
               ],
             ),
           ),
