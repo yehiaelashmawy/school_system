@@ -38,4 +38,15 @@ class MessagesRepo {
       rethrow;
     }
   }
+
+  Future<void> deleteMessage(String oid) async {
+    try {
+      if (oid.trim().isEmpty) return;
+      await ApiService().delete('/api/Messages/$oid');
+    } on DioException catch (e) {
+      throw ApiExceptions.handleException(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

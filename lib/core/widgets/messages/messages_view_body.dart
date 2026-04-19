@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 import 'package:school_system/core/widgets/messages/manager/messages_cubit.dart';
 import 'package:school_system/core/widgets/messages/manager/messages_state.dart';
+import 'package:school_system/core/widgets/messages/message_model.dart';
 import 'message_item.dart';
 
 class MessagesViewBody extends StatelessWidget {
@@ -79,7 +81,25 @@ class MessagesViewBody extends StatelessWidget {
           child: BlocBuilder<MessagesCubit, MessagesState>(
             builder: (context, state) {
               if (state is MessagesLoading) {
-                return const Center(child: CircularProgressIndicator());
+                final skeletonMessages = List.generate(
+                  8,
+                  (_) => const MessageModel(
+                    name: 'Sarah Ahmed',
+                    role: '(Teacher)',
+                    preview: 'Please review the assignment before tomorrow.',
+                    time: '10:30 AM',
+                    unreadCount: 2,
+                  ),
+                );
+                return Skeletonizer(
+                  enabled: true,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: skeletonMessages.length,
+                    itemBuilder: (context, index) =>
+                        MessageItem(message: skeletonMessages[index]),
+                  ),
+                );
               } else if (state is MessagesFailure) {
                 return Center(
                   child: Text(

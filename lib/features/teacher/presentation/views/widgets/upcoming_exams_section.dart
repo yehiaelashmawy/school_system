@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_exams_cubit/teacher_exams_cubit.dart';
@@ -45,7 +46,25 @@ class UpcomingExamsSection extends StatelessWidget {
         BlocBuilder<TeacherExamsCubit, TeacherExamsState>(
           builder: (context, state) {
             if (state is TeacherExamsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Skeletonizer(
+                enabled: true,
+                child: Column(
+                  children: List.generate(
+                    3,
+                    (i) => Padding(
+                      padding: EdgeInsets.only(bottom: i == 2 ? 0 : 16),
+                      child: _buildExamCard(
+                        month: 'APR',
+                        day: '20',
+                        title: 'Midterm Examination',
+                        subtitle: 'Grade 10 • 30 Students',
+                        statusText: 'In 3 Days',
+                        statusColor: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              );
             } else if (state is TeacherExamsFailure) {
               return Text(
                 state.error.errorMessage,

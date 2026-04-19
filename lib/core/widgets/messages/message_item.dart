@@ -13,6 +13,41 @@ class MessageItem extends StatelessWidget {
 
   const MessageItem({super.key, required this.message});
 
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete message'),
+        content: const Text('Do you want to remove this message?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true || !context.mounted) return;
+
+    try {
+      await context.read<MessagesCubit>().removeMessage(message);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message removed')),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isUnread = message.unreadCount > 0;
@@ -29,6 +64,7 @@ class MessageItem extends StatelessWidget {
         if (!context.mounted) return;
         context.read<MessagesCubit>().fetchMessagesConversations();
       },
+      onLongPress: () => _confirmAndDelete(context),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         decoration: BoxDecoration(
@@ -124,6 +160,15 @@ class MessageItem extends StatelessWidget {
                             context,
                             fontSize: 12,
                           ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => _confirmAndDelete(context),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: AppColors.grey.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

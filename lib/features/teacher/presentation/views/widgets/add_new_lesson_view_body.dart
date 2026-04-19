@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_state.dart';
@@ -179,7 +180,15 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
           BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
             builder: (context, subjectState) {
               if (subjectState is TeacherSubjectsLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Skeletonizer(
+                  enabled: true,
+                  child: CustomDropdownField(
+                    hintText: 'Choose a subject',
+                    items: const ['Mathematics'],
+                    value: 'Mathematics',
+                    onChanged: (_) {},
+                  ),
+                );
               } else if (subjectState is TeacherSubjectsFailure) {
                 return Text(
                   subjectState.error.errorMessage,
@@ -220,7 +229,15 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
           BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
             builder: (context, classState) {
               if (classState is TeacherClassesLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Skeletonizer(
+                  enabled: true,
+                  child: CustomDropdownField(
+                    hintText: 'Choose a class',
+                    items: const ['Grade 10 - A'],
+                    value: 'Grade 10 - A',
+                    onChanged: (_) {},
+                  ),
+                );
               } else if (classState is TeacherClassesFailure) {
                 return Text(
                   classState.error.errorMessage,
@@ -328,7 +345,32 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
           const SizedBox(height: 32),
 
           isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Skeletonizer(
+                  enabled: true,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: null,
+                      icon: Icon(Icons.upload, color: AppColors.white, size: 20),
+                      label: Text(
+                        'Publish Lesson',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.secondaryColor,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                )
               : SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(

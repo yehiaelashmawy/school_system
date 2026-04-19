@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/manager/announcements_cubit/announcements_cubit.dart';
@@ -34,7 +35,23 @@ class SchoolAnnouncementsSection extends StatelessWidget {
           BlocBuilder<AnnouncementsCubit, AnnouncementsState>(
             builder: (context, state) {
               if (state is AnnouncementsLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Skeletonizer(
+                  enabled: true,
+                  child: Column(
+                    children: List.generate(
+                      3,
+                      (i) => Padding(
+                        padding: EdgeInsets.only(bottom: i == 2 ? 0 : 16),
+                        child: _buildAnnouncementItem(
+                          title: 'School Event Announcement',
+                          subtitle:
+                              'Important update about upcoming school activity and schedule changes.',
+                          timeAgo: '2h ago',
+                        ),
+                      ),
+                    ),
+                  ),
+                );
               } else if (state is AnnouncementsFailure) {
                 return Text(
                   state.error.errorMessage,

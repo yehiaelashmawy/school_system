@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/widgets/messages/data/messages_repo.dart';
+import 'package:school_system/core/widgets/messages/message_model.dart';
 import 'messages_state.dart';
 
 class MessagesCubit extends Cubit<MessagesState> {
@@ -40,6 +41,24 @@ class MessagesCubit extends Cubit<MessagesState> {
         return message.copyWith(unreadCount: 0);
       }
       return message;
+    }).toList();
+
+    emit(MessagesSuccess(messages: updated));
+  }
+
+  Future<void> removeMessage(MessageModel message) async {
+    final current = state;
+    if (current is! MessagesSuccess) return;
+
+    if (message.oid.trim().isNotEmpty) {
+      await messagesRepo.deleteMessage(message.oid);
+    }
+
+    final updated = current.messages.where((m) {
+      if (message.oid.trim().isNotEmpty) {
+        return m.oid != message.oid;
+      }
+      return m.senderOid != message.senderOid;
     }).toList();
 
     emit(MessagesSuccess(messages: updated));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
@@ -88,7 +89,21 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
     return BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
       builder: (context, state) {
         if (state is TeacherClassesLoading) {
-          return const Center(child: CircularProgressIndicator());
+          final skeletonClasses = List.generate(
+            5,
+            (index) => TeacherClassModel(
+              oid: 'skeleton-$index',
+              name: 'Mathematics - Grade 10',
+              level: '10',
+              createdAt: '',
+              studentsCount: 25,
+              sectionsCount: 2,
+            ),
+          );
+          return Skeletonizer(
+            enabled: true,
+            child: _ActiveClassesTab(classes: skeletonClasses),
+          );
         } else if (state is TeacherClassesFailure) {
           return Center(child: Text(state.error.errorMessage));
         } else if (state is TeacherClassesSuccess) {

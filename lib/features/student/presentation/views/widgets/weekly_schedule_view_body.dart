@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/features/student/data/models/weekly_schedule_models.dart';
@@ -211,7 +212,54 @@ class _WeeklyScheduleViewBodyState extends State<WeeklyScheduleViewBody> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      final skeletonDays = List.generate(
+        5,
+        (index) => ScheduleDay(
+          dayName: ['MON', 'TUE', 'WED', 'THU', 'FRI'][index],
+          dayNumber: '${index + 10}',
+          classCount: 3,
+        ),
+      );
+      final skeletonItems = List.generate(
+        4,
+        (_) => CurriculumItem(
+          startTime: '08:00',
+          endTime: '09:00',
+          title: 'Mathematics',
+          subtitle: 'Room 101 • Grade 10 • Teacher',
+          type: 'REQUIRED',
+        ),
+      );
+
+      return Skeletonizer(
+        enabled: true,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              WeeklyScheduleHeader(
+                dateRangeText: 'Apr 14 - Apr 18,\n2026',
+                weekText: 'Spring Semester • Week 12',
+                onPreviousWeek: () {},
+                onNextWeek: () {},
+              ),
+              const SizedBox(height: 24),
+              WeeklyDaysSelector(
+                days: skeletonDays,
+                selectedIndex: 0,
+                onDaySelected: (_) {},
+              ),
+              const SizedBox(height: 32),
+              DailyCurriculumSection(
+                dateString: 'APRIL 14',
+                items: skeletonItems,
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      );
     }
 
     if (_errorMessage != null) {

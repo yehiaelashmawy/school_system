@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/widgets/notifications/manager/notifications_cubit.dart';
 import 'package:school_system/core/widgets/notifications/manager/notifications_state.dart';
+import 'package:school_system/core/widgets/notifications/notification_model.dart';
 import 'notification_item.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 
@@ -52,7 +54,40 @@ class NotificationsListTab extends StatelessWidget {
     return BlocBuilder<NotificationsCubit, NotificationsState>(
       builder: (context, state) {
         if (state is NotificationsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          final skeletonNotifications = List.generate(
+            6,
+            (index) => NotificationModel(
+              oid: 'skeleton-$index',
+              title: 'Class Update Notification',
+              message: 'A new class activity has been assigned for this week.',
+              type: isAlerts ? 'Warning' : 'Info',
+              priority: 'Medium',
+              isRead: false,
+              iconStr: 'calendar',
+              colorHex: '#3D7EE3',
+              timeAgo: '1h ago',
+            ),
+          );
+          return Skeletonizer(
+            enabled: true,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  itemCount: skeletonNotifications.length,
+                  itemBuilder: (context, index) {
+                    return NotificationItem(
+                      notification: skeletonNotifications[index],
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
         } else if (state is NotificationsFailure) {
           return Center(
             child: Text(

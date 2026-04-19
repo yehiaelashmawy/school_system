@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/models/teacher_timetable_entry_model.dart';
@@ -42,9 +43,36 @@ class TodaysClassesSection extends StatelessWidget {
         BlocBuilder<TeacherTimetableCubit, TeacherTimetableState>(
           builder: (context, state) {
             if (state is TeacherTimetableLoading) {
-              return const SizedBox(
+              final skeletonClasses = List.generate(
+                3,
+                (_) => TeacherTimetableEntryModel(
+                  time: '08:00 AM - 09:00 AM',
+                  subjectName: 'Mathematics',
+                  teacherName: 'Teacher Name',
+                  room: 'Room 101',
+                  className: 'Grade 10 - A',
+                  classOid: '',
+                  subjectOid: '',
+                  day: 'Monday',
+                  startTime: '08:00',
+                  endTime: '09:00',
+                  period: 1,
+                ),
+              );
+              return SizedBox(
                 height: 160,
-                child: Center(child: CircularProgressIndicator()),
+                child: Skeletonizer(
+                  enabled: true,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.none,
+                    itemCount: skeletonClasses.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 16),
+                    itemBuilder: (context, index) {
+                      return _buildClassCard(skeletonClasses[index]);
+                    },
+                  ),
+                ),
               );
             }
 

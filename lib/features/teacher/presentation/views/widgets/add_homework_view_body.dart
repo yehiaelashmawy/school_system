@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/custom_dropdown_field.dart';
@@ -131,7 +132,15 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
               BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
                 builder: (context, classState) {
                   if (classState is TeacherClassesLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Skeletonizer(
+                      enabled: true,
+                      child: CustomDropdownField(
+                        hintText: 'Choose a class',
+                        items: const ['Grade 10 - A'],
+                        value: 'Grade 10 - A',
+                        onChanged: (_) {},
+                      ),
+                    );
                   } else if (classState is TeacherClassesFailure) {
                     return Text(
                       classState.error.errorMessage,
@@ -174,7 +183,15 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
               BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
                 builder: (context, subjectState) {
                   if (subjectState is TeacherSubjectsLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Skeletonizer(
+                      enabled: true,
+                      child: CustomDropdownField(
+                        hintText: 'Choose a subject',
+                        items: const ['Mathematics'],
+                        value: 'Mathematics',
+                        onChanged: (_) {},
+                      ),
+                    );
                   } else if (subjectState is TeacherSubjectsFailure) {
                     return Text(
                       subjectState.error.errorMessage,
@@ -255,7 +272,36 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
               const SizedBox(height: 40),
 
               isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Skeletonizer(
+                      enabled: true,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: null,
+                          icon: Icon(
+                            Icons.send_outlined,
+                            color: AppColors.white,
+                            size: 20,
+                          ),
+                          label: Text(
+                            'Create Homework',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondaryColor,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    )
                   : _buildCreateButton(),
               const SizedBox(height: 32),
             ],

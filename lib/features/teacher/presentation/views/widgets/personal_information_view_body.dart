@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/personal_information_action_buttons.dart';
@@ -118,7 +119,67 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
       },
       builder: (context, state) {
         if (state is ProfileLoading || state is ProfileUpdateLoading) {
-           return const Center(child: CircularProgressIndicator());
+          return Skeletonizer(
+            enabled: true,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ProfileAvatarSection(
+                    name: 'Teacher Name',
+                    title: 'Senior Teacher',
+                    pickedImagePath: null,
+                    onPickPhoto: _pickPhoto,
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    'Account Details',
+                    style: AppTextStyle.bold16.copyWith(
+                      color: AppColors.darkBlue,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ProfileFieldSection(
+                    label: 'Full Name',
+                    controller: TextEditingController(text: 'Teacher Name'),
+                    suffixIcon: Icons.edit_outlined,
+                  ),
+                  const SizedBox(height: 16),
+                  ProfileFieldSection(
+                    label: 'Email Address',
+                    controller: TextEditingController(text: 'teacher@school.com'),
+                    suffixIcon: Icons.mail_outline,
+                  ),
+                  const SizedBox(height: 16),
+                  ProfileFieldSection(
+                    label: 'Phone Number',
+                    controller: TextEditingController(text: '+1 111 111 1111'),
+                    suffixIcon: Icons.phone_outlined,
+                  ),
+                  const SizedBox(height: 16),
+                  ProfileFieldSection(
+                    label: 'Department',
+                    controller: TextEditingController(text: 'Science'),
+                    suffixIcon: Icons.school_outlined,
+                  ),
+                  const SizedBox(height: 16),
+                  ProfileFieldSection(
+                    label: 'Employee ID',
+                    controller: TextEditingController(text: 'EMP-12345'),
+                    suffixIcon: Icons.badge_outlined,
+                  ),
+                  const SizedBox(height: 32),
+                  PersonalInformationActionButtons(
+                    onSave: () {},
+                    onReset: () {},
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          );
         }
         
         return SingleChildScrollView(

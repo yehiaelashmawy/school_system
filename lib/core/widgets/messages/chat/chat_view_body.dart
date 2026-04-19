@@ -3,6 +3,7 @@ import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 import 'package:school_system/core/widgets/messages/chat/data/chat_repo.dart';
 import 'package:school_system/core/widgets/messages/message_model.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'models/chat_message_model.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/chat_input_field.dart';
@@ -168,7 +169,37 @@ class _ChatViewBodyState extends State<ChatViewBody> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      final skeletonMessages = List.generate(
+        8,
+        (index) => ChatMessageModel(
+          text: 'This is a placeholder chat message.',
+          time: '10:30 AM',
+          isSender: index.isEven,
+        ),
+      );
+      return Skeletonizer(
+        enabled: true,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: ThemeManager.isDarkMode
+                    ? const Color(0xff0F172A)
+                    : const Color(0xffF8FAFC),
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  children: [
+                    const DateSeparator(dateText: 'TODAY'),
+                    const SizedBox(height: 24),
+                    ...skeletonMessages.map((msg) => ChatBubble(message: msg)),
+                  ],
+                ),
+              ),
+            ),
+            ChatInputField(onSendMessage: (_, {attachedFile}) {}),
+          ],
+        ),
+      );
     }
     if (_errorMessage != null) {
       return Center(
