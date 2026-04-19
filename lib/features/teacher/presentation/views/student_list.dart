@@ -30,6 +30,29 @@ class _StudentListState extends State<StudentList>
 
   bool get _isExamsTab => _tabController.index == _examsTabIndex;
 
+  List<TeacherLessonModel> get _classLessons {
+    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final map = <String, TeacherLessonModel>{};
+    for (final student in students) {
+      for (final lesson in student.details.lessons) {
+        final key = lesson.oid.isNotEmpty
+            ? lesson.oid
+            : '${lesson.title}-${lesson.date}';
+        map.putIfAbsent(key, () => lesson);
+      }
+    }
+    final lessons = map.values.toList();
+    lessons.sort((a, b) {
+      final aDate = DateTime.tryParse(a.date);
+      final bDate = DateTime.tryParse(b.date);
+      if (aDate == null && bDate == null) return 0;
+      if (aDate == null) return 1;
+      if (bDate == null) return -1;
+      return bDate.compareTo(aDate);
+    });
+    return lessons;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -108,7 +131,7 @@ class _StudentListState extends State<StudentList>
         controller: _tabController,
         children: [
           StudentsListBody(students: widget.teacherClass?.students ?? const []),
-          const LessonsListBody(),
+          LessonsListBody(lessons: _classLessons),
           const HomeworkListBody(),
           const ExamsListBody(),
           ListView(

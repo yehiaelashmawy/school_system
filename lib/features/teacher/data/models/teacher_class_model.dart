@@ -45,12 +45,14 @@ class TeacherStudentModel {
   final String fullName;
   final String email;
   final String phone;
+  final TeacherStudentDetailsModel details;
 
   const TeacherStudentModel({
     required this.oid,
     required this.fullName,
     required this.email,
     required this.phone,
+    this.details = const TeacherStudentDetailsModel(),
   });
 
   factory TeacherStudentModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,54 @@ class TeacherStudentModel {
       fullName: (json['fullName'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
       phone: (json['phone'] ?? '').toString(),
+      details: TeacherStudentDetailsModel.fromJson(
+        (json['details'] as Map?)?.cast<String, dynamic>() ?? const {},
+      ),
+    );
+  }
+}
+
+class TeacherStudentDetailsModel {
+  final List<TeacherLessonModel> lessons;
+
+  const TeacherStudentDetailsModel({this.lessons = const []});
+
+  factory TeacherStudentDetailsModel.fromJson(Map<String, dynamic> json) {
+    final lessonsRaw = json['lessons'];
+    return TeacherStudentDetailsModel(
+      lessons: lessonsRaw is List
+          ? lessonsRaw
+                .whereType<Map>()
+                .map(
+                  (lesson) => TeacherLessonModel.fromJson(
+                    lesson.cast<String, dynamic>(),
+                  ),
+                )
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class TeacherLessonModel {
+  final String oid;
+  final String title;
+  final String date;
+  final String status;
+
+  const TeacherLessonModel({
+    required this.oid,
+    required this.title,
+    required this.date,
+    required this.status,
+  });
+
+  factory TeacherLessonModel.fromJson(Map<String, dynamic> json) {
+    return TeacherLessonModel(
+      oid: (json['oid'] ?? '').toString(),
+      title: (json['title'] ?? '').toString(),
+      date: (json['date'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
     );
   }
 }
