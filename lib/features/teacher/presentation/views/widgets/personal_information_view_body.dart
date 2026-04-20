@@ -26,6 +26,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
   final TextEditingController _experienceController = TextEditingController();
 
   String? _pickedImagePath;
+  String? _profileAvatarUrl;
   String _displayName = 'Loading...';
   String _displayTitle = 'Loading...';
 
@@ -52,6 +53,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
     _subjectController.clear();
     _experienceController.clear();
     _pickedImagePath = null;
+    _profileAvatarUrl = null;
     // Re-trigger fetch or reset from initial?
     context.read<ProfileCubit>().fetchProfile();
   }
@@ -59,10 +61,12 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
   void _saveChanges() {
     context.read<ProfileCubit>().updateProfile(
       fullName: _nameController.text,
+      email: _emailController.text,
       phone: _phoneController.text,
       department: _subjectController.text,
       position: _displayTitle,
-      avatar: _pickedImagePath,
+      employeeId: _experienceController.text,
+      avatar: _pickedImagePath ?? _profileAvatarUrl,
     );
   }
 
@@ -114,10 +118,22 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           setState(() {
             _displayName = profile.fullName ?? 'Unknown';
             _displayTitle = profile.position ?? 'Unknown Title';
+            _profileAvatarUrl = profile.avatar;
           });
         }
       },
       builder: (context, state) {
+        // Read avatar/name/title live from state so the image appears
+        // as soon as ProfileSuccess arrives — not only after the listener setState.
+        String? liveAvatarUrl = _profileAvatarUrl;
+        String liveName = _displayName;
+        String liveTitle = _displayTitle;
+        if (state is ProfileSuccess) {
+          liveAvatarUrl = state.profile.avatar;
+          liveName = state.profile.fullName ?? _displayName;
+          liveTitle = state.profile.position ?? _displayTitle;
+        }
+
         if (state is ProfileLoading || state is ProfileUpdateLoading) {
           return Skeletonizer(
             enabled: true,
@@ -188,9 +204,10 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ProfileAvatarSection(
-                name: _displayName,
-                title: _displayTitle,
+                name: liveName,
+                title: liveTitle,
                 pickedImagePath: _pickedImagePath,
+                networkImageUrl: liveAvatarUrl,
                 onPickPhoto: _pickPhoto,
               ),
               

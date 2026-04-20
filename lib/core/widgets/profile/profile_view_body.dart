@@ -60,6 +60,7 @@ class ProfileViewBody extends StatelessWidget {
                           builder: (context, state) {
                             String displayAvatarName = name;
                             String displayAvatarTitle = roleTitle;
+                            String? avatarUrl;
 
                             if (state is ProfileLoading) {
                               displayAvatarName = 'Loading...';
@@ -68,11 +69,13 @@ class ProfileViewBody extends StatelessWidget {
                               displayAvatarName = state.profile.fullName ?? name;
                               displayAvatarTitle =
                                   state.profile.position ?? roleTitle;
+                              avatarUrl = state.profile.avatar;
                             }
 
                             return ProfileAvatar(
                               name: displayAvatarName,
                               title: displayAvatarTitle,
+                              networkImageUrl: avatarUrl,
                               onEditTap: () {
                                 Navigator.pushNamed(
                                   context,

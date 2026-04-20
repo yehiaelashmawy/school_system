@@ -24,18 +24,22 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> updateProfile({
     required String fullName,
+    required String email,
     required String phone,
     required String department,
     required String position,
+    required String employeeId,
     String? avatar,
   }) async {
     emit(ProfileUpdateLoading());
     try {
       final successMsg = await profileRepo.updateProfile(
         fullName: fullName,
+        email: email,
         phone: phone,
         department: department,
         position: position,
+        employeeId: employeeId,
         avatar: avatar,
       );
       emit(ProfileUpdateSuccess(successMsg));
