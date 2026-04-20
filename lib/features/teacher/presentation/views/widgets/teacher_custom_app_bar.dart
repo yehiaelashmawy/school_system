@@ -22,16 +22,33 @@ class TeacherCustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(color: AppColors.white),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Color(0xFF8B9272),
-            child: Icon(Icons.person, color: AppColors.white, size: 28),
+          BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              String? imageUrl;
+
+              if (state is ProfileSuccess) {
+                imageUrl = state.profile.avatar;
+              }
+
+              return CircleAvatar(
+                radius: 24,
+                backgroundColor: const Color(0xFF8B9272),
+                backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? NetworkImage(imageUrl)
+                    : null,
+                child: (imageUrl == null || imageUrl.isEmpty)
+                    ? Icon(Icons.person, color: AppColors.white, size: 28)
+                    : null,
+              );
+            },
           ),
+
           const SizedBox(width: 12),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,12 +57,13 @@ class TeacherCustomAppBar extends StatelessWidget {
                   _getGreeting(),
                   style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
                 ),
+
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, state) {
                     final teacherName = state is ProfileSuccess
                         ? (state.profile.fullName?.trim().isNotEmpty ?? false)
-                            ? state.profile.fullName!.trim()
-                            : 'Teacher'
+                              ? state.profile.fullName!.trim()
+                              : 'Teacher'
                         : 'Teacher';
 
                     return Text(
@@ -58,6 +76,7 @@ class TeacherCustomAppBar extends StatelessWidget {
               ],
             ),
           ),
+
           _buildIconButton(Icons.search),
         ],
       ),

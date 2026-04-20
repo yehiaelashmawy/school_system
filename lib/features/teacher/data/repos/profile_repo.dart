@@ -9,12 +9,12 @@ class ProfileRepo {
   Future<String> _resolveAvatarForUpdate(String? avatar) async {
     if (avatar == null || avatar.trim().isEmpty) return '';
 
-    // Already server path or absolute URL.
+    // Already server path or absolute URL
     if (avatar.startsWith('/uploads/') || avatar.startsWith('http')) {
       return avatar;
     }
 
-    // Local file path -> upload first, then use returned avatarUrl.
+    // Local file path -> upload first
     final file = File(avatar);
     if (!file.existsSync()) return '';
 
@@ -32,7 +32,14 @@ class ProfileRepo {
 
     if (uploadResponse['success'] == true && uploadResponse['data'] is Map) {
       final avatarUrl = (uploadResponse['data']['avatarUrl'] ?? '').toString();
-      if (avatarUrl.isNotEmpty) return avatarUrl;
+
+      if (avatarUrl.isNotEmpty) {
+        // normalize returned url
+        if (avatarUrl.startsWith('/')) {
+          return '${AppConstants.apiBaseUrl}$avatarUrl';
+        }
+        return avatarUrl;
+      }
     }
 
     throw Exception('Failed to upload avatar');
@@ -44,28 +51,30 @@ class ProfileRepo {
 
       if (response['success'] == true && response['data'] != null) {
         final raw = Map<String, dynamic>.from(response['data'] as Map);
+
         final avatar = raw['avatar']?.toString() ?? '';
-        if (avatar.isNotEmpty && !avatar.startsWith('http')) {
-          raw['avatar'] = '${AppConstants.apiBaseUrl}$avatar';
+
+        if (avatar.isNotEmpty) {
+          if (avatar.startsWith('/')) {
+            raw['avatar'] = '${AppConstants.apiBaseUrl}$avatar';
+          }
         }
+
         return ProfileModel.fromJson(raw);
       } else {
         String errMsg = 'Failed to fetch profile';
-        if (response is Map) {
-          final errors = response['errors'];
-          if (errors is List && errors.isNotEmpty) {
-            errMsg = errors.first.toString();
-          } else if (response['messages'] is Map) {
-            final msgs = response['messages'] as Map;
-            if (msgs['EN'] != null) {
-              errMsg = msgs['EN'].toString();
-            } else if (msgs['error'] != null) {
-              errMsg = msgs['error'].toString();
-            } else if (msgs.isNotEmpty) {
-              errMsg = msgs.values.first.toString();
-            }
-          }
+
+        final errors = response['errors'];
+        if (errors is List && errors.isNotEmpty) {
+          errMsg = errors.first.toString();
+        } else if (response['messages'] is Map) {
+          final msgs = response['messages'] as Map;
+          errMsg =
+              msgs['EN']?.toString() ??
+              msgs['error']?.toString() ??
+              msgs.values.first.toString();
         }
+
         throw Exception(errMsg);
       }
     } on DioException catch (e) {
@@ -86,6 +95,7 @@ class ProfileRepo {
   }) async {
     try {
       final resolvedAvatar = await _resolveAvatarForUpdate(avatar);
+
       final response = await ApiService().put(
         '/api/Profile',
         data: {
@@ -102,33 +112,25 @@ class ProfileRepo {
       );
 
       if (response['success'] == true) {
-        String successMsg = 'Profile updated successfully';
-        if (response is Map) {
-          if (response['messages'] is Map) {
-            final msgs = response['messages'] as Map;
-            if (msgs['EN'] != null) {
-              successMsg = msgs['EN'].toString();
-            }
-          }
-        }
-        return successMsg;
+        final msgs = response['messages'];
+
+        return (msgs is Map && msgs['EN'] != null)
+            ? msgs['EN'].toString()
+            : 'Profile updated successfully';
       } else {
         String errMsg = 'Failed to update profile';
-        if (response is Map) {
-          final errors = response['errors'];
-          if (errors is List && errors.isNotEmpty) {
-            errMsg = errors.first.toString();
-          } else if (response['messages'] is Map) {
-            final msgs = response['messages'] as Map;
-            if (msgs['EN'] != null) {
-              errMsg = msgs['EN'].toString();
-            } else if (msgs['error'] != null) {
-              errMsg = msgs['error'].toString();
-            } else if (msgs.isNotEmpty) {
-              errMsg = msgs.values.first.toString();
-            }
-          }
+
+        final errors = response['errors'];
+        if (errors is List && errors.isNotEmpty) {
+          errMsg = errors.first.toString();
+        } else if (response['messages'] is Map) {
+          final msgs = response['messages'] as Map;
+          errMsg =
+              msgs['EN']?.toString() ??
+              msgs['error']?.toString() ??
+              msgs.values.first.toString();
         }
+
         throw Exception(errMsg);
       }
     } on DioException catch (e) {
@@ -154,31 +156,25 @@ class ProfileRepo {
       );
 
       if (response['success'] == true) {
-        String successMsg = 'Password changed successfully';
-        if (response is Map && response['messages'] is Map) {
-          final msgs = response['messages'] as Map;
-          if (msgs['EN'] != null) {
-            successMsg = msgs['EN'].toString();
-          }
-        }
-        return successMsg;
+        final msgs = response['messages'];
+
+        return (msgs is Map && msgs['EN'] != null)
+            ? msgs['EN'].toString()
+            : 'Password changed successfully';
       } else {
         String errMsg = 'Failed to change password';
-        if (response is Map) {
-          final errors = response['errors'];
-          if (errors is List && errors.isNotEmpty) {
-            errMsg = errors.first.toString();
-          } else if (response['messages'] is Map) {
-            final msgs = response['messages'] as Map;
-            if (msgs['EN'] != null) {
-              errMsg = msgs['EN'].toString();
-            } else if (msgs['error'] != null) {
-              errMsg = msgs['error'].toString();
-            } else if (msgs.isNotEmpty) {
-              errMsg = msgs.values.first.toString();
-            }
-          }
+
+        final errors = response['errors'];
+        if (errors is List && errors.isNotEmpty) {
+          errMsg = errors.first.toString();
+        } else if (response['messages'] is Map) {
+          final msgs = response['messages'] as Map;
+          errMsg =
+              msgs['EN']?.toString() ??
+              msgs['error']?.toString() ??
+              msgs.values.first.toString();
         }
+
         throw Exception(errMsg);
       }
     } on DioException catch (e) {

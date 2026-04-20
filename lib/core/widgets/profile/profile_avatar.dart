@@ -1,6 +1,4 @@
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/helper/shared_prefs_helper.dart';
@@ -22,34 +20,46 @@ class ProfileAvatar extends StatelessWidget {
 
   Widget _buildAvatar() {
     String url = networkImageUrl?.trim() ?? '';
+
+    if (url.isEmpty) {
+      return Icon(
+        Icons.account_circle_outlined,
+        size: 130,
+        color: AppColors.grey,
+      );
+    }
+
+    // لو الرابط نسبي
     if (url.startsWith('/')) {
       url = '${AppConstants.apiBaseUrl}$url';
     }
-    if (!kIsWeb && Platform.isAndroid && url.startsWith('https://localhost')) {
-      url = url.replaceFirst('https://localhost', 'https://10.0.2.2');
+
+    // 👇 مهم جدًا للـ Emulator
+    if (url.contains('localhost')) {
+      url = url.replaceFirst('localhost', '10.0.2.2');
     }
+
     final token = SharedPrefsHelper.token;
     final headers = (token != null && token.isNotEmpty)
         ? {'Authorization': 'Bearer $token'}
-        : const <String, String>{};
+        : <String, String>{};
 
     return ClipOval(
       child: SizedBox(
         width: 130,
         height: 130,
-        child: url.isNotEmpty
-            ? Image.network(
-                url,
-                headers: headers,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/images/profile_photo.png',
-                    fit: BoxFit.cover,
-                  );
-                },
-              )
-            : Image.asset('assets/images/profile_photo.png', fit: BoxFit.cover),
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          headers: headers,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.account_circle_outlined,
+              size: 130,
+              color: AppColors.grey,
+            );
+          },
+        ),
       ),
     );
   }
