@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/helper/shared_prefs_helper.dart';
-import 'package:school_system/core/utils/app_constants.dart';
+import 'package:school_system/core/helper/url_helper.dart';
 
 class ProfileAvatarSection extends StatelessWidget {
   const ProfileAvatarSection({
@@ -23,17 +23,13 @@ class ProfileAvatarSection extends StatelessWidget {
   final VoidCallback onPickPhoto;
 
   Widget _buildAvatar() {
-    String url = networkImageUrl?.trim() ?? '';
-    if (url.startsWith('/')) {
-      url = '${AppConstants.apiBaseUrl}$url';
-    }
-    if (!kIsWeb && Platform.isAndroid && url.startsWith('https://localhost')) {
-      url = url.replaceFirst('https://localhost', 'https://10.0.2.2');
-    }
     final token = SharedPrefsHelper.token;
+
     final headers = (token != null && token.isNotEmpty)
         ? {'Authorization': 'Bearer $token'}
-        : const <String, String>{};
+        : <String, String>{};
+
+    final String url = UrlHelper.getFullImageUrl(networkImageUrl);
 
     return ClipOval(
       child: SizedBox(
@@ -51,21 +47,21 @@ class ProfileAvatarSection extends StatelessWidget {
                 },
               )
             : (url.isNotEmpty
-                ? Image.network(
-                    url,
-                    headers: headers,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/profile_photo.png',
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                : Image.asset(
-                    'assets/images/profile_photo.png',
-                    fit: BoxFit.cover,
-                  )),
+                  ? Image.network(
+                      url,
+                      headers: headers,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/profile_photo.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      'assets/images/profile_photo.png',
+                      fit: BoxFit.cover,
+                    )),
       ),
     );
   }

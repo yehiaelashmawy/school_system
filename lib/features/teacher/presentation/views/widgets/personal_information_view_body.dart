@@ -15,10 +15,12 @@ class PersonalInformationViewBody extends StatefulWidget {
   const PersonalInformationViewBody({super.key});
 
   @override
-  State<PersonalInformationViewBody> createState() => _PersonalInformationViewBodyState();
+  State<PersonalInformationViewBody> createState() =>
+      _PersonalInformationViewBodyState();
 }
 
-class _PersonalInformationViewBodyState extends State<PersonalInformationViewBody> {
+class _PersonalInformationViewBodyState
+    extends State<PersonalInformationViewBody> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -71,9 +73,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
   }
 
   Future<void> _pickPhoto() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
 
     if (result != null && result.files.single.path != null) {
       setState(() {
@@ -114,7 +114,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
           _phoneController.text = profile.phone ?? '';
           _subjectController.text = profile.department ?? '';
           _experienceController.text = profile.employeeId ?? '';
-          
+
           setState(() {
             _displayName = profile.fullName ?? 'Unknown';
             _displayTitle = profile.position ?? 'Unknown Title';
@@ -165,7 +165,9 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
                   const SizedBox(height: 16),
                   ProfileFieldSection(
                     label: 'Email Address',
-                    controller: TextEditingController(text: 'teacher@school.com'),
+                    controller: TextEditingController(
+                      text: 'teacher@school.com',
+                    ),
                     suffixIcon: Icons.mail_outline,
                   ),
                   const SizedBox(height: 16),
@@ -197,7 +199,7 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
             ),
           );
         }
-        
+
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
@@ -210,66 +212,66 @@ class _PersonalInformationViewBodyState extends State<PersonalInformationViewBod
                 networkImageUrl: liveAvatarUrl,
                 onPickPhoto: _pickPhoto,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               Text(
                 'Account Details',
                 style: AppTextStyle.bold16.copyWith(
-                   color: AppColors.darkBlue,
+                  color: AppColors.darkBlue,
                   fontSize: 18,
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               ProfileFieldSection(
                 label: 'Full Name',
                 controller: _nameController,
                 suffixIcon: Icons.edit_outlined,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               ProfileFieldSection(
                 label: 'Email Address',
                 controller: _emailController,
                 suffixIcon: Icons.mail_outline,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               ProfileFieldSection(
                 label: 'Phone Number',
                 controller: _phoneController,
                 suffixIcon: Icons.phone_outlined,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               ProfileFieldSection(
                 label: 'Department',
                 controller: _subjectController,
                 suffixIcon: Icons.school_outlined,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               ProfileFieldSection(
                 label: 'Employee ID',
                 controller: _experienceController,
                 suffixIcon: Icons.badge_outlined,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               PersonalInformationActionButtons(
                 onSave: _saveChanges,
                 onReset: () {
                   _resetDefaults();
                 },
               ),
-              
+
               const SizedBox(height: 24),
             ],
           ),

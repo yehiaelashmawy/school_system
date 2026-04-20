@@ -5,6 +5,8 @@ import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_state.dart';
 
+import '../../../../../core/helper/url_helper.dart';
+
 class TeacherCustomAppBar extends StatelessWidget {
   const TeacherCustomAppBar({super.key});
 
@@ -31,7 +33,7 @@ class TeacherCustomAppBar extends StatelessWidget {
               String? imageUrl;
 
               if (state is ProfileSuccess) {
-                imageUrl = state.profile.avatar;
+                imageUrl = UrlHelper.getFullImageUrl(state.profile.avatar);
               }
 
               return CircleAvatar(
