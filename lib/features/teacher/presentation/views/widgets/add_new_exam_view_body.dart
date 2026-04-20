@@ -48,7 +48,12 @@ class AddNewExamViewBody extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Exam scheduled successfully')),
+                );
+                Navigator.pop(context, true);
+              },
               icon: Icon(Icons.send_outlined, color: AppColors.white, size: 20),
               label: Text(
                 'Schedule Exam',

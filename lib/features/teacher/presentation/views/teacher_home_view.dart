@@ -7,6 +7,10 @@ import 'package:school_system/core/widgets/profile/profile_view_body.dart';
 import 'package:school_system/core/widgets/notifications/notifications_view.dart';
 import 'package:school_system/core/widgets/messages/messages_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/teacher_bottom_nav_bar.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_classes_repo.dart';
+import 'package:school_system/core/api/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TeacherHomeView extends StatefulWidget {
   const TeacherHomeView({super.key});
@@ -118,12 +122,17 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
           setState(() => _currentIndex = 0);
         }
       },
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        body: IndexedStack(index: _currentIndex, children: _views),
-        bottomNavigationBar: TeacherBottomNavBar(
-          currentIndex: _currentIndex,
-          onTap: _handleNavTap,
+      child: BlocProvider(
+        create: (context) => TeacherClassesCubit(
+          TeacherClassesRepo(ApiService()),
+        )..fetchClasses(),
+        child: Scaffold(
+          backgroundColor: AppColors.backgroundColor,
+          body: IndexedStack(index: _currentIndex, children: _views),
+          bottomNavigationBar: TeacherBottomNavBar(
+            currentIndex: _currentIndex,
+            onTap: _handleNavTap,
+          ),
         ),
       ),
     );

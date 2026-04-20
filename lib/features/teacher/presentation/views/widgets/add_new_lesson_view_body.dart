@@ -148,7 +148,7 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         } else if (state is AddLessonFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

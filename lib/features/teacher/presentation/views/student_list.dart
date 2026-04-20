@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_classes_repo.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/exams_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lessons_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/students_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_list_body.dart';
+import 'package:school_system/features/teacher/presentation/views/add_homework_view.dart';
 
 class StudentList extends StatefulWidget {
   final String className;
@@ -24,12 +27,18 @@ class StudentList extends StatefulWidget {
 class _StudentListState extends State<StudentList>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  late TeacherClassModel? _currentClass;
+  bool _hasDataChanges = false;
+  static const int _lessonsTabIndex = 1;
+  static const int _homeworkTabIndex = 2;
   static const int _examsTabIndex = 3;
 
+  bool get _isLessonsTab => _tabController.index == _lessonsTabIndex;
   bool get _isExamsTab => _tabController.index == _examsTabIndex;
+  bool get _isHomeworkTab => _tabController.index == _homeworkTabIndex;
 
   List<TeacherLessonModel> get _classLessons {
-    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final students = _currentClass?.students ?? const <TeacherStudentModel>[];
     final map = <String, TeacherLessonModel>{};
     for (final student in students) {
       for (final lesson in student.details.lessons) {
@@ -52,7 +61,7 @@ class _StudentListState extends State<StudentList>
   }
 
   List<TeacherHomeworkModel> get _classHomeworks {
-    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final students = _currentClass?.students ?? const <TeacherStudentModel>[];
     final map = <String, TeacherHomeworkModel>{};
     for (final student in students) {
       for (final homework in student.details.homeworks) {
@@ -75,7 +84,7 @@ class _StudentListState extends State<StudentList>
   }
 
   List<TeacherExamModel> get _classExams {
-    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final students = _currentClass?.students ?? const <TeacherStudentModel>[];
     final map = <String, TeacherExamModel>{};
     for (final student in students) {
       for (final exam in student.details.exams) {
@@ -96,7 +105,7 @@ class _StudentListState extends State<StudentList>
   }
 
   TeacherAttendanceModel get _classAttendance {
-    final students = widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+    final students = _currentClass?.students ?? const <TeacherStudentModel>[];
     int present = 0;
     int absent = 0;
     int late = 0;
@@ -135,7 +144,7 @@ class _StudentListState extends State<StudentList>
   /// Merges [details.attendance.recentRecords] from every student (same API payload).
   List<TeacherAttendanceListEntry> get _attendanceRecentEntries {
     final students =
-        widget.teacherClass?.students ?? const <TeacherStudentModel>[];
+        _currentClass?.students ?? const <TeacherStudentModel>[];
     final entries = <TeacherAttendanceListEntry>[];
     for (final student in students) {
       for (final record in student.details.attendance.recentRecords) {
@@ -159,9 +168,66 @@ class _StudentListState extends State<StudentList>
     return entries;
   }
 
+  Future<void> _refreshClassData() async {
+    final classOid = _currentClass?.oid;
+    if (classOid == null || classOid.isEmpty) return;
+
+    final result = await TeacherClassesRepo(ApiService()).getTeacherClasses();
+    result.fold(
+      (_) {},
+      (classes) {
+        final updated = classes.where((c) => c.oid == classOid).toList();
+        if (updated.isNotEmpty && mounted) {
+          setState(() {
+            _currentClass = updated.first;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> _openAddLesson() async {
+    final created = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed('/add_new_lesson');
+    if (created == true) {
+      _hasDataChanges = true;
+      await _refreshClassData();
+    }
+  }
+
+  Future<void> _openAddExam() async {
+    final created = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed('/add_new_exam');
+    if (created == true) {
+      _hasDataChanges = true;
+      await _refreshClassData();
+    }
+  }
+
+  Future<void> _openAddHomework() async {
+    final created = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed(AddHomeworkView.routeName);
+    if (created == true) {
+      _hasDataChanges = true;
+      await _refreshClassData();
+      if (mounted) {
+        setState(() {
+          _tabController.index = _homeworkTabIndex;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _currentClass = widget.teacherClass;
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() => setState(() {}));
   }
@@ -181,13 +247,13 @@ class _StudentListState extends State<StudentList>
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, _hasDataChanges),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.teacherClass?.name ?? widget.className,
+              _currentClass?.name ?? widget.className,
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: 18,
@@ -236,13 +302,13 @@ class _StudentListState extends State<StudentList>
       body: TabBarView(
         controller: _tabController,
         children: [
-          StudentsListBody(students: widget.teacherClass?.students ?? const []),
+          StudentsListBody(students: _currentClass?.students ?? const []),
           LessonsListBody(lessons: _classLessons),
           HomeworkListBody(homeworks: _classHomeworks),
           ExamsListBody(exams: _classExams),
           AttendanceListBody(
-            className: widget.teacherClass?.name ?? widget.className,
-            studentCount: widget.teacherClass?.studentsCount ?? 0,
+            className: _currentClass?.name ?? widget.className,
+            studentCount: _currentClass?.studentsCount ?? 0,
             summary: _classAttendance,
             statusColor: _attendanceStatusColor,
             statusText: _attendanceStatusText,
@@ -251,24 +317,27 @@ class _StudentListState extends State<StudentList>
         ],
       ),
       floatingActionButton: AnimatedScale(
-        scale: _isExamsTab ? 1.0 : 0.0,
+        scale: (_isExamsTab || _isHomeworkTab || _isLessonsTab) ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
         child: FloatingActionButton(
           onPressed: _isExamsTab
-              ? () {
-                  Navigator.of(
-                    context,
-                    rootNavigator: true,
-                  ).pushNamed('/add_new_exam');
-                }
-              : null,
+              ? _openAddExam
+              : (_isHomeworkTab
+                  ? _openAddHomework
+                  : (_isLessonsTab ? _openAddLesson : null)),
           backgroundColor: AppColors.secondaryColor,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          child: const Icon(Icons.add, color: Colors.white, size: 28),
+          child: Icon(
+            _isHomeworkTab
+                ? Icons.assignment_add
+                : (_isLessonsTab ? Icons.library_add : Icons.add),
+            color: Colors.white,
+            size: 28,
+          ),
         ),
       ),
     );

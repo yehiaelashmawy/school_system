@@ -109,7 +109,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pop(context); // Go back after success
+          Navigator.pop(context, true); // Go back after success
         } else if (state is AddHomeworkFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

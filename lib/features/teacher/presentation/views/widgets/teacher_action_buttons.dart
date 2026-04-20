@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/features/teacher/presentation/views/add_homework_view.dart';
 import 'package:school_system/core/widgets/smart_tutor/smart_tutor_view.dart';
 import 'package:school_system/features/teacher/presentation/views/take_attendance_view.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_exams_cubit/teacher_exams_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_timetable_cubit/teacher_timetable_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 
 class TeacherActionButtons extends StatelessWidget {
@@ -35,8 +40,22 @@ class TeacherActionButtons extends StatelessWidget {
                 backgroundColor: AppColors.white,
                 textColor: AppColors.black,
                 iconColor: AppColors.primaryColor,
-                onTap: () {
-                  Navigator.pushNamed(context, '/add_new_lesson');
+                onTap: () async {
+                  final created = await Navigator.pushNamed(
+                    context,
+                    '/add_new_lesson',
+                  );
+                  if (created == true && context.mounted) {
+                    context.read<TeacherExamsCubit>().fetchExams();
+                    context.read<TeacherClassesCubit>().fetchClasses();
+                    final teacherIdentifier =
+                        (SharedPrefsHelper.teacherOid?.trim().isNotEmpty ?? false)
+                        ? SharedPrefsHelper.teacherOid!.trim()
+                        : (SharedPrefsHelper.userId ?? '');
+                    context.read<TeacherTimetableCubit>().fetchTodayClasses(
+                      teacherIdentifier,
+                    );
+                  }
                 },
               ),
             ),
@@ -53,8 +72,15 @@ class TeacherActionButtons extends StatelessWidget {
                 textColor: AppColors.black,
                 iconColor: AppColors.primaryColor,
                 isDashed: true,
-                onTap: () {
-                  Navigator.pushNamed(context, AddHomeworkView.routeName);
+                onTap: () async {
+                  final created = await Navigator.pushNamed(
+                    context,
+                    AddHomeworkView.routeName,
+                  );
+                  if (created == true && context.mounted) {
+                    context.read<TeacherExamsCubit>().fetchExams();
+                    context.read<TeacherClassesCubit>().fetchClasses();
+                  }
                 },
               ),
             ),

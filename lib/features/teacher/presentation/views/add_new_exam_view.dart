@@ -32,7 +32,7 @@ class AddNewExamView extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Exam saved as draft')),
               );
-              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             child: Text(
               'Drafts',

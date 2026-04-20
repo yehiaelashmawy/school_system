@@ -192,8 +192,15 @@ class _ActiveClassesTab extends StatelessWidget {
           numStudents: c.studentsCount.toString(),
           schedule: 'Sections: ${c.sectionsCount}',
           extraStudentsCount: 0,
-          onViewClass: () {
-            Navigator.pushNamed(context, StudentList.routeName, arguments: c);
+          onViewClass: () async {
+            final changed = await Navigator.pushNamed(
+              context,
+              StudentList.routeName,
+              arguments: c,
+            );
+            if (changed == true && context.mounted) {
+              context.read<TeacherClassesCubit>().fetchClasses();
+            }
           },
         );
       },
