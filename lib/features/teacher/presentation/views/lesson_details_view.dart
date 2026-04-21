@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lesson_details_view_body.dart';
 
 class LessonDetailsView extends StatelessWidget {
-  const LessonDetailsView({super.key});
+  const LessonDetailsView({super.key, this.lessonId});
   static const String routeName = '/lesson_details';
+  final String? lessonId;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class LessonDetailsView extends StatelessWidget {
           ),
         ],
       ),
-      body: const LessonDetailsViewBody(),
+      body: LessonDetailsViewBody(lessonId: lessonId),
     );
   }
 }

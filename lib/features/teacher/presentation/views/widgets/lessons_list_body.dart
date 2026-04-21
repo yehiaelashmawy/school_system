@@ -69,6 +69,7 @@ class LessonsListBody extends StatelessWidget {
                             : 'Untitled Lesson',
                         dateInfo: _formatDateInfo(lesson.date),
                         image: 'assets/images/lesson1.png',
+                        lessonId: lesson.oid,
                       );
                     },
                   ),

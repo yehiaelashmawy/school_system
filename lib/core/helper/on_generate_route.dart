@@ -157,7 +157,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
         builder: (context) => StudentList(className: className),
       );
     case LessonDetailsView.routeName:
-      return MaterialPageRoute(builder: (context) => const LessonDetailsView());
+      final lessonId = settings.arguments as String?;
+      return MaterialPageRoute(
+        builder: (context) => LessonDetailsView(lessonId: lessonId),
+      );
     case AddNewLessonView.routeName:
       return MaterialPageRoute(builder: (context) => const AddNewLessonView());
     case AddNewExamView.routeName:

@@ -8,11 +8,13 @@ class LessonListItem extends StatelessWidget {
     required this.title,
     required this.dateInfo,
     required this.image,
+    required this.lessonId,
   });
 
   final String title;
   final String dateInfo;
   final String image;
+  final String lessonId;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +76,11 @@ class LessonListItem extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, LessonDetailsView.routeName);
+                Navigator.pushNamed(
+                  context,
+                  LessonDetailsView.routeName,
+                  arguments: lessonId,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff0F52BD),
