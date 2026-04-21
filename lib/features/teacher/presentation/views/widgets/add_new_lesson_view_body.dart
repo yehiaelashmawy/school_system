@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_state.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
@@ -108,9 +109,7 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
         _selectedClassId == null ||
         _selectedSubjectId == null ||
         _selectedDateIso == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
-      );
+      CustomSnackBar.showError(context, 'Please fill all required fields');
       return;
     }
 
@@ -139,20 +138,10 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
     return BlocConsumer<AddLessonCubit, AddLessonState>(
       listener: (context, state) {
         if (state is AddLessonSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          CustomSnackBar.showSuccess(context, state.message);
           Navigator.pop(context, true);
         } else if (state is AddLessonFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage),
-              backgroundColor: Colors.red,
-            ),
-          );
+          CustomSnackBar.showError(context, state.errorMessage);
         }
       },
       builder: (context, state) {

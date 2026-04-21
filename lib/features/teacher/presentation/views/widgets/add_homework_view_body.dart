@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_homework_cubit/add_homework_state.dart';
@@ -64,9 +65,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
         _selectedClassId == null ||
         _selectedSubjectId == null ||
         _dueDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
-      );
+      CustomSnackBar.showError(context, 'Please fill all required fields');
       return;
     }
 
@@ -92,20 +91,10 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
     return BlocConsumer<AddHomeworkCubit, AddHomeworkState>(
       listener: (context, state) {
         if (state is AddHomeworkSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          CustomSnackBar.showSuccess(context, state.message);
           Navigator.pop(context, true); // Go back after success
         } else if (state is AddHomeworkFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage),
-              backgroundColor: Colors.red,
-            ),
-          );
+          CustomSnackBar.showError(context, state.errorMessage);
         }
       },
       builder: (context, state) {

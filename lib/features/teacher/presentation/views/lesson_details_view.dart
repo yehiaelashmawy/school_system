@@ -1,6 +1,7 @@
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:school_system/core/api/api_service.dart';
+import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lesson_details_view_body.dart';
 
 class LessonDetailsView extends StatefulWidget {
@@ -16,9 +17,7 @@ class _LessonDetailsViewState extends State<LessonDetailsView> {
   Future<void> _deleteLesson() async {
     final lessonId = widget.lessonId;
     if (lessonId == null || lessonId.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lesson ID is missing')),
-      );
+      CustomSnackBar.showError(context, 'Lesson ID is missing');
       return;
     }
 
@@ -50,20 +49,14 @@ class _LessonDetailsViewState extends State<LessonDetailsView> {
       if (!mounted) return;
 
       if (isSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lesson deleted successfully')),
-        );
+        CustomSnackBar.showSuccess(context, 'Lesson deleted successfully');
         Navigator.pop(context, true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete lesson')),
-        );
+        CustomSnackBar.showError(context, 'Failed to delete lesson');
       }
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to delete lesson')),
-      );
+      CustomSnackBar.showError(context, 'Failed to delete lesson');
     }
   }
 
