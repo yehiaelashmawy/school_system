@@ -13,6 +13,8 @@ class LessonDetailsViewBody extends StatelessWidget {
   Future<Map<String, dynamic>> _fetchLessonData() async {
     if (lessonId == null || lessonId!.trim().isEmpty) {
       return {
+        'subjectName': 'Subject',
+        'lessonName': 'Lesson',
         'description': 'No lesson selected.',
         'materials': const <Map<String, dynamic>>[],
       };
@@ -22,6 +24,8 @@ class LessonDetailsViewBody extends StatelessWidget {
     final data = response is Map<String, dynamic>
         ? response['data'] as Map<String, dynamic>?
         : null;
+    final subjectName = data?['subjectName']?.toString() ?? '';
+    final lessonName = data?['title']?.toString() ?? '';
     final description = data?['description']?.toString() ?? '';
     final materialsRaw = data?['materials'];
     final materials = materialsRaw is List
@@ -32,6 +36,8 @@ class LessonDetailsViewBody extends StatelessWidget {
         : <Map<String, dynamic>>[];
 
     return {
+      'subjectName': subjectName.isNotEmpty ? subjectName : 'Subject',
+      'lessonName': lessonName.isNotEmpty ? lessonName : 'Lesson',
       'description': description.isNotEmpty
           ? description
           : 'No description available.',
@@ -59,6 +65,8 @@ class LessonDetailsViewBody extends StatelessWidget {
     return FutureBuilder<Map<String, dynamic>>(
       future: _fetchLessonData(),
       builder: (context, snapshot) {
+        String subjectName = 'Loading...';
+        String lessonName = 'Loading lesson...';
         String description = 'Loading lesson description...';
         List<Map<String, dynamic>> materials = const [];
         if (snapshot.connectionState == ConnectionState.done) {
@@ -66,6 +74,8 @@ class LessonDetailsViewBody extends StatelessWidget {
             description = 'Failed to load lesson description.';
           } else {
             final result = snapshot.data ?? const <String, dynamic>{};
+            subjectName = result['subjectName']?.toString() ?? 'Subject';
+            lessonName = result['lessonName']?.toString() ?? 'Lesson';
             description =
                 result['description']?.toString() ?? 'No description available.';
             final rawMaterials = result['materials'];
@@ -79,7 +89,10 @@ class LessonDetailsViewBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const LessonDetailsHeader(),
+              LessonDetailsHeader(
+                subjectName: subjectName,
+                lessonName: lessonName,
+              ),
 
               // Content Section
               Padding(

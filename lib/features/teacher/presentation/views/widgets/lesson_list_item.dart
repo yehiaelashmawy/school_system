@@ -9,12 +9,14 @@ class LessonListItem extends StatelessWidget {
     required this.dateInfo,
     required this.image,
     required this.lessonId,
+    this.onLessonDeleted,
   });
 
   final String title;
   final String dateInfo;
   final String image;
   final String lessonId;
+  final ValueChanged<String>? onLessonDeleted;
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +77,15 @@ class LessonListItem extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
+              onPressed: () async {
+                final deleted = await Navigator.pushNamed(
                   context,
                   LessonDetailsView.routeName,
                   arguments: lessonId,
                 );
+                if (deleted == true) {
+                  onLessonDeleted?.call(lessonId);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff0F52BD),

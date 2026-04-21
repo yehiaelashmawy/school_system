@@ -29,6 +29,7 @@ class _StudentListState extends State<StudentList>
   late final TabController _tabController;
   late TeacherClassModel? _currentClass;
   bool _hasDataChanges = false;
+  final Set<String> _deletedLessonIds = <String>{};
   static const int _lessonsTabIndex = 1;
   static const int _homeworkTabIndex = 2;
   static const int _examsTabIndex = 3;
@@ -49,6 +50,7 @@ class _StudentListState extends State<StudentList>
       }
     }
     final lessons = map.values.toList();
+    lessons.removeWhere((lesson) => _deletedLessonIds.contains(lesson.oid));
     lessons.sort((a, b) {
       final aDate = DateTime.tryParse(a.date);
       final bDate = DateTime.tryParse(b.date);
@@ -197,6 +199,14 @@ class _StudentListState extends State<StudentList>
     }
   }
 
+  void _handleLessonDeleted(String lessonId) {
+    if (lessonId.trim().isEmpty) return;
+    setState(() {
+      _deletedLessonIds.add(lessonId);
+      _hasDataChanges = true;
+    });
+  }
+
   Future<void> _openAddExam() async {
     final created = await Navigator.of(
       context,
@@ -303,7 +313,10 @@ class _StudentListState extends State<StudentList>
         controller: _tabController,
         children: [
           StudentsListBody(students: _currentClass?.students ?? const []),
-          LessonsListBody(lessons: _classLessons),
+          LessonsListBody(
+            lessons: _classLessons,
+            onLessonDeleted: _handleLessonDeleted,
+          ),
           HomeworkListBody(homeworks: _classHomeworks),
           ExamsListBody(exams: _classExams),
           AttendanceListBody(

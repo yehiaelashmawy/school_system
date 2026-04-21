@@ -5,8 +5,13 @@ import 'package:school_system/features/teacher/presentation/views/widgets/lesson
 
 class LessonsListBody extends StatelessWidget {
   final List<TeacherLessonModel> lessons;
+  final ValueChanged<String>? onLessonDeleted;
 
-  const LessonsListBody({super.key, this.lessons = const []});
+  const LessonsListBody({
+    super.key,
+    this.lessons = const [],
+    this.onLessonDeleted,
+  });
 
   String _formatDateInfo(String rawDate) {
     if (rawDate.trim().isEmpty) return 'Date unavailable';
@@ -70,6 +75,7 @@ class LessonsListBody extends StatelessWidget {
                         dateInfo: _formatDateInfo(lesson.date),
                         image: 'assets/images/lesson1.png',
                         lessonId: lesson.oid,
+                        onLessonDeleted: onLessonDeleted,
                       );
                     },
                   ),

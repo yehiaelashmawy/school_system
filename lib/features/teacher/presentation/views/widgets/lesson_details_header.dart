@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 
 class LessonDetailsHeader extends StatelessWidget {
-  const LessonDetailsHeader({super.key});
+  const LessonDetailsHeader({
+    super.key,
+    required this.subjectName,
+    required this.lessonName,
+  });
+  final String subjectName;
+  final String lessonName;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +57,7 @@ class LessonDetailsHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    'MATHEMATICS',
+                    subjectName.toUpperCase(),
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 10,
@@ -62,7 +68,7 @@ class LessonDetailsHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Introduction to\nCalculus',
+                  lessonName,
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: 28,
