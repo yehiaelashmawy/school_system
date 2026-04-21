@@ -8,13 +8,14 @@ class CustomDropdownField extends StatelessWidget {
     required this.hintText,
     required this.items,
     required this.value,
-    required this.onChanged,
+    this.onChanged,
   });
 
   final String hintText;
   final List<String> items;
   final String? value;
-  final ValueChanged<String?> onChanged;
+  final ValueChanged<String?>? onChanged;
+
 
   @override
   Widget build(BuildContext context) {

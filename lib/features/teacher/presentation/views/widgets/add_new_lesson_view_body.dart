@@ -50,11 +50,13 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
     );
+
     if (date != null && mounted) {
       final time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
       );
+
       if (time != null) {
         final combined = DateTime(
           date.year,
@@ -63,10 +65,11 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
           time.hour,
           time.minute,
         );
+
         setState(() {
           _dateTimeController.text =
               "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}, ${time.format(context)}";
-          _selectedDateIso = combined.toUtc().toIso8601String();
+          _selectedDateIso = combined.toIso8601String();
         });
       }
     }
@@ -111,17 +114,8 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
       return;
     }
 
-    final List<Map<String, dynamic>> materials = _attachedFiles.map((f) {
-      return {
-        "name": f.name,
-        "fileUrl": "https://example.com/files/${f.name}",
-        "fileType": f.extension ?? "pdf",
-        "fileSize": f.size,
-      };
-    }).toList();
-
     final parsedStart = DateTime.parse(_selectedDateIso!);
-    final endTime = parsedStart.add(const Duration(hours: 1)).toUtc().toIso8601String();
+    final endTime = parsedStart.add(const Duration(hours: 1)).toIso8601String();
 
     context.read<AddLessonCubit>().createLesson(
       title: _titleController.text,
@@ -132,8 +126,11 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
       classOid: _selectedClassId!,
       subjectOid: _selectedSubjectId!,
       type: 1,
-      objectives: _descController.text.split('\n').where((s) => s.trim().isNotEmpty).toList(),
-      materials: materials,
+      objectives: _descController.text
+          .split('\n')
+          .where((s) => s.trim().isNotEmpty)
+          .toList(),
+      attachedFiles: _attachedFiles,
     );
   }
 
@@ -161,220 +158,196 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
       builder: (context, state) {
         final isLoading = state is AddLessonLoading;
 
-        return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const FieldLabel(label: 'Lesson Title'),
-          const SizedBox(height: 8),
-          CustomTextField(
-            controller: _titleController,
-            hintText: 'e.g., Introduction to Quadratic Equations',
-          ),
-
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Subject'),
-          const SizedBox(height: 8),
-          BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
-            builder: (context, subjectState) {
-              if (subjectState is TeacherSubjectsLoading) {
-                return Skeletonizer(
-                  enabled: true,
-                  child: CustomDropdownField(
-                    hintText: 'Choose a subject',
-                    items: const ['Mathematics'],
-                    value: 'Mathematics',
-                    onChanged: (_) {},
-                  ),
-                );
-              } else if (subjectState is TeacherSubjectsFailure) {
-                return Text(
-                  subjectState.error.errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                );
-              } else if (subjectState is TeacherSubjectsSuccess) {
-                final subjectNames =
-                    subjectState.subjects.map((e) => e.name).toList();
-
-                if (_selectedSubject != null &&
-                    !subjectNames.contains(_selectedSubject)) {
-                  _selectedSubject = null;
-                  _selectedSubjectId = null;
-                }
-
-                return CustomDropdownField(
-                  hintText: 'Choose a subject',
-                  items: subjectNames,
-                  value: _selectedSubject,
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedSubject = val;
-                      final selectedModel = subjectState.subjects.firstWhere(
-                        (e) => e.name == val,
-                      );
-                      _selectedSubjectId = selectedModel.oid;
-                    });
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Class/Section'),
-          const SizedBox(height: 8),
-          BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
-            builder: (context, classState) {
-              if (classState is TeacherClassesLoading) {
-                return Skeletonizer(
-                  enabled: true,
-                  child: CustomDropdownField(
-                    hintText: 'Choose a class',
-                    items: const ['Grade 10 - A'],
-                    value: 'Grade 10 - A',
-                    onChanged: (_) {},
-                  ),
-                );
-              } else if (classState is TeacherClassesFailure) {
-                return Text(
-                  classState.error.errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                );
-              } else if (classState is TeacherClassesSuccess) {
-                final classNames = classState.classes.map((e) => e.name).toList();
-
-                if (_selectedClass != null &&
-                    !classNames.contains(_selectedClass)) {
-                  _selectedClass = null;
-                  _selectedClassId = null;
-                }
-
-                return CustomDropdownField(
-                  hintText: 'Choose a class',
-                  items: classNames,
-                  value: _selectedClass,
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedClass = val;
-                      final selectedModel = classState.classes.firstWhere(
-                        (e) => e.name == val,
-                      );
-                      _selectedClassId = selectedModel.oid;
-                    });
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Scheduled Date & Time'),
-          const SizedBox(height: 8),
-          CustomTextField(
-            hintText: 'mm/dd/yyyy, --:-- --',
-            controller: _dateTimeController,
-            readOnly: true,
-            onTap: _pickDateTime,
-          ),
-
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Lesson Description/Objectives'),
-          const SizedBox(height: 8),
-          CustomTextField(
-            controller: _descController,
-            hintText: 'What will the students learn today?',
-            maxLines: 4,
-          ),
-
-          const SizedBox(height: 20),
-
-          const FieldLabel(label: 'Attachments'),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: DashedUploadButton(
-                  title: 'Upload PDF',
-                  icon: Icons.picture_as_pdf_outlined,
-                  onTap: _pickPDFs,
+        return Skeletonizer(
+          enabled: isLoading,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Lesson Title ────────────────────────────────────────────
+                const FieldLabel(label: 'Lesson Title'),
+                const SizedBox(height: 8),
+                CustomTextField(
+                  controller: _titleController,
+                  hintText: 'e.g., Introduction to Quadratic Equations',
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: DashedUploadButton(
-                  title: 'Add Images',
-                  icon: Icons.image_outlined,
-                  onTap: _pickImages,
-                ),
-              ),
-            ],
-          ),
 
-          if (_attachedFiles.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            ..._attachedFiles.map((file) {
-              final isPdf = file.extension?.toLowerCase() == 'pdf';
-              final kbSize = file.size / 1024;
-              final mbSize = kbSize / 1024;
-              final sizeStr = mbSize > 1
-                  ? '${mbSize.toStringAsFixed(1)} MB'
-                  : '${kbSize.toStringAsFixed(0)} KB';
+                const SizedBox(height: 20),
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: LessonFileCard(
-                  fileName: file.name,
-                  fileInfo: '$sizeStr • ${isPdf ? 'PDF Document' : 'Image'}',
-                  iconColor: isPdf
-                      ? const Color(0xffFEE2E2)
-                      : const Color(0xffDBEAFE),
-                  iconData: isPdf ? Icons.picture_as_pdf : Icons.image,
-                  iconWidgetColor: isPdf
-                      ? const Color(0xffDC2626)
-                      : const Color(0xff2563EB),
-                ),
-              );
-            }),
-          ],
-
-          const SizedBox(height: 32),
-
-          isLoading
-              ? Skeletonizer(
-                  enabled: true,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: null,
-                      icon: Icon(Icons.upload, color: AppColors.white, size: 20),
-                      label: Text(
-                        'Publish Lesson',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                // ── Subject ─────────────────────────────────────────────────
+                const FieldLabel(label: 'Subject'),
+                const SizedBox(height: 8),
+                BlocBuilder<TeacherSubjectsCubit, TeacherSubjectsState>(
+                  builder: (context, subjectState) {
+                    if (subjectState is TeacherSubjectsLoading) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: CustomDropdownField(
+                          hintText: 'Choose a subject',
+                          items: const ['Mathematics'],
+                          value: 'Mathematics',
+                          onChanged: (_) {},
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondaryColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+                      );
+                    } else if (subjectState is TeacherSubjectsFailure) {
+                      return Text(
+                        subjectState.error.errorMessage,
+                        style: const TextStyle(color: Colors.red),
+                      );
+                    } else if (subjectState is TeacherSubjectsSuccess) {
+                      final subjectNames = subjectState.subjects
+                          .map((e) => e.name)
+                          .toList();
+                      return CustomDropdownField(
+                        hintText: 'Choose a subject',
+                        items: subjectNames,
+                        value: _selectedSubject,
+                        onChanged: isLoading
+                            ? null
+                            : (val) {
+                                setState(() {
+                                  _selectedSubject = val;
+                                  final selected = subjectState.subjects
+                                      .firstWhere((e) => e.name == val);
+                                  _selectedSubjectId = selected.oid;
+                                });
+                              },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Class / Section ─────────────────────────────────────────
+                const FieldLabel(label: 'Class/Section'),
+                const SizedBox(height: 8),
+                BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
+                  builder: (context, classState) {
+                    if (classState is TeacherClassesLoading) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: CustomDropdownField(
+                          hintText: 'Choose a class',
+                          items: const ['Grade 10 - A'],
+                          value: 'Grade 10 - A',
+                          onChanged: (_) {},
                         ),
-                        elevation: 0,
+                      );
+                    } else if (classState is TeacherClassesFailure) {
+                      return Text(
+                        classState.error.errorMessage,
+                        style: const TextStyle(color: Colors.red),
+                      );
+                    } else if (classState is TeacherClassesSuccess) {
+                      final classNames = classState.classes
+                          .map((e) => e.name)
+                          .toList();
+                      return CustomDropdownField(
+                        hintText: 'Choose a class',
+                        items: classNames,
+                        value: _selectedClass,
+                        onChanged: isLoading
+                            ? null
+                            : (val) {
+                                setState(() {
+                                  _selectedClass = val;
+                                  final selected = classState.classes
+                                      .firstWhere((e) => e.name == val);
+                                  _selectedClassId = selected.oid;
+                                });
+                              },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Scheduled Date & Time ────────────────────────────────────
+                const FieldLabel(label: 'Scheduled Date & Time'),
+                const SizedBox(height: 8),
+                CustomTextField(
+                  hintText: 'Select date & time',
+                  controller: _dateTimeController,
+                  readOnly: true,
+                  onTap: isLoading ? null : _pickDateTime,
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Description / Objectives ─────────────────────────────────
+                const FieldLabel(label: 'Description/Objectives'),
+                const SizedBox(height: 8),
+                CustomTextField(
+                  controller: _descController,
+                  hintText: 'What will students learn?',
+                  maxLines: 4,
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Attachments ──────────────────────────────────────────────
+                const FieldLabel(label: 'Attachments'),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DashedUploadButton(
+                        title: 'Upload PDF',
+                        icon: Icons.picture_as_pdf_outlined,
+                        onTap: isLoading ? () {} : _pickPDFs,
                       ),
                     ),
-                  ),
-                )
-              : SizedBox(
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DashedUploadButton(
+                        title: 'Add Images',
+                        icon: Icons.image_outlined,
+                        onTap: isLoading ? () {} : _pickImages,
+                      ),
+                    ),
+                  ],
+                ),
+
+                if (_attachedFiles.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  ..._attachedFiles.map((file) {
+                    final isPdf = file.extension?.toLowerCase() == 'pdf';
+                    final kbSize = file.size / 1024;
+                    final mbSize = kbSize / 1024;
+                    final sizeStr = mbSize > 1
+                        ? '${mbSize.toStringAsFixed(1)} MB'
+                        : '${kbSize.toStringAsFixed(0)} KB';
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: LessonFileCard(
+                        fileName: file.name,
+                        fileInfo:
+                            '$sizeStr • ${isPdf ? 'PDF Document' : 'Image'}',
+                        iconColor: isPdf
+                            ? const Color(0xffFEE2E2)
+                            : const Color(0xffDBEAFE),
+                        iconData: isPdf ? Icons.picture_as_pdf : Icons.image,
+                        iconWidgetColor: isPdf
+                            ? const Color(0xffDC2626)
+                            : const Color(0xff2563EB),
+                      ),
+                    );
+                  }),
+                ],
+
+                const SizedBox(height: 32),
+
+                // ── Publish Button ───────────────────────────────────────────
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _submitLesson,
+                    onPressed: isLoading ? null : _submitLesson,
                     icon: Icon(Icons.upload, color: AppColors.white, size: 20),
                     label: Text(
                       'Publish Lesson',
@@ -394,10 +367,12 @@ class _AddNewLessonViewBodyState extends State<AddNewLessonViewBody> {
                     ),
                   ),
                 ),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

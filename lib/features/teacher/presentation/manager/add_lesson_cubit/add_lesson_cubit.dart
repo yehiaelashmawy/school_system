@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/features/teacher/data/repos/add_lesson_repo.dart';
 import 'package:school_system/features/teacher/presentation/manager/add_lesson_cubit/add_lesson_state.dart';
@@ -17,10 +18,11 @@ class AddLessonCubit extends Cubit<AddLessonState> {
     required String subjectOid,
     required int type,
     required List<String> objectives,
-    required List<Map<String, dynamic>> materials,
+    List<PlatformFile> attachedFiles = const [],
   }) async {
     emit(AddLessonLoading());
-    final result = await repo.createLesson(
+
+    final createResult = await repo.createLesson(
       title: title,
       description: description,
       date: date,
@@ -30,11 +32,29 @@ class AddLessonCubit extends Cubit<AddLessonState> {
       subjectOid: subjectOid,
       type: type,
       objectives: objectives,
-      materials: materials,
     );
-    result.fold(
-      (error) => emit(AddLessonFailure(error.errorMessage)),
-      (success) => emit(AddLessonSuccess(success)),
+
+    await createResult.fold(
+      (error) async {
+        emit(AddLessonFailure(error.errorMessage));
+      },
+      (lessonOid) async {
+        // ✅ طالما وصلنا هنا يبقى عندنا OID مضمون
+        if (attachedFiles.isNotEmpty) {
+          final uploadResult = await repo.uploadLessonFiles(
+            lessonId: lessonOid,
+            files: attachedFiles,
+          );
+
+          if (uploadResult.isLeft()) {
+            final error = uploadResult.fold((l) => l.errorMessage, (_) => '');
+            emit(AddLessonFailure('File upload failed: $error'));
+            return;
+          }
+        }
+
+        emit(AddLessonSuccess('Lesson published successfully'));
+      },
     );
   }
 }
