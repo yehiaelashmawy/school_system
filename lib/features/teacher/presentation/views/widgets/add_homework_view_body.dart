@@ -72,17 +72,6 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
 
     final points = int.tryParse(_pointsController.text) ?? 0;
 
-    // Attachments will be omitted or mapped to mock URLs since we don't have file upload API right now.
-    // In a real app, you would upload files first.
-    final List<Map<String, dynamic>> attachments = _attachedFiles.map((f) {
-      return {
-        "fileName": f.name,
-        "fileUrl": "https://example.com/files/${f.name}",
-        "fileType": f.extension ?? "pdf",
-        "fileSize": f.size,
-      };
-    }).toList();
-
     context.read<AddHomeworkCubit>().createHomework(
       title: _titleController.text,
       description: _descController.text,
@@ -94,7 +83,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
       submissionType: "file",
       allowLateSubmissions: true,
       notifyParents: true,
-      attachments: attachments,
+      attachedFiles: _attachedFiles,
     );
   }
 
@@ -209,18 +198,17 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
                     }
 
                     return CustomDropdownField(
-                       hintText: 'Choose a subject',
-                       items: subjectNames,
-                       value: _selectedSubject,
-                       onChanged: (val) {
-                         setState(() {
-                           _selectedSubject = val;
-                           final selectedModel = subjectState.subjects.firstWhere(
-                             (e) => e.name == val,
-                           );
-                           _selectedSubjectId = selectedModel.oid;
-                         });
-                       },
+                      hintText: 'Choose a subject',
+                      items: subjectNames,
+                      value: _selectedSubject,
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedSubject = val;
+                          final selectedModel = subjectState.subjects
+                              .firstWhere((e) => e.name == val);
+                          _selectedSubjectId = selectedModel.oid;
+                        });
+                      },
                     );
                   }
                   return const SizedBox.shrink();

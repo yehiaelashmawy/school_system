@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_system/features/teacher/data/repos/add_homework_repo.dart';
 import 'add_homework_state.dart';
@@ -18,6 +19,7 @@ class AddHomeworkCubit extends Cubit<AddHomeworkState> {
     required String submissionType,
     required bool allowLateSubmissions,
     required bool notifyParents,
+    List<PlatformFile> attachedFiles = const [],
     List<Map<String, dynamic>> attachments = const [],
   }) async {
     emit(AddHomeworkLoading());
@@ -35,9 +37,24 @@ class AddHomeworkCubit extends Cubit<AddHomeworkState> {
       attachments: attachments,
     );
 
-    result.fold(
-      (error) => emit(AddHomeworkFailure(error.errorMessage)),
-      (successMessage) => emit(AddHomeworkSuccess(successMessage)),
+    await result.fold(
+      (error) async => emit(AddHomeworkFailure(error.errorMessage)),
+      (homeworkId) async {
+        if (attachedFiles.isNotEmpty) {
+          final uploadResult = await _addHomeworkRepo.uploadHomeworkFiles(
+            homeworkId: homeworkId,
+            files: attachedFiles,
+          );
+
+          if (uploadResult.isLeft()) {
+            final error = uploadResult.fold((l) => l.errorMessage, (_) => '');
+            emit(AddHomeworkFailure('File upload failed: $error'));
+            return;
+          }
+        }
+
+        emit(AddHomeworkSuccess('Homework created successfully.'));
+      },
     );
   }
 }
