@@ -8,6 +8,8 @@ class LessonFileCard extends StatelessWidget {
   final Color iconColor;
   final IconData iconData;
   final Color iconWidgetColor;
+  final VoidCallback? onTap;
+  final VoidCallback? onDownloadTap;
 
   const LessonFileCard({
     super.key,
@@ -16,62 +18,77 @@ class LessonFileCard extends StatelessWidget {
     required this.iconColor,
     required this.iconData,
     required this.iconWidgetColor,
+    this.onTap,
+    this.onDownloadTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(iconData, color: iconWidgetColor, size: 24),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fileName,
-                  style: AppTextStyle.semiBold14.copyWith(
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: iconColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(iconData, color: iconWidgetColor, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fileName,
+                      style: AppTextStyle.semiBold14.copyWith(
+                        color: AppColors.darkBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      fileInfo,
+                      style: AppTextStyle.regular12.copyWith(
+                        color: AppColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: onDownloadTap ?? onTap,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.lightGrey.withValues(alpha: 0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.file_download_outlined,
                     color: AppColors.darkBlue,
+                    size: 18,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  fileInfo,
-                  style: AppTextStyle.regular12.copyWith(color: AppColors.grey),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: AppColors.lightGrey.withValues(alpha: 0.3),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.file_download_outlined,
-              color: AppColors.darkBlue,
-              size: 18,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
