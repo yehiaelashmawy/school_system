@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/features/student/data/models/student_subject_model.dart';
+import 'package:school_system/features/student/data/repos/student_subjects_repo.dart';
 import 'package:school_system/features/student/presentation/views/widgets/student_subjects_app_bar.dart';
 import 'package:school_system/features/student/presentation/views/widgets/subject_item_card.dart';
 
@@ -13,35 +15,27 @@ class StudentSubjectsViewBody extends StatefulWidget {
 
 class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
   String _selectedFilter = 'All';
+  late Future<List<StudentSubjectModel>> _subjectsFuture;
+  final StudentSubjectsRepo _repo = StudentSubjectsRepo(ApiService());
 
-  final List<StudentSubjectModel> _allSubjects = [
-    StudentSubjectModel(
-      trackName: 'STEM TRACK',
-      subjectName: 'Advanced Mathematics',
-      professorName: 'Prof. Sarah Jenkins',
-      progressPercentage: 78,
-      attendancePercentage: 94,
-      assignmentsPercentage: 88,
-    ),
-    StudentSubjectModel(
-      trackName: 'HUMANITIES',
-      subjectName: 'Modern Literature',
-      professorName: 'Dr. Michael Chen',
-      progressPercentage: 45,
-      attendancePercentage: 100,
-      assignmentsPercentage: 62,
-    ),
-    StudentSubjectModel(
-      trackName: 'STEM TRACK',
-      subjectName: 'Quantum Physics',
-      professorName: 'Prof. Alistair Thorne',
-      progressPercentage: 92,
-      attendancePercentage: 82,
-      assignmentsPercentage: 95,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _subjectsFuture = _loadSubjects();
+  }
 
-  void _showFilterBottomSheet() {
+  Future<List<StudentSubjectModel>> _loadSubjects() async {
+    final result = await _repo.getStudentSubjects();
+    return result.fold((error) => throw error.errorMessage, (subjects) => subjects);
+  }
+
+  void _reloadSubjects() {
+    setState(() {
+      _subjectsFuture = _loadSubjects();
+    });
+  }
+
+  void _showFilterBottomSheet(List<String> filters) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -64,9 +58,7 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFilterOption('All'),
-              _buildFilterOption('STEM TRACK'),
-              _buildFilterOption('HUMANITIES'),
+              ...filters.map(_buildFilterOption),
               const SizedBox(height: 16),
             ],
           ),
@@ -99,31 +91,86 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredSubjects = _selectedFilter == 'All' 
-        ? _allSubjects 
-        : _allSubjects.where((s) => s.trackName == _selectedFilter).toList();
-
     return Container(
       color: Colors.white,
       child: SafeArea(
         bottom: false,
         child: Container(
           color: AppColors.backgroundColor,
-          child: Column(
-            children: [
-              StudentSubjectsAppBar(
-                onFilterTap: _showFilterBottomSheet,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(24.0),
-                  itemCount: filteredSubjects.length,
-                  itemBuilder: (context, index) {
-                    return SubjectItemCard(subject: filteredSubjects[index]);
-                  },
-                ),
-              ),
-            ],
+          child: FutureBuilder<List<StudentSubjectModel>>(
+            future: _subjectsFuture,
+            builder: (context, snapshot) {
+              final subjects = snapshot.data ?? const <StudentSubjectModel>[];
+              final filters = <String>{
+                'All',
+                ...subjects
+                    .map((e) => e.trackName)
+                    .where((e) => e.trim().isNotEmpty),
+              }.toList();
+
+              if (_selectedFilter != 'All' && !filters.contains(_selectedFilter)) {
+                _selectedFilter = 'All';
+              }
+
+              final filteredSubjects = _selectedFilter == 'All'
+                  ? subjects
+                  : subjects.where((s) => s.trackName == _selectedFilter).toList();
+
+              return Column(
+                children: [
+                  StudentSubjectsAppBar(
+                    onFilterTap: () => _showFilterBottomSheet(filters),
+                  ),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    snapshot.error.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: AppColors.grey),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _reloadSubjects,
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        if (filteredSubjects.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No subjects found.',
+                              style: TextStyle(color: AppColors.grey),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(24.0),
+                          itemCount: filteredSubjects.length,
+                          itemBuilder: (context, index) {
+                            return SubjectItemCard(subject: filteredSubjects[index]);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
