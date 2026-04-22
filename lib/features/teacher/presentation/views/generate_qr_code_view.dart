@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/generate_qr_code_view_body.dart';
 
 class GenerateQrCodeView extends StatelessWidget {
   static const String routeName = '/generate_qr_code_view';
+  final AttendanceSessionModel session;
 
-  const GenerateQrCodeView({super.key});
+  GenerateQrCodeView({super.key, required this.session});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class GenerateQrCodeView extends StatelessWidget {
           ),
         ),
       ),
-      body: const GenerateQrCodeViewBody(),
+      body: GenerateQrCodeViewBody(session: session),
     );
   }
 }

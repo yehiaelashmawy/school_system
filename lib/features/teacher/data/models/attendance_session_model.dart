@@ -7,6 +7,7 @@ class AttendanceSessionModel {
   final int method;
   final String? qrCodeBase64;
   final String? randomNumbers;
+  final String? expiresAt;
   final List<SessionStudentModel> students;
 
   AttendanceSessionModel({
@@ -18,6 +19,7 @@ class AttendanceSessionModel {
     required this.method,
     this.qrCodeBase64,
     this.randomNumbers,
+    this.expiresAt,
     required this.students,
   });
 
@@ -32,6 +34,7 @@ class AttendanceSessionModel {
       method: int.tryParse(json['method']?.toString() ?? '1') ?? 1,
       qrCodeBase64: json['qrCodeBase64']?.toString(),
       randomNumbers: json['randomNumbers']?.toString(),
+      expiresAt: json['expiresAt']?.toString(),
       students: studentsRaw is List
           ? studentsRaw
               .whereType<Map>()

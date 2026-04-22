@@ -6,6 +6,7 @@ import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/manager/start_attendance_cubit/start_attendance_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/start_attendance_cubit/start_attendance_state.dart';
+import 'package:school_system/features/teacher/presentation/views/generate_qr_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/manual_attendance_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_lesson_selector.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_method_card.dart';
@@ -69,14 +70,24 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
     return BlocConsumer<StartAttendanceCubit, StartAttendanceState>(
       listener: (context, state) {
         if (state is StartAttendanceSuccess) {
-          Navigator.pushNamed(
-            context,
-            ManualAttendanceView.routeName,
-            arguments: ManualAttendanceViewArgs(
-              teacherClass: widget.teacherClass,
-              session: state.session,
-            ),
-          );
+          if (state.session.method == 2) {
+            // QR Code
+            Navigator.pushNamed(
+              context,
+              GenerateQrCodeView.routeName,
+              arguments: state.session,
+            );
+          } else {
+            // Default to Manual (method 1)
+            Navigator.pushNamed(
+              context,
+              ManualAttendanceView.routeName,
+              arguments: ManualAttendanceViewArgs(
+                teacherClass: widget.teacherClass,
+                session: state.session,
+              ),
+            );
+          }
         } else if (state is StartAttendanceFailure) {
           CustomSnackBar.showError(context, state.failure.errorMessage);
         }
@@ -168,7 +179,7 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                   icon: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(Icons.qr_code, color: Colors.white),
@@ -180,7 +191,18 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                   actionIcon: Icons.bolt,
                   isPrimary: true,
                   onTap: () {
-                    Navigator.pushNamed(context, '/generate_qr_code_view');
+                    if (_selectedLessonOid == null) {
+                      CustomSnackBar.showError(
+                        context,
+                        'Please select a lesson first',
+                      );
+                      return;
+                    }
+                    context.read<StartAttendanceCubit>().startSession(
+                      classOid: widget.teacherClass.oid,
+                      method: 2, // QR Code
+                      lessonOid: _selectedLessonOid,
+                    );
                   },
                 ),
                 AttendanceMethodCard(

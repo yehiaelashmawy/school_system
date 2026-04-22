@@ -8,12 +8,24 @@ import 'package:school_system/features/teacher/data/repos/attendance_repo.dart';
 import 'package:school_system/features/teacher/presentation/manager/start_attendance_cubit/start_attendance_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_method_view_body.dart';
 
+class AttendanceMethodViewArgs {
+  final TeacherClassModel teacherClass;
+  final String? lessonId;
+
+  AttendanceMethodViewArgs({required this.teacherClass, this.lessonId});
+}
+
 class AttendanceMethodView extends StatelessWidget {
   static const String routeName = '/attendance_method_view';
 
   final TeacherClassModel teacherClass;
+  final String? lessonId;
 
-  const AttendanceMethodView({super.key, required this.teacherClass});
+  AttendanceMethodView({
+    super.key,
+    required this.teacherClass,
+    this.lessonId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +48,10 @@ class AttendanceMethodView extends StatelessWidget {
             ),
           ),
         ),
-        body: AttendanceMethodViewBody(teacherClass: teacherClass),
+        body: AttendanceMethodViewBody(
+          teacherClass: teacherClass,
+          lessonId: lessonId,
+        ),
       ),
     );
   }

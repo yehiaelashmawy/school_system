@@ -46,6 +46,7 @@ import 'package:school_system/features/teacher/presentation/views/generate_qr_co
 import 'package:school_system/features/teacher/presentation/views/entry_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/attendance_report_view.dart';
 import 'package:school_system/features/teacher/presentation/views/teacher_weekly_schedule_view.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -184,10 +185,17 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       );
     case AttendanceMethodView.routeName:
       {
-        final classArg = settings.arguments as TeacherClassModel?;
-        if (classArg != null) {
+        final args = settings.arguments;
+        if (args is AttendanceMethodViewArgs) {
           return MaterialPageRoute(
-            builder: (context) => AttendanceMethodView(teacherClass: classArg),
+            builder: (context) => AttendanceMethodView(
+              teacherClass: args.teacherClass,
+              lessonId: args.lessonId,
+            ),
+          );
+        } else if (args is TeacherClassModel) {
+          return MaterialPageRoute(
+            builder: (context) => AttendanceMethodView(teacherClass: args),
           );
         }
         return MaterialPageRoute(builder: (context) => const SplashView());
@@ -207,9 +215,15 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       }
 
     case GenerateQrCodeView.routeName:
-      return MaterialPageRoute(
-        builder: (context) => const GenerateQrCodeView(),
-      );
+      {
+        final session = settings.arguments as AttendanceSessionModel?;
+        if (session != null) {
+          return MaterialPageRoute(
+            builder: (context) => GenerateQrCodeView(session: session),
+          );
+        }
+        return MaterialPageRoute(builder: (context) => const SplashView());
+      }
 
     case EntryCodeView.routeName:
       return MaterialPageRoute(builder: (context) => const EntryCodeView());

@@ -1,63 +1,29 @@
-import 'dart:async';
-import 'dart:math';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 
 class GenerateQrCodeViewBody extends StatefulWidget {
-  const GenerateQrCodeViewBody({super.key});
+  final AttendanceSessionModel session;
+
+  const GenerateQrCodeViewBody({super.key, required this.session});
 
   @override
   State<GenerateQrCodeViewBody> createState() => _GenerateQrCodeViewBodyState();
 }
 
 class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
-  late Timer _scanTimer;
-  final _random = Random();
+  late final List<Map<String, dynamic>> _students;
   String? _lastScannedName;
-  // Simulate students — true = scanned in
-  final List<Map<String, dynamic>> _students = [
-    {'name': 'Julianne Devis', 'scanned': true},
-    {'name': 'Arthur Morgan', 'scanned': true},
-    {'name': 'Lydia Bennet', 'scanned': true},
-    {'name': 'Tobias Kingston', 'scanned': false},
-    {'name': 'Sarah Walker', 'scanned': false},
-    {'name': 'Marcus Lee', 'scanned': true},
-    {'name': 'Clara Hunt', 'scanned': false},
-    {'name': 'Noah Adams', 'scanned': true},
-    {'name': 'Ella Brooks', 'scanned': false},
-    {'name': 'James Weir', 'scanned': false},
-    {'name': 'Amina Karimi', 'scanned': false},
-    {'name': 'Dylan Park', 'scanned': false},
-    {'name': 'Sophia Turner', 'scanned': true},
-    {'name': 'Liam Chen', 'scanned': false},
-    {'name': 'Chloe Reed', 'scanned': false},
-  ];
 
   @override
   void initState() {
     super.initState();
-    // Simulate a new student scanning every 2.5 seconds
-    _scanTimer = Timer.periodic(const Duration(milliseconds: 2500), (_) {
-      final pending = _students.where((s) => s['scanned'] == false).toList();
-      if (pending.isEmpty) {
-        _scanTimer.cancel();
-        return;
-      }
-      final next = pending[_random.nextInt(pending.length)];
-      setState(() {
-        next['scanned'] = true;
-        _lastScannedName = next['name'] as String;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _scanTimer.cancel();
-    super.dispose();
+    _students = widget.session.students.map((s) {
+      return {'oid': s.studentOid, 'name': s.studentName, 'scanned': false};
+    }).toList();
   }
 
   int get _total => _students.length;
@@ -96,7 +62,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                 const SizedBox(height: 16),
 
                 Text(
-                  'Grade 10-A',
+                  widget.session.className,
                   style: AppTextStyle.bold24.copyWith(
                     color: AppColors.black,
                     fontSize: 32,
@@ -104,7 +70,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Mathematics: Advanced\nAlgebra',
+                  widget.session.lessonName,
                   textAlign: TextAlign.center,
                   style: AppTextStyle.medium18.copyWith(
                     color: AppColors.primaryColor,
@@ -119,7 +85,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                   children: [
                     _buildDateTimeItem(
                       Icons.calendar_today_outlined,
-                      'Tuesday, Oct\n24',
+                      'Current Session',
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -129,10 +95,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                         color: AppColors.lightGrey,
                       ),
                     ),
-                    _buildDateTimeItem(
-                      Icons.access_time,
-                      '09:45 AM - 10:30\nAM',
-                    ),
+                    _buildDateTimeItem(Icons.access_time, _getExpirationText()),
                   ],
                 ),
 
@@ -160,12 +123,18 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                           : const Color(0xffF4F7FB),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: QrImageView(
-                      data: 'session_10A_math_static_qr_code',
-                      version: QrVersions.auto,
-                      size: 200.0,
-                      foregroundColor: AppColors.primaryColor,
-                    ),
+                    child: widget.session.qrCodeBase64 != null
+                        ? Image.memory(
+                            base64Decode(widget.session.qrCodeBase64!),
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.contain,
+                          )
+                        : const Icon(
+                            Icons.qr_code,
+                            size: 200,
+                            color: Colors.grey,
+                          ),
                   ),
                 ),
 
@@ -194,7 +163,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
 
                 const SizedBox(height: 16),
 
-                // "Just scanned" live feedback banner
+                // Live feedback banner for scans
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   child: _lastScannedName != null
@@ -263,7 +232,7 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
 
                 const SizedBox(height: 24),
 
-                // Student scan list (simulate real-time scan feedback)
+                // Student scan list
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -279,59 +248,52 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
                 ...List.generate(_students.length, (index) {
                   final student = _students[index];
                   final bool scanned = student['scanned'] as bool;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _students[index]['scanned'] = !scanned;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: scanned
+                            ? const Color(0xff065AD8).withValues(alpha: 0.3)
+                            : AppColors.lightGrey.withValues(alpha: 0.4),
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: scanned
-                              ? const Color(0xff065AD8).withValues(alpha: 0.3)
-                              : AppColors.lightGrey.withValues(alpha: 0.4),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: scanned
+                                ? const Color(0xff065AD8)
+                                : AppColors.lightGrey,
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: scanned
-                                  ? const Color(0xff065AD8)
-                                  : AppColors.lightGrey,
-                              shape: BoxShape.circle,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            student['name'] as String,
+                            style: AppTextStyle.medium14.copyWith(
+                              color: AppColors.black,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              student['name'] as String,
-                              style: AppTextStyle.medium14.copyWith(
-                                color: AppColors.black,
-                              ),
-                            ),
+                        ),
+                        Text(
+                          scanned ? 'Scanned' : 'Pending',
+                          style: AppTextStyle.bold12.copyWith(
+                            color: scanned
+                                ? const Color(0xff065AD8)
+                                : AppColors.grey,
+                            fontSize: 10,
                           ),
-                          Text(
-                            scanned ? 'Scanned' : 'Pending',
-                            style: AppTextStyle.bold12.copyWith(
-                              color: scanned
-                                  ? const Color(0xff065AD8)
-                                  : AppColors.grey,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 }),
@@ -342,6 +304,18 @@ class _GenerateQrCodeViewBodyState extends State<GenerateQrCodeViewBody> {
         ),
       ],
     );
+  }
+
+  String _getExpirationText() {
+    if (widget.session.expiresAt == null) return 'No Expiration';
+    try {
+      final expiry = DateTime.parse(widget.session.expiresAt!);
+      final diff = expiry.difference(DateTime.now());
+      if (diff.isNegative) return 'Expired';
+      return '${diff.inMinutes}m remaining';
+    } catch (_) {
+      return 'Active';
+    }
   }
 
   Widget _buildDateTimeItem(IconData icon, String text) {
