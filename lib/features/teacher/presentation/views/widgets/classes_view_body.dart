@@ -20,7 +20,15 @@ class ClassesViewBody extends StatefulWidget {
 class _ClassesViewBodyState extends State<ClassesViewBody> {
   String? _selectedFilter;
 
-  void _showFilterSheet() {
+  void _showFilterSheet(List<TeacherClassModel> allClasses) {
+    // Get unique levels from fetched classes and sort them
+    final levels = allClasses
+        .map((c) => c.level)
+        .where((l) => l.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.white,
@@ -46,36 +54,16 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
                   Navigator.pop(context);
                 },
               ),
-              ListTile(
-                title: const Text('Grade 10 Only'),
-                trailing: _selectedFilter == 'Grade 10'
-                    ? Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedFilter = 'Grade 10');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Grade 11 Only'),
-                trailing: _selectedFilter == 'Grade 11'
-                    ? Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedFilter = 'Grade 11');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Grade 12 Only'),
-                trailing: _selectedFilter == 'Grade 12'
-                    ? Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedFilter = 'Grade 12');
-                  Navigator.pop(context);
-                },
-              ),
+              ...levels.map((level) => ListTile(
+                    title: Text('Grade $level Only'),
+                    trailing: _selectedFilter == level
+                        ? Icon(Icons.check, color: AppColors.primaryColor)
+                        : null,
+                    onTap: () {
+                      setState(() => _selectedFilter = level);
+                      Navigator.pop(context);
+                    },
+                  )),
               const SizedBox(height: 24),
             ],
           ),
@@ -110,7 +98,7 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
           final allClasses = state.classes;
           final filtered = allClasses.where((cls) {
             if (_selectedFilter == null) return true;
-            return cls.name.contains(_selectedFilter!);
+            return cls.level == _selectedFilter;
           }).toList();
 
           return DefaultTabController(
@@ -121,7 +109,9 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
                   color: AppColors.white,
                   child: SafeArea(
                     bottom: false,
-                    child: TeacherClassesAppBar(onFilterTap: _showFilterSheet),
+                    child: TeacherClassesAppBar(
+                      onFilterTap: () => _showFilterSheet(allClasses),
+                    ),
                   ),
                 ),
                 Container(
