@@ -73,6 +73,7 @@ class _ManualAttendanceViewState extends State<ManualAttendanceView> {
               key: _bodyKey,
               teacherClass: widget.teacherClass,
               session: widget.session,
+              isLoading: state is SubmitAttendanceLoading,
             ),
             bottomNavigationBar: SafeArea(
               child: Padding(

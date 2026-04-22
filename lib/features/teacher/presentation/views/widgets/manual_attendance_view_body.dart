@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
@@ -24,14 +25,17 @@ class StudentData {
   });
 }
 
+
 class ManualAttendanceViewBody extends StatefulWidget {
   final TeacherClassModel teacherClass;
   final AttendanceSessionModel? session;
+  final bool isLoading;
 
-  const ManualAttendanceViewBody({
+  ManualAttendanceViewBody({
     super.key,
     required this.teacherClass,
     this.session,
+    this.isLoading = false,
   });
 
   @override
@@ -126,9 +130,11 @@ class ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
   @override
   Widget build(BuildContext context) {
     final teacherClass = widget.teacherClass;
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
-      children: [
+    return Skeletonizer(
+      enabled: widget.isLoading,
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 24),
+        children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
           child: Column(
@@ -243,6 +249,7 @@ class ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
           },
         ),
       ],
+    ),
     );
   }
 }
