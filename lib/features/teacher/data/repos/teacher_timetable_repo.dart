@@ -39,6 +39,40 @@ class TeacherTimetableRepo {
     }
   }
 
+  Future<Either<ApiErrors, Map<String, List<TeacherTimetableEntryModel>>>>
+  getWeeklyClassesForTeacher(String teacherOid) async {
+    try {
+      if (teacherOid.trim().isEmpty) {
+        return Left(
+          ApiErrors(
+            errorMessage: 'Teacher id is missing. Please login again.',
+          ),
+        );
+      }
+
+      final response = await apiService.get('/api/Timetable/teacher/$teacherOid');
+      final data = response['data'] as Map<String, dynamic>? ?? {};
+      final weeklySchedule = data['weeklySchedule'] as Map<String, dynamic>? ?? {};
+
+      final Map<String, List<TeacherTimetableEntryModel>> allClasses = {};
+      
+      weeklySchedule.forEach((key, value) {
+        if (value is List) {
+          allClasses[key] = value
+              .map((item) => TeacherTimetableEntryModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+        }
+      });
+
+      return Right(allClasses);
+    } catch (e) {
+      if (e is ApiErrors) {
+        return Left(e);
+      }
+      return Left(ApiErrors(errorMessage: e.toString()));
+    }
+  }
+
   String _weekdayKey(int weekday) {
     switch (weekday) {
       case DateTime.monday:

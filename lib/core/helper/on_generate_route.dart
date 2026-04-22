@@ -45,6 +45,7 @@ import 'package:school_system/features/teacher/presentation/views/manual_attenda
 import 'package:school_system/features/teacher/presentation/views/generate_qr_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/entry_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/attendance_report_view.dart';
+import 'package:school_system/features/teacher/presentation/views/teacher_weekly_schedule_view.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -74,6 +75,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case WeeklyScheduleView.routeName:
       return MaterialPageRoute(
         builder: (context) => const WeeklyScheduleView(),
+      );
+    case TeacherWeeklyScheduleView.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const TeacherWeeklyScheduleView(),
       );
     case StudentSubjectDetailsView.routeName:
       final subject = settings.arguments as StudentSubjectModel;

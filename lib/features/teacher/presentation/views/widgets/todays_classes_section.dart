@@ -6,7 +6,7 @@ import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/models/teacher_timetable_entry_model.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_timetable_cubit/teacher_timetable_cubit.dart';
 import 'package:school_system/features/teacher/presentation/manager/teacher_timetable_cubit/teacher_timetable_state.dart';
-import 'package:school_system/features/student/presentation/views/weekly_schedule_view.dart';
+import 'package:school_system/features/teacher/presentation/views/teacher_weekly_schedule_view.dart';
 
 class TodaysClassesSection extends StatelessWidget {
   const TodaysClassesSection({super.key});
@@ -23,7 +23,7 @@ class TodaysClassesSection extends StatelessWidget {
             const Text('Today\'s Classes', style: AppTextStyle.bold20),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, WeeklyScheduleView.routeName);
+                Navigator.pushNamed(context, TeacherWeeklyScheduleView.routeName);
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
