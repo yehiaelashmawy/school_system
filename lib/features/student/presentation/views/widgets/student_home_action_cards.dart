@@ -1,39 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/student/data/repos/student_grades_repo.dart';
+import 'package:school_system/features/student/data/repos/student_homework_repo.dart';
+import 'package:school_system/features/student/presentation/manager/student_grades_cubit/student_grades_cubit.dart';
+import 'package:school_system/features/student/presentation/manager/student_grades_cubit/student_grades_state.dart';
+import 'package:school_system/features/student/presentation/manager/student_homework_cubit/student_homework_cubit.dart';
+import 'package:school_system/features/student/presentation/manager/student_homework_cubit/student_homework_state.dart';
 
 class StudentHomeActionCards extends StatelessWidget {
   const StudentHomeActionCards({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, 'student_homework_view');
-            },
-            child: const _ActionCard(
-              title: 'Homework',
-              subtitle: '4 Pending Tasks',
-              icon: Icons.assignment,
-            ),
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => StudentHomeworkCubit(
+            StudentHomeworkRepo(ApiService()),
+          )..fetchHomeworks(),
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, 'student_grades_view');
-            },
-            child: const _ActionCard(
-              title: 'My Grades',
-              subtitle: 'GPA: 3.8 / 4.0',
-              icon: Icons.bar_chart,
-            ),
-          ),
+        BlocProvider(
+          create: (context) => StudentGradesCubit(
+            StudentGradesRepo(ApiService()),
+          )..fetchGradesDashboard(),
         ),
       ],
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, 'student_homework_view');
+              },
+              child: BlocBuilder<StudentHomeworkCubit, StudentHomeworkState>(
+                builder: (context, state) {
+                  String subtitle = 'Loading...';
+                  bool isLoading = state is StudentHomeworkLoading || state is StudentHomeworkInitial;
+
+                  if (state is StudentHomeworkSuccess) {
+                    final pending = state.data.stats?.pending ?? 0;
+                    subtitle = '$pending Pending Tasks';
+                  } else if (state is StudentHomeworkFailure) {
+                    subtitle = 'Failed to load';
+                  }
+
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: _ActionCard(
+                      title: 'Homework',
+                      subtitle: subtitle,
+                      icon: Icons.assignment,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, 'student_grades_view');
+              },
+              child: BlocBuilder<StudentGradesCubit, StudentGradesState>(
+                builder: (context, state) {
+                  String subtitle = 'Loading...';
+                  bool isLoading = state is StudentGradesLoading || state is StudentGradesInitial;
+
+                  if (state is StudentGradesSuccess) {
+                    final gpa = state.data.overallGPA?.gpa ?? 0.0;
+                    subtitle = 'GPA: $gpa / 4.0';
+                  } else if (state is StudentGradesFailure) {
+                    subtitle = 'Failed to load';
+                  }
+
+                  return Skeletonizer(
+                    enabled: isLoading,
+                    child: _ActionCard(
+                      title: 'My Grades',
+                      subtitle: subtitle,
+                      icon: Icons.bar_chart,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

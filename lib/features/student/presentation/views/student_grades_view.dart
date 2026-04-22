@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:intl/intl.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/student/data/repos/student_grades_repo.dart';
+import 'package:school_system/features/student/presentation/manager/student_grades_cubit/student_grades_cubit.dart';
+import 'package:school_system/features/student/presentation/manager/student_grades_cubit/student_grades_state.dart';
 import 'package:school_system/features/student/presentation/views/widgets/student_grade_assessment_card.dart';
 import 'package:school_system/features/student/presentation/views/widgets/student_quarterly_projection_card.dart';
 
@@ -11,119 +18,232 @@ class StudentGradesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'My Grades',
-          style: AppTextStyle.bold16.copyWith(
-            color: AppColors.black,
-            fontSize: 18,
+    return BlocProvider(
+      create: (context) => StudentGradesCubit(StudentGradesRepo(ApiService()))
+        ..fetchGradesDashboard(),
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundColor,
+        appBar: AppBar(
+          title: Text(
+            'My Grades',
+            style: AppTextStyle.bold16.copyWith(
+              color: AppColors.black,
+              fontSize: 18,
+            ),
+          ),
+          backgroundColor: AppColors.backgroundColor,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: false,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: AppColors.secondaryColor),
+            onPressed: () => Navigator.pop(context),
           ),
         ),
-        backgroundColor: AppColors.backgroundColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.secondaryColor),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Academic Performance',
-                style: AppTextStyle.bold24.copyWith(
-                  color: AppColors.black,
-                  fontSize: 26,
-                ),
-              ),
-              const SizedBox(height: 12),
-              RichText(
-                text: TextSpan(
-                  style: AppTextStyle.medium14.copyWith(
-                    color: AppColors.grey,
-                    height: 1.5,
+        body: SafeArea(
+          child: BlocBuilder<StudentGradesCubit, StudentGradesState>(
+            builder: (context, state) {
+              if (state is StudentGradesLoading) {
+                return Skeletonizer(
+                  enabled: true,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'Academic Performance',
+                          style: AppTextStyle.bold24.copyWith(
+                            color: AppColors.black,
+                            fontSize: 26,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Loading detailed breakdown of your progress this term. Current Weighted Average: 90%',
+                          style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
+                        ),
+                        const SizedBox(height: 32),
+                        Text(
+                          'Graded Assessments',
+                          style: AppTextStyle.bold16.copyWith(color: AppColors.black),
+                        ),
+                        const SizedBox(height: 16),
+                        ...List.generate(
+                          3,
+                          (index) => StudentGradeAssessmentCard(
+                            badgeText: 'LOADING',
+                            badgeColor: AppColors.darkBlue,
+                            badgeBackgroundColor: AppColors.lightGrey.withValues(alpha: 0.2),
+                            dateString: 'Completed Jan 01',
+                            title: 'Loading Assignment Title',
+                            grade: '90',
+                            totalGrade: '100',
+                            gradeColor: AppColors.secondaryColor,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        StudentQuarterlyProjectionCard(
+                          statusMessage: 'Loading status',
+                          examsCount: 0,
+                          tasksCount: 3,
+                          averagePercentage: 90,
+                        ),
+                      ],
+                    ),
                   ),
-                  children: [
-                    const TextSpan(
-                      text:
-                          'Detailed breakdown of your mathematical progress this term. Current Weighted Average: ',
+                );
+              }
+
+              if (state is StudentGradesFailure) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      state.error.errorMessage,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyle.medium16.copyWith(color: Colors.red),
                     ),
-                    TextSpan(
-                      text: '92.4%',
-                      style: AppTextStyle.bold14.copyWith(
-                        color: AppColors.secondaryColor, // Matching blue percentage
+                  ),
+                );
+              }
+
+              if (state is StudentGradesSuccess) {
+                final data = state.data;
+                final overallGpa = data.overallGPA?.gpa ?? 0.0;
+                final overallGrade = data.overallGPA?.overallGrade ?? 0;
+                
+                // Collect all assessments across subjects
+                final allAssessments = <Widget>[];
+                for (var subject in data.subjectDetailedGrades) {
+                  for (var assignment in subject.assignments) {
+                    DateTime? dueDate;
+                    String formattedDate = '';
+                    if (assignment.dueDate.isNotEmpty) {
+                      try {
+                        dueDate = DateTime.parse(assignment.dueDate);
+                        formattedDate = DateFormat('MMM dd, yyyy').format(dueDate);
+                      } catch (e) {
+                        // ignore
+                      }
+                    }
+
+                    allAssessments.add(
+                      StudentGradeAssessmentCard(
+                        badgeText: subject.subjectName.toUpperCase(),
+                        badgeColor: AppColors.darkBlue,
+                        badgeBackgroundColor: AppColors.lightGrey.withValues(alpha: 0.2),
+                        dateString: dueDate != null ? 'Due $formattedDate' : '',
+                        title: assignment.title,
+                        grade: assignment.grade.toString(),
+                        totalGrade: assignment.totalMarks.toString(),
+                        gradeColor: AppColors.secondaryColor,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'Graded Assessments',
-                style: AppTextStyle.bold16.copyWith(
-                  color: AppColors.black,
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Assessments List
-              StudentGradeAssessmentCard(
-                badgeText: 'QUARTER 1',
-                badgeColor: AppColors.darkBlue,
-                badgeBackgroundColor: AppColors.lightGrey.withValues(alpha: 0.2),
-                dateString: 'Completed Oct 15, 2023',
-                title: 'Midterm Algebra Exam',
-                grade: '95',
-                totalGrade: '100',
-                gradeColor: AppColors.secondaryColor,
-                statusText: 'Excellent',
-                statusColor: AppColors.secondaryColor,
-                statusBackgroundColor: AppColors.primaryColor.withValues(alpha: 0.15),
-              ),
-              StudentGradeAssessmentCard(
-                badgeText: 'TOPIC QUIZ',
-                badgeColor: AppColors.darkBlue,
-                badgeBackgroundColor: AppColors.lightGrey.withValues(alpha: 0.2),
-                dateString: 'Completed Sep 28, 2023',
-                title: 'Advanced Trigonometry Quiz',
-                grade: '88',
-                totalGrade: '100',
-                gradeColor: AppColors.secondaryColor,
-              ),
-              StudentGradeAssessmentCard(
-                badgeText: 'HOMEWORK UNIT 2',
-                badgeColor: AppColors.peach, // Or bright red/orange handling dark mode
-                badgeBackgroundColor: AppColors.peach.withValues(alpha: 0.2),
-                dateString: 'Completed Sep 12, 2023',
-                title: 'Complex Numbers Problem Set',
-                grade: '74',
-                totalGrade: '100',
-                gradeColor: AppColors.peach,
-                statusText: 'good',
-                statusColor: AppColors.peach,
-                statusBackgroundColor: AppColors.peach.withValues(alpha: 0.2),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Bottom Projection Card
-              const StudentQuarterlyProjectionCard(
-                statusMessage: 'You\'re on track for an A+',
-                examsCount: 4,
-                tasksCount: 12,
-                averagePercentage: 92,
-              ),
-            ],
+                    );
+                  }
+
+                  for (var exam in subject.exams) {
+                    DateTime? dueDate;
+                    String formattedDate = '';
+                    if (exam.dueDate.isNotEmpty) {
+                      try {
+                        dueDate = DateTime.parse(exam.dueDate);
+                        formattedDate = DateFormat('MMM dd, yyyy').format(dueDate);
+                      } catch (e) {
+                        // ignore
+                      }
+                    }
+
+                    allAssessments.add(
+                      StudentGradeAssessmentCard(
+                        badgeText: '${subject.subjectName.toUpperCase()} EXAM',
+                        badgeColor: AppColors.peach,
+                        badgeBackgroundColor: AppColors.peach.withValues(alpha: 0.2),
+                        dateString: dueDate != null ? 'Completed $formattedDate' : '',
+                        title: exam.title,
+                        grade: exam.grade.toString(),
+                        totalGrade: exam.totalMarks.toString(),
+                        gradeColor: AppColors.peach,
+                      ),
+                    );
+                  }
+                }
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Academic Performance',
+                        style: AppTextStyle.bold24.copyWith(
+                          color: AppColors.black,
+                          fontSize: 26,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      RichText(
+                        text: TextSpan(
+                          style: AppTextStyle.medium14.copyWith(
+                            color: AppColors.grey,
+                            height: 1.5,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text:
+                                  'Detailed breakdown of your progress this term. Current Weighted Average: ',
+                            ),
+                            TextSpan(
+                              text: '$overallGrade%',
+                              style: AppTextStyle.bold14.copyWith(
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ' (GPA: ',
+                            ),
+                            TextSpan(
+                              text: '$overallGpa',
+                              style: AppTextStyle.bold14.copyWith(
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ')',
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      if (allAssessments.isNotEmpty) ...[
+                        Text(
+                          'Graded Assessments',
+                          style: AppTextStyle.bold16.copyWith(
+                            color: AppColors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ...allAssessments,
+                        const SizedBox(height: 16),
+                      ],
+                      if (data.classRank != null)
+                        StudentQuarterlyProjectionCard(
+                          statusMessage: data.classRank!.text,
+                          examsCount: 0, // Mock, or calculate
+                          tasksCount: allAssessments.length,
+                          averagePercentage: overallGrade,
+                        ),
+                    ],
+                  ),
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
           ),
         ),
       ),
     );
   }
 }
+

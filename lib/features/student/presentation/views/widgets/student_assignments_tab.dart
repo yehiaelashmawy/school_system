@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:intl/intl.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
@@ -16,7 +17,24 @@ class StudentAssignmentsTab extends StatelessWidget {
     return BlocBuilder<StudentHomeworkCubit, StudentHomeworkState>(
       builder: (context, state) {
         if (state is StudentHomeworkLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Skeletonizer(
+            enabled: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: List.generate(
+                3,
+                (index) => StudentAssignmentItemCard(
+                  status: AssignmentStatus.notSubmitted,
+                  title: 'Loading Assignment Title',
+                  submittedDate: 'Loading Date',
+                  isDueSoon: false,
+                  description: 'Loading description...',
+                  onViewDetails: () {},
+                  onSecondaryAction: () {},
+                ),
+              ),
+            ),
+          );
         } else if (state is StudentHomeworkFailure) {
           return Center(
             child: Text(
