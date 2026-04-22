@@ -44,23 +44,25 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Filter Subjects',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  // Fallback to black if darkBlue is unavailable, but AppColors is imported
-                  color: Color(0xff0F2042),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Filter Subjects',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    // Fallback to black if darkBlue is unavailable, but AppColors is imported
+                    color: Color(0xff0F2042),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ...filters.map(_buildFilterOption),
-              const SizedBox(height: 16),
-            ],
+                const SizedBox(height: 16),
+                ...filters.map(_buildFilterOption),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         );
       },
