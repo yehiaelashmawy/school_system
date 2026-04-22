@@ -90,7 +90,9 @@ class _StudentListState extends State<StudentList>
     final map = <String, TeacherExamModel>{};
     for (final student in students) {
       for (final exam in student.details.exams) {
-        final key = exam.oid.isNotEmpty ? exam.oid : '${exam.name}-${exam.date}';
+        final key = exam.oid.isNotEmpty
+            ? exam.oid
+            : '${exam.name}-${exam.date}';
         map.putIfAbsent(key, () => exam);
       }
     }
@@ -123,7 +125,9 @@ class _StudentListState extends State<StudentList>
       percentCount += 1;
     }
 
-    final avgPercent = percentCount == 0 ? 0.0 : (percentSum / percentCount).toDouble();
+    final avgPercent = percentCount == 0
+        ? 0.0
+        : (percentSum / percentCount).toDouble();
     return TeacherAttendanceModel(
       presentCount: present,
       absentCount: absent,
@@ -145,15 +149,15 @@ class _StudentListState extends State<StudentList>
 
   /// Merges [details.attendance.recentRecords] from every student (same API payload).
   List<TeacherAttendanceListEntry> get _attendanceRecentEntries {
-    final students =
-        _currentClass?.students ?? const <TeacherStudentModel>[];
+    final students = _currentClass?.students ?? const <TeacherStudentModel>[];
     final entries = <TeacherAttendanceListEntry>[];
     for (final student in students) {
       for (final record in student.details.attendance.recentRecords) {
         entries.add(
           TeacherAttendanceListEntry(
-            studentName:
-                student.fullName.trim().isNotEmpty ? student.fullName : 'Student',
+            studentName: student.fullName.trim().isNotEmpty
+                ? student.fullName
+                : 'Student',
             record: record,
           ),
         );
@@ -175,17 +179,14 @@ class _StudentListState extends State<StudentList>
     if (classOid == null || classOid.isEmpty) return;
 
     final result = await TeacherClassesRepo(ApiService()).getTeacherClasses();
-    result.fold(
-      (_) {},
-      (classes) {
-        final updated = classes.where((c) => c.oid == classOid).toList();
-        if (updated.isNotEmpty && mounted) {
-          setState(() {
-            _currentClass = updated.first;
-          });
-        }
-      },
-    );
+    result.fold((_) {}, (classes) {
+      final updated = classes.where((c) => c.oid == classOid).toList();
+      if (updated.isNotEmpty && mounted) {
+        setState(() {
+          _currentClass = updated.first;
+        });
+      }
+    });
   }
 
   Future<void> _openAddLesson() async {
@@ -338,8 +339,8 @@ class _StudentListState extends State<StudentList>
           onPressed: _isExamsTab
               ? _openAddExam
               : (_isHomeworkTab
-                  ? _openAddHomework
-                  : (_isLessonsTab ? _openAddLesson : null)),
+                    ? _openAddHomework
+                    : (_isLessonsTab ? _openAddLesson : null)),
           backgroundColor: AppColors.secondaryColor,
           elevation: 4,
           shape: RoundedRectangleBorder(

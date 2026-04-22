@@ -108,9 +108,7 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case StudentAttendanceMethodView.routeName:
       final subject = settings.arguments as String;
       return MaterialPageRoute(
-        builder: (context) => StudentAttendanceMethodView(
-          subject: subject,
-        ),
+        builder: (context) => StudentAttendanceMethodView(subject: subject),
       );
     case StudentScanQrView.routeName:
       final subject = settings.arguments as String;
@@ -151,10 +149,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       final args = settings.arguments;
       if (args is TeacherClassModel) {
         return MaterialPageRoute(
-          builder: (context) => StudentList(
-            className: args.name,
-            teacherClass: args,
-          ),
+          builder: (context) =>
+              StudentList(className: args.name, teacherClass: args),
         );
       }
       final className = args as String? ?? 'Grade 10-A - Mathematics';
@@ -198,11 +194,13 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       }
     case ManualAttendanceView.routeName:
       {
-        final classArg = settings.arguments as TeacherClassModel?;
-        if (classArg != null) {
+        final args = settings.arguments as ManualAttendanceViewArgs?;
+        if (args != null) {
           return MaterialPageRoute(
-            builder: (context) =>
-                ManualAttendanceView(teacherClass: classArg),
+            builder: (context) => ManualAttendanceView(
+              teacherClass: args.teacherClass,
+              session: args.session,
+            ),
           );
         }
         return MaterialPageRoute(builder: (context) => const SplashView());
@@ -238,9 +236,7 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const MessagesView());
     case ChatView.routeName:
       return MaterialPageRoute(
-        builder: (context) => ChatView(
-          conversation: settings.arguments,
-        ),
+        builder: (context) => ChatView(conversation: settings.arguments),
       );
     case GradeSubmissionView.routeName:
       return MaterialPageRoute(

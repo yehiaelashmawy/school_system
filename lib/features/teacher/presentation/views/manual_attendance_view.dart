@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/manual_attendance_view_body.dart';
+
+class ManualAttendanceViewArgs {
+  final TeacherClassModel teacherClass;
+  final AttendanceSessionModel? session;
+
+  ManualAttendanceViewArgs({required this.teacherClass, this.session});
+}
 
 class ManualAttendanceView extends StatelessWidget {
   static const String routeName = '/manual_attendance_view';
 
   final TeacherClassModel teacherClass;
+  final AttendanceSessionModel? session;
 
-  const ManualAttendanceView({super.key, required this.teacherClass});
+  const ManualAttendanceView({
+    super.key,
+    required this.teacherClass,
+    this.session,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +43,10 @@ class ManualAttendanceView extends StatelessWidget {
           ),
         ),
       ),
-      body: ManualAttendanceViewBody(teacherClass: teacherClass),
+      body: ManualAttendanceViewBody(
+        teacherClass: teacherClass,
+        session: session,
+      ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
