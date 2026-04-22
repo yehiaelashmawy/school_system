@@ -174,6 +174,11 @@ class _ActiveClassesTab extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final c = classes[index];
+        final studentAvatars =
+            c.students.map((s) => s.avatar).take(3).toList();
+        final extraCount =
+            c.studentsCount > 3 ? c.studentsCount - studentAvatars.length : 0;
+
         return TeacherClassCard(
           image: 'assets/images/class_image.png',
           badgeText: 'Level ${c.level}',
@@ -181,7 +186,8 @@ class _ActiveClassesTab extends StatelessWidget {
           subtitle: 'Level ${c.level}',
           numStudents: c.studentsCount.toString(),
           schedule: 'Sections: ${c.sectionsCount}',
-          extraStudentsCount: 0,
+          extraStudentsCount: extraCount,
+          studentAvatars: studentAvatars,
           onViewClass: () async {
             final changed = await Navigator.pushNamed(
               context,

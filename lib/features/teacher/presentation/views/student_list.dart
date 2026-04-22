@@ -320,6 +320,7 @@ class _StudentListState extends State<StudentList>
           HomeworkListBody(homeworks: _classHomeworks),
           ExamsListBody(exams: _classExams),
           AttendanceListBody(
+            teacherClass: _currentClass,
             className: _currentClass?.name ?? widget.className,
             studentCount: _currentClass?.studentsCount ?? 0,
             summary: _classAttendance,

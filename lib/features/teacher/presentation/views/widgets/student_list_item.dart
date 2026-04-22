@@ -7,13 +7,13 @@ class StudentListItem extends StatelessWidget {
     required this.name,
     required this.id,
     required this.isOnline,
-    required this.avatarColor,
+    required this.avatar,
   });
 
   final String name;
   final String id;
   final bool isOnline;
-  final Color avatarColor;
+  final String avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +27,29 @@ class StudentListItem extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(
-                  color: avatarColor,
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.person,
-                  color: AppColors.black.withValues(alpha: 0.54),
-                  size: 28,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: avatar.isEmpty
+                      ? Icon(
+                          Icons.person,
+                          color: AppColors.black.withValues(alpha: 0.54),
+                          size: 28,
+                        )
+                      : avatar.startsWith('assets')
+                          ? Image.asset(avatar, fit: BoxFit.cover)
+                          : Image.network(
+                              avatar,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                Icons.person,
+                                color: AppColors.black.withValues(alpha: 0.54),
+                                size: 28,
+                              ),
+                            ),
                 ),
               ),
               if (isOnline)

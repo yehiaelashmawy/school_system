@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_method_view_body.dart';
 
 class AttendanceMethodView extends StatelessWidget {
   static const String routeName = '/attendance_method_view';
 
-  const AttendanceMethodView({super.key});
+  final TeacherClassModel teacherClass;
+
+  const AttendanceMethodView({super.key, required this.teacherClass});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class AttendanceMethodView extends StatelessWidget {
           ),
         ),
       ),
-      body: const AttendanceMethodViewBody(),
+      body: AttendanceMethodViewBody(teacherClass: teacherClass),
     );
   }
 }

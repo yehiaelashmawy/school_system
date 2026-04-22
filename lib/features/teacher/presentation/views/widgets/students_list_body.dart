@@ -61,7 +61,7 @@ class StudentsListBody extends StatelessWidget {
                             : 'Unknown',
                         id: student.oid,
                         isOnline: false,
-                        avatarColor: const Color(0xFFFDE68A),
+                        avatar: student.avatar,
                       );
                     },
                   )

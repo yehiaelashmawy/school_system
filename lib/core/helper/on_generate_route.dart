@@ -187,13 +187,26 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
         builder: (context) => const TakeAttendanceView(),
       );
     case AttendanceMethodView.routeName:
-      return MaterialPageRoute(
-        builder: (context) => const AttendanceMethodView(),
-      );
+      {
+        final classArg = settings.arguments as TeacherClassModel?;
+        if (classArg != null) {
+          return MaterialPageRoute(
+            builder: (context) => AttendanceMethodView(teacherClass: classArg),
+          );
+        }
+        return MaterialPageRoute(builder: (context) => const SplashView());
+      }
     case ManualAttendanceView.routeName:
-      return MaterialPageRoute(
-        builder: (context) => const ManualAttendanceView(),
-      );
+      {
+        final classArg = settings.arguments as TeacherClassModel?;
+        if (classArg != null) {
+          return MaterialPageRoute(
+            builder: (context) =>
+                ManualAttendanceView(teacherClass: classArg),
+          );
+        }
+        return MaterialPageRoute(builder: (context) => const SplashView());
+      }
 
     case GenerateQrCodeView.routeName:
       return MaterialPageRoute(

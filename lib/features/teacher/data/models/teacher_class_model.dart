@@ -45,6 +45,7 @@ class TeacherStudentModel {
   final String fullName;
   final String email;
   final String phone;
+  final String avatar;
   final TeacherStudentDetailsModel details;
 
   const TeacherStudentModel({
@@ -52,6 +53,7 @@ class TeacherStudentModel {
     required this.fullName,
     required this.email,
     required this.phone,
+    this.avatar = '',
     this.details = const TeacherStudentDetailsModel(),
   });
 
@@ -61,6 +63,7 @@ class TeacherStudentModel {
       fullName: (json['fullName'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
       phone: (json['phone'] ?? '').toString(),
+      avatar: json['avatar']?.toString() ?? '',
       details: TeacherStudentDetailsModel.fromJson(
         (json['details'] as Map?)?.cast<String, dynamic>() ?? const {},
       ),

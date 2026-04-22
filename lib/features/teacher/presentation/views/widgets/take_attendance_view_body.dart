@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/teacher_classes_cubit/teacher_classes_state.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/take_attendance_card.dart';
 import 'package:school_system/features/teacher/presentation/views/attendance_report_view.dart';
 import 'package:school_system/features/teacher/presentation/views/attendance_method_view.dart';
@@ -10,6 +15,37 @@ class TakeAttendanceViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<TeacherClassesCubit, TeacherClassesState>(
+      builder: (context, state) {
+        if (state is TeacherClassesLoading) {
+          return Skeletonizer(
+            enabled: true,
+            child: _buildList(
+              context,
+              List.generate(
+                3,
+                (index) => TeacherClassModel(
+                  oid: 'skeleton-$index',
+                  name: 'Mathematics',
+                  level: 'Grade 10-A',
+                  createdAt: '',
+                  studentsCount: 24,
+                  sectionsCount: 1,
+                ),
+              ),
+            ),
+          );
+        } else if (state is TeacherClassesFailure) {
+          return Center(child: Text(state.error.errorMessage));
+        } else if (state is TeacherClassesSuccess) {
+          return _buildList(context, state.classes);
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<TeacherClassModel> classes) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       children: [
@@ -31,54 +67,26 @@ class TakeAttendanceViewBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        TakeAttendanceCard(
-          imagePath: 'assets/images/lesson1.png',
-          statusText: 'NEXT SESSION: 09:00 AM',
-          statusColor: AppColors.primaryColor,
-          grade: 'Grade 10-A',
-          subject: 'Mathematics',
-          studentsCount: 24,
-          onViewReports: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceReportView.routeName);
-          },
-          onTakeAttendance: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceMethodView.routeName);
-          },
-        ),
-        TakeAttendanceCard(
-          imagePath: 'assets/images/lesson2.png',
-          statusText: 'NEXT SESSION: 11:30 AM',
-          statusColor: const Color(0xff7D8B9D), // Greyish purple color
-          grade: 'Grade 11-B',
-          subject: 'Advanced Calculus',
-          studentsCount: 18,
-          onViewReports: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceReportView.routeName);
-          },
-          onTakeAttendance: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceMethodView.routeName);
-          },
-        ),
-        TakeAttendanceCard(
-          imagePath: 'assets/images/lesson3.png',
-          statusText: 'ATTENDANCE COMPLETED',
-          statusColor: const Color(0xff0BA96A), // Emerald green
-          grade: 'Grade 9-C',
-          subject: 'Algebra Basics',
-          studentsCount: 30,
-          onViewReports: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceReportView.routeName);
-          },
-          onTakeAttendance: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceMethodView.routeName);
-          },
-        ),
+        ...classes.map((c) {
+          return TakeAttendanceCard(
+            imagePath: 'assets/images/lesson1.png',
+            statusText: 'SESSION: ${c.level}',
+            statusColor: AppColors.primaryColor,
+            grade: c.level,
+            subject: c.name,
+            studentsCount: c.studentsCount,
+            onViewReports: () {
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamed(AttendanceReportView.routeName);
+            },
+            onTakeAttendance: () {
+              Navigator.of(context, rootNavigator: true).pushNamed(
+                AttendanceMethodView.routeName,
+                arguments: c,
+              );
+            },
+          );
+        }),
         const SizedBox(height: 24),
       ],
     );

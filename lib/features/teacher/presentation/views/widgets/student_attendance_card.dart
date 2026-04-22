@@ -59,13 +59,32 @@ class StudentAttendanceCard extends StatelessWidget {
           final studentInfo = Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  imagePath,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+              Container(
+                width: 50,
+                height: 50,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: imagePath.isEmpty
+                      ? Icon(
+                          Icons.person,
+                          size: 24,
+                          color: AppColors.black.withValues(alpha: 0.54),
+                        )
+                      : imagePath.startsWith('assets')
+                          ? Image.asset(imagePath, fit: BoxFit.cover)
+                          : Image.network(
+                              imagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                Icons.person,
+                                size: 24,
+                                color: AppColors.black.withValues(alpha: 0.54),
+                              ),
+                            ),
                 ),
               ),
               const SizedBox(width: 16),

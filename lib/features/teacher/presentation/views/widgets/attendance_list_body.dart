@@ -18,6 +18,7 @@ class TeacherAttendanceListEntry {
 }
 
 class AttendanceListBody extends StatelessWidget {
+  final TeacherClassModel? teacherClass;
   final String className;
   final int studentCount;
   final TeacherAttendanceModel summary;
@@ -27,6 +28,7 @@ class AttendanceListBody extends StatelessWidget {
 
   const AttendanceListBody({
     super.key,
+    this.teacherClass,
     required this.className,
     required this.studentCount,
     required this.summary,
@@ -89,8 +91,10 @@ class AttendanceListBody extends StatelessWidget {
                 .pushNamed(AttendanceReportView.routeName);
           },
           onTakeAttendance: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceMethodView.routeName);
+            Navigator.of(context, rootNavigator: true).pushNamed(
+              AttendanceMethodView.routeName,
+              arguments: teacherClass,
+            );
           },
         ),
         const SizedBox(height: 24),

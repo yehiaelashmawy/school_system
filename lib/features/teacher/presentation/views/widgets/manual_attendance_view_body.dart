@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_stats_row.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/student_attendance_card.dart';
 
@@ -21,43 +22,31 @@ class StudentData {
 }
 
 class ManualAttendanceViewBody extends StatefulWidget {
-  const ManualAttendanceViewBody({super.key});
+  final TeacherClassModel teacherClass;
+
+  const ManualAttendanceViewBody({super.key, required this.teacherClass});
 
   @override
-  State<ManualAttendanceViewBody> createState() => _ManualAttendanceViewBodyState();
+  State<ManualAttendanceViewBody> createState() =>
+      _ManualAttendanceViewBodyState();
 }
 
 class _ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
-  final List<StudentData> students = [
-    StudentData(
-      name: 'Julianne Devis',
-      subtitle: '"Late last Monday"',
-      imagePath: 'assets/images/profile_photo.png',
-      status: AttendanceStatus.present,
-    ),
-    StudentData(
-      name: 'Arthur Morgan',
-      subtitle: 'Roll No. 002',
-      imagePath: 'assets/images/profile_photo.png',
-    ),
-    StudentData(
-      name: 'Lydia Bennet',
-      subtitle: 'Roll No. 003',
-      imagePath: 'assets/images/profile_photo.png',
-      hasHonorRoll: true,
-      status: AttendanceStatus.absent,
-    ),
-    StudentData(
-      name: 'Tobias Kingston',
-      subtitle: 'Roll No. 004',
-      imagePath: 'assets/images/profile_photo.png',
-    ),
-    StudentData(
-      name: 'Sarah Walker',
-      subtitle: 'Roll No. 005',
-      imagePath: 'assets/images/profile_photo.png',
-    ),
-  ];
+  late final List<StudentData> students;
+
+  @override
+  void initState() {
+    super.initState();
+    students = widget.teacherClass.students.asMap().entries.map((entry) {
+      final index = entry.key;
+      final s = entry.value;
+      return StudentData(
+        name: s.fullName,
+        subtitle: 'Roll No. ${(index + 1).toString().padLeft(3, '0')}',
+        imagePath: s.avatar,
+      );
+    }).toList();
+  }
 
   int get enrolledCount => students.length;
   int get absentCount =>
@@ -65,11 +54,12 @@ class _ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
 
   @override
   Widget build(BuildContext context) {
+    final teacherClass = widget.teacherClass;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       children: [
         Text(
-          'CLASS 4B • HISTORY OF ART',
+          '${teacherClass.level.toUpperCase()} • ${teacherClass.name.toUpperCase()}',
           style: AppTextStyle.bold12.copyWith(
             color: AppColors.grey,
             letterSpacing: 1.0,
@@ -78,11 +68,14 @@ class _ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
         const SizedBox(height: 8),
         Text(
           'Attendance Check',
-          style: AppTextStyle.bold24.copyWith(color: AppColors.black, fontSize: 32),
+          style: AppTextStyle.bold24.copyWith(
+            color: AppColors.black,
+            fontSize: 32,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Monday, October 23rd • Morning Session',
+          '${teacherClass.studentsCount} Students Enrolled',
           style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
         ),
         const SizedBox(height: 24),

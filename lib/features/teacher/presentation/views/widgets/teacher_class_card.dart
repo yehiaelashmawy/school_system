@@ -10,6 +10,7 @@ class TeacherClassCard extends StatelessWidget {
   final String numStudents;
   final String schedule;
   final int extraStudentsCount;
+  final List<String> studentAvatars;
   final VoidCallback onViewClass;
 
   const TeacherClassCard({
@@ -21,6 +22,7 @@ class TeacherClassCard extends StatelessWidget {
     required this.numStudents,
     required this.schedule,
     required this.extraStudentsCount,
+    this.studentAvatars = const [],
     required this.onViewClass,
   });
 
@@ -44,6 +46,7 @@ class TeacherClassCard extends StatelessWidget {
                 const SizedBox(height: 24),
                 _ClassActionRow(
                   extraStudentsCount: extraStudentsCount,
+                  studentAvatars: studentAvatars,
                   onViewClass: onViewClass,
                 ),
               ],
@@ -184,10 +187,12 @@ class _ClassDetailsRow extends StatelessWidget {
 class _ClassActionRow extends StatelessWidget {
   const _ClassActionRow({
     required this.extraStudentsCount,
+    required this.studentAvatars,
     required this.onViewClass,
   });
 
   final int extraStudentsCount;
+  final List<String> studentAvatars;
   final VoidCallback onViewClass;
 
   @override
@@ -214,54 +219,74 @@ class _ClassActionRow extends StatelessWidget {
   }
 
   Widget _buildStudentAvatars() {
+    final displayAvatars = studentAvatars.take(3).toList();
     return SizedBox(
       width: 110,
       height: 40,
       child: Stack(
         children: [
-          Positioned(left: 0, child: _buildAvatar(const Color(0xFFFDE68A))),
-          Positioned(left: 20, child: _buildAvatar(const Color(0xFFFECACA))),
-          Positioned(left: 40, child: _buildAvatar(const Color(0xFFBFDBFE))),
-          Positioned(
-            left: 60,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: AppColors.darkBlue,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.white, width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  '+$extraStudentsCount',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+          ...displayAvatars.asMap().entries.map((entry) {
+            return Positioned(
+              left: entry.key * 20.0,
+              child: _buildAvatar(entry.value),
+            );
+          }),
+          if (extraStudentsCount > 0)
+            Positioned(
+              left: displayAvatars.length * 20.0,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.darkBlue,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.white, width: 2),
+                ),
+                child: Center(
+                  child: Text(
+                    '+$extraStudentsCount',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildAvatar(Color color) {
+  Widget _buildAvatar(String imagePath) {
     return Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: color,
+        color: AppColors.white,
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.white, width: 2),
       ),
-      child: Icon(
-        Icons.person,
-        size: 20,
-        color: AppColors.black.withValues(alpha: 0.54),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: imagePath.isEmpty
+            ? Icon(
+                Icons.person,
+                size: 20,
+                color: AppColors.black.withValues(alpha: 0.54),
+              )
+            : imagePath.startsWith('assets')
+                ? Image.asset(imagePath, fit: BoxFit.cover)
+                : Image.network(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.person,
+                      size: 20,
+                      color: AppColors.black.withValues(alpha: 0.54),
+                    ),
+                  ),
       ),
     );
   }

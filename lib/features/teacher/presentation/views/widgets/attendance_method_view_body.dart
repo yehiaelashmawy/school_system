@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_method_card.dart';
 
 class AttendanceMethodViewBody extends StatelessWidget {
-  const AttendanceMethodViewBody({super.key});
+  final TeacherClassModel teacherClass;
+
+  const AttendanceMethodViewBody({super.key, required this.teacherClass});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class AttendanceMethodViewBody extends StatelessWidget {
                     'Select a preferred method to verify student presence for ',
               ),
               TextSpan(
-                text: 'Advanced Calculus - Section 4B',
+                text: '${teacherClass.name} - ${teacherClass.level}',
                 style: AppTextStyle.medium14.copyWith(
                   color: AppColors.secondaryColor,
                 ),
@@ -60,7 +63,11 @@ class AttendanceMethodViewBody extends StatelessWidget {
               'Personally mark students present or absent from the class roster.',
           actionText: 'SELECT METHOD',
           onTap: () {
-            Navigator.pushNamed(context, '/manual_attendance_view');
+            Navigator.pushNamed(
+              context,
+              '/manual_attendance_view',
+              arguments: teacherClass,
+            );
           },
         ),
         AttendanceMethodCard(
