@@ -21,15 +21,11 @@ class MessagesViewBody extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Container(
             decoration: BoxDecoration(
-              color: ThemeManager.isDarkMode
-                  ? AppColors.darkBlue
-                  : Colors.white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(24),
-              border: ThemeManager.isDarkMode
-                  ? Border.all(
-                      color: AppColors.lightGrey.withValues(alpha: 0.5),
-                    )
-                  : Border.all(color: const Color(0xffE2E8F0)),
+              border: Border.all(
+                color: AppColors.lightGrey.withValues(alpha: 0.5),
+              ),
               boxShadow: ThemeManager.isDarkMode
                   ? []
                   : [
@@ -41,6 +37,7 @@ class MessagesViewBody extends StatelessWidget {
                     ],
             ),
             child: TextField(
+              style: AppTextStyle.medium14.copyWith(color: AppColors.darkBlue),
               decoration: InputDecoration(
                 hintText: 'Search conversations',
                 hintStyle: AppTextStyle.regular14.copyWith(
@@ -65,9 +62,7 @@ class MessagesViewBody extends StatelessWidget {
           unselectedLabelStyle: AppTextStyle.semiBold16,
           indicatorColor: AppColors.primaryColor,
           indicatorWeight: 3,
-          dividerColor: ThemeManager.isDarkMode
-              ? AppColors.lightGrey
-              : const Color(0xffE2E8F0),
+          dividerColor: AppColors.lightGrey,
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Teachers'),

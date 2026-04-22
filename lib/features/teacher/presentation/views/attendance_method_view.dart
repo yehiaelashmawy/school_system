@@ -16,28 +16,16 @@ class AttendanceMethodView extends StatelessWidget {
         backgroundColor: AppColors.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xff0F52BD)),
+          icon: Icon(Icons.arrow_back, color: AppColors.secondaryColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Select Attendance Method',
           style: AppTextStyle.bold16.copyWith(
-            color: const Color(0xff0F2042),
+            color: AppColors.darkBlue,
             fontSize: 18,
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 24.0),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.primaryColor.withValues(alpha: 0.2),
-              backgroundImage: const AssetImage(
-                'assets/images/profile_photo.png',
-              ),
-            ),
-          ),
-        ],
       ),
       body: const AttendanceMethodViewBody(),
     );

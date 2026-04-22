@@ -16,13 +16,13 @@ class ManualAttendanceView extends StatelessWidget {
         backgroundColor: AppColors.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xff0F52BD)),
+          icon: Icon(Icons.arrow_back, color: AppColors.secondaryColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Manual Attendance',
           style: AppTextStyle.bold16.copyWith(
-            color: const Color(0xff0F2042),
+            color: AppColors.darkBlue,
             fontSize: 18,
           ),
         ),
@@ -39,7 +39,7 @@ class ManualAttendanceView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff065AD8),
+                    backgroundColor: AppColors.secondaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

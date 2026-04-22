@@ -11,7 +11,7 @@ class StudentSubjectsAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-      color: Colors.white,
+      color: AppColors.white,
       child: Row(
         children: [
           Container(

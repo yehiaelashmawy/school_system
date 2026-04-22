@@ -78,27 +78,8 @@ class TeacherCustomAppBar extends StatelessWidget {
               ],
             ),
           ),
-
-          _buildIconButton(Icons.search),
         ],
       ),
-    );
-  }
-
-  Widget _buildIconButton(IconData icon, {bool hasBadge = false}) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.lightGrey.withValues(alpha: 0.3),
-        shape: BoxShape.circle,
-      ),
-      child: hasBadge
-          ? Badge(
-              smallSize: 8,
-              backgroundColor: const Color(0xFFEF4444),
-              child: Icon(icon, color: AppColors.darkBlue, size: 24),
-            )
-          : Icon(icon, color: AppColors.darkBlue, size: 24),
     );
   }
 }

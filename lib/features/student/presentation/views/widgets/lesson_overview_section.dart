@@ -44,7 +44,7 @@ class LessonOverviewSection extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xffF2F3FE),
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(

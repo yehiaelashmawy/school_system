@@ -132,11 +132,11 @@ class _CurriculumCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: AppColors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -248,7 +248,7 @@ class _CurriculumCard extends StatelessWidget {
             right: index * 14.0,
             child: CircleAvatar(
               radius: 12,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white,
               child: index == 2
                   ? CircleAvatar(
                       radius: 10,

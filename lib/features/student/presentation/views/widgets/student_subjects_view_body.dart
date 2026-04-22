@@ -49,13 +49,12 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Filter Subjects',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    // Fallback to black if darkBlue is unavailable, but AppColors is imported
-                    color: Color(0xff0F2042),
+                    color: AppColors.darkBlue,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -75,7 +74,7 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
       title: Text(
         filter,
         style: TextStyle(
-          color: _selectedFilter == filter ? AppColors.primaryColor : const Color(0xff0F2042),
+          color: _selectedFilter == filter ? AppColors.primaryColor : AppColors.darkBlue,
           fontWeight: _selectedFilter == filter ? FontWeight.bold : FontWeight.w500,
         ),
       ),
@@ -94,7 +93,7 @@ class _StudentSubjectsViewBodyState extends State<StudentSubjectsViewBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: AppColors.white,
       child: SafeArea(
         bottom: false,
         child: Container(
