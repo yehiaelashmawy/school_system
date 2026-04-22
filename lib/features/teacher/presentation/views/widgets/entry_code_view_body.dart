@@ -1,90 +1,260 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
-import 'package:school_system/features/teacher/presentation/views/widgets/active_course_card.dart';
+import 'package:school_system/core/utils/theme_manager.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/code_selector_card.dart';
-import 'package:school_system/features/teacher/presentation/views/widgets/joined_students_card.dart';
 
 class EntryCodeViewBody extends StatefulWidget {
-  const EntryCodeViewBody({super.key});
+  final AttendanceSessionModel session;
+  final bool isLoading;
+
+  EntryCodeViewBody({super.key, required this.session, this.isLoading = false});
 
   @override
   State<EntryCodeViewBody> createState() => _EntryCodeViewBodyState();
 }
 
 class _EntryCodeViewBodyState extends State<EntryCodeViewBody> {
-  static const int _totalStudents = 45;
-
-  List<String> _codes = ['84', '29', '17'];
+  late final List<Map<String, dynamic>> _students;
+  String? _lastScannedName;
   int _activeCodeIndex = 0;
-  int _joinedCount = 32;
-  late Timer _joinTimer;
 
   @override
   void initState() {
     super.initState();
-    // Simulate students joining every ~2 seconds until all joined
-    _joinTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
-      if (_joinedCount >= _totalStudents) {
-        _joinTimer.cancel();
-        return;
-      }
-      if (mounted) {
-        setState(() => _joinedCount++);
-      }
-    });
+    _students = widget.session.students.map((s) {
+      return {'oid': s.studentOid, 'name': s.studentName, 'scanned': false};
+    }).toList();
   }
 
-  @override
-  void dispose() {
-    _joinTimer.cancel();
-    super.dispose();
-  }
-
-  void _generateNewCode() {
-    final rng = Random();
-    setState(() {
-      _codes = List.generate(3, (_) => (rng.nextInt(90) + 10).toString());
-      _activeCodeIndex = 0;
-    });
-  }
+  int get _total => _students.length;
+  int get _presentCount => _students.where((s) => s['scanned'] == true).length;
+  int get _pendingCount => _total - _presentCount;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 28),
-                CodeSelectorCard(
-                  codes: _codes,
-                  activeIndex: _activeCodeIndex,
-                  onSelect: (i) => setState(() => _activeCodeIndex = i),
-                ),
-                const SizedBox(height: 24),
-                const _SectionDivider(),
-                const SizedBox(height: 20),
-                const ActiveCourseCard(
-                  courseName: 'Advanced Pedagogy 402',
-                  location: 'Main Lecture Hall C',
-                ),
-                const SizedBox(height: 20),
-                const _SectionDivider(),
-                const SizedBox(height: 20),
-                JoinedStudentsCard(joined: _joinedCount, total: _totalStudents),
-              ],
+    final List<String> codes =
+        widget.session.randomNumbers
+            ?.map((e) => e.toString().padLeft(2, '0'))
+            .toList() ??
+        ['00', '00', '00'];
+
+    return Skeletonizer(
+      enabled: widget.isLoading,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 28),
+                  CodeSelectorCard(
+                    codes: codes,
+                    activeIndex: _activeCodeIndex,
+                    onSelect: (i) => setState(() => _activeCodeIndex = i),
+                  ),
+                  const SizedBox(height: 32),
+                  _SectionDivider(),
+                  const SizedBox(height: 24),
+
+                  // Session info
+                  Text(
+                    'SESSION DETAILS',
+                    style: AppTextStyle.bold12.copyWith(
+                      color: AppColors.grey,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.lightGrey.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffDDE4FF),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.school_outlined,
+                            color: Color(0xff065AD8),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.session.className,
+                                style: AppTextStyle.bold16.copyWith(
+                                  color: AppColors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                widget.session.lessonName,
+                                style: AppTextStyle.medium14.copyWith(
+                                  color: AppColors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Live feedback banner for entries
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    child: _lastScannedName != null
+                        ? Container(
+                            key: ValueKey(_lastScannedName),
+                            margin: const EdgeInsets.only(bottom: 24),
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xff065AD8,
+                              ).withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(
+                                  0xff065AD8,
+                                ).withValues(alpha: 0.25),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Color(0xff065AD8),
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    '$_lastScannedName matched the code',
+                                    style: AppTextStyle.medium14.copyWith(
+                                      color: const Color(0xff065AD8),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+
+                  // Stats Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildBottomStatCard(
+                          '$_presentCount/$_total',
+                          'STUDENTS\nPRESENT',
+                          AppColors.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildBottomStatCard(
+                          _pendingCount.toString().padLeft(2, '0'),
+                          'PENDING',
+                          const Color(0xff993300),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Student list
+                  Text(
+                    'STUDENT STATUS',
+                    style: AppTextStyle.bold12.copyWith(
+                      color: AppColors.grey,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...List.generate(_students.length, (index) {
+                    final student = _students[index];
+                    final bool scanned = student['scanned'] as bool;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: scanned
+                              ? const Color(0xff065AD8).withValues(alpha: 0.3)
+                              : AppColors.lightGrey.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: scanned
+                                  ? const Color(0xff065AD8)
+                                  : AppColors.lightGrey,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              student['name'] as String,
+                              style: AppTextStyle.medium14.copyWith(
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            scanned ? 'Joined' : 'Waiting',
+                            style: AppTextStyle.bold12.copyWith(
+                              color: scanned
+                                  ? const Color(0xff065AD8)
+                                  : AppColors.grey,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
-        ),
-        _buildGenerateButton(),
-      ],
+        ],
+      ),
     );
   }
 
@@ -125,53 +295,42 @@ class _EntryCodeViewBodyState extends State<EntryCodeViewBody> {
     );
   }
 
-  Widget _buildGenerateButton() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
-        child: GestureDetector(
-          onTap: _generateNewCode,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.refresh_rounded,
-                  color: Color(0xff065AD8),
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Generate New Code',
-                  style: AppTextStyle.semiBold16.copyWith(
-                    color: const Color(0xff065AD8),
-                  ),
-                ),
-              ],
+  Widget _buildBottomStatCard(String value, String label, Color valueColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        color: ThemeManager.isDarkMode
+            ? AppColors.lightGrey.withValues(alpha: 0.2)
+            : const Color(0xffF4F7FB),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: AppTextStyle.bold24.copyWith(
+              color: valueColor,
+              fontSize: 26,
             ),
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppTextStyle.bold12.copyWith(
+              color: AppColors.grey,
+              letterSpacing: 1.0,
+              fontSize: 10,
+              height: 1.4,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _SectionDivider extends StatelessWidget {
-  const _SectionDivider();
-
   @override
   Widget build(BuildContext context) {
     return Divider(

@@ -226,7 +226,15 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       }
 
     case EntryCodeView.routeName:
-      return MaterialPageRoute(builder: (context) => const EntryCodeView());
+      {
+        final session = settings.arguments as AttendanceSessionModel?;
+        if (session != null) {
+          return MaterialPageRoute(
+            builder: (context) => EntryCodeView(session: session),
+          );
+        }
+        return MaterialPageRoute(builder: (context) => const SplashView());
+      }
 
     case AttendanceReportView.routeName:
       return MaterialPageRoute(

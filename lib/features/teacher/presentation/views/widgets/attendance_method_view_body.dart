@@ -8,6 +8,7 @@ import 'package:school_system/features/teacher/presentation/manager/start_attend
 import 'package:school_system/features/teacher/presentation/manager/start_attendance_cubit/start_attendance_state.dart';
 import 'package:school_system/features/teacher/presentation/views/generate_qr_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/manual_attendance_view.dart';
+import 'package:school_system/features/teacher/presentation/views/entry_code_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_lesson_selector.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_method_card.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -34,7 +35,6 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
   void initState() {
     super.initState();
     _selectedLessonOid = widget.lessonId;
-    // If no lessonId passed, and we have lessons, select the first one by default
     final lessons = _classLessons;
     if (_selectedLessonOid == null && lessons.isNotEmpty) {
       _selectedLessonOid = lessons.first.oid;
@@ -56,7 +56,6 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
       final status = lesson.status.toLowerCase();
       return status != 'expired' && status != 'completed';
     }).toList();
-    // Sort by date descending
     lessons.sort((a, b) {
       final da = DateTime.tryParse(a.date);
       final db = DateTime.tryParse(b.date);
@@ -76,6 +75,13 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
             Navigator.pushNamed(
               context,
               GenerateQrCodeView.routeName,
+              arguments: state.session,
+            );
+          } else if (state.session.method == 3) {
+            // Entry Code
+            Navigator.pushNamed(
+              context,
+              EntryCodeView.routeName,
               arguments: state.session,
             );
           } else {
@@ -170,10 +176,10 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                     return;
                   }
                   context.read<StartAttendanceCubit>().startSession(
-                        classOid: widget.teacherClass.oid,
-                        method: 1, // Manual
-                        lessonOid: _selectedLessonOid,
-                      );
+                    classOid: widget.teacherClass.oid,
+                    method: 1, // Manual
+                    lessonOid: _selectedLessonOid,
+                  );
                 },
               ),
               AttendanceMethodCard(
@@ -200,10 +206,10 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                     return;
                   }
                   context.read<StartAttendanceCubit>().startSession(
-                        classOid: widget.teacherClass.oid,
-                        method: 2, // QR Code
-                        lessonOid: _selectedLessonOid,
-                      );
+                    classOid: widget.teacherClass.oid,
+                    method: 2, // QR Code
+                    lessonOid: _selectedLessonOid,
+                  );
                 },
               ),
               AttendanceMethodCard(
@@ -217,10 +223,21 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                 ),
                 title: 'Generate Code',
                 subtitle:
-                    'Create a unique 6-digit numeric key for students to enter manually.',
+                    'Create a unique numeric key for students to enter manually.',
                 actionText: 'SELECT METHOD',
                 onTap: () {
-                  Navigator.pushNamed(context, '/entry_code_view');
+                  if (_selectedLessonOid == null) {
+                    CustomSnackBar.showError(
+                      context,
+                      'Please select a lesson first',
+                    );
+                    return;
+                  }
+                  context.read<StartAttendanceCubit>().startSession(
+                    classOid: widget.teacherClass.oid,
+                    method: 3, // Entry Code
+                    lessonOid: _selectedLessonOid,
+                  );
                 },
               ),
             ],

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/attendance_session_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/entry_code_view_body.dart';
 
 class EntryCodeView extends StatelessWidget {
   static const String routeName = '/entry_code_view';
+  final AttendanceSessionModel session;
 
-  const EntryCodeView({super.key});
+  const EntryCodeView({super.key, required this.session});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class EntryCodeView extends StatelessWidget {
           ),
         ),
       ),
-      body: const EntryCodeViewBody(),
+      body: EntryCodeViewBody(session: session),
     );
   }
 }

@@ -6,7 +6,7 @@ class AttendanceSessionModel {
   final String className;
   final int method;
   final String? qrCodeBase64;
-  final String? randomNumbers;
+  final List<int>? randomNumbers;
   final String? expiresAt;
   final List<SessionStudentModel> students;
 
@@ -25,6 +25,7 @@ class AttendanceSessionModel {
 
   factory AttendanceSessionModel.fromJson(Map<String, dynamic> json) {
     final studentsRaw = json['students'];
+    final randomNumbersRaw = json['randomNumbers'];
     return AttendanceSessionModel(
       sessionId: (json['sessionId'] ?? '').toString(),
       classOid: (json['classOid'] ?? '').toString(),
@@ -33,7 +34,9 @@ class AttendanceSessionModel {
       className: (json['className'] ?? '').toString(),
       method: int.tryParse(json['method']?.toString() ?? '1') ?? 1,
       qrCodeBase64: json['qrCodeBase64']?.toString(),
-      randomNumbers: json['randomNumbers']?.toString(),
+      randomNumbers: randomNumbersRaw is List
+          ? randomNumbersRaw.map((e) => int.tryParse(e.toString()) ?? 0).toList()
+          : null,
       expiresAt: json['expiresAt']?.toString(),
       students: studentsRaw is List
           ? studentsRaw
