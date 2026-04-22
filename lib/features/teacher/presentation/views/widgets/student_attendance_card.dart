@@ -3,7 +3,7 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 
-enum AttendanceStatus { present, absent, none }
+enum AttendanceStatus { present, absent, late, none }
 
 class StudentAttendanceCard extends StatelessWidget {
   final String name;
@@ -54,7 +54,7 @@ class StudentAttendanceCard extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 320;
+          final isNarrow = constraints.maxWidth < 400; // Increased threshold for 3 items
 
           final studentInfo = Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,6 +185,15 @@ class StudentAttendanceCard extends StatelessWidget {
               isSelected: status == AttendanceStatus.absent,
               selectedColor: const Color(0xffBD2828),
               onTap: () => _handleStatusTap(AttendanceStatus.absent),
+            ),
+          ),
+          _wrapOption(
+            expanded: expanded,
+            child: _ToggleOption(
+              text: 'Late',
+              isSelected: status == AttendanceStatus.late,
+              selectedColor: const Color(0xffF59E0B), // Amber color for Late
+              onTap: () => _handleStatusTap(AttendanceStatus.late),
             ),
           ),
         ],

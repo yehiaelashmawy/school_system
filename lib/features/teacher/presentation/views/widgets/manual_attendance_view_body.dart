@@ -36,42 +36,84 @@ class ManualAttendanceViewBody extends StatefulWidget {
 
   @override
   State<ManualAttendanceViewBody> createState() =>
-      _ManualAttendanceViewBodyState();
+      ManualAttendanceViewBodyState();
 }
 
-class _ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
+class ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
   late final List<StudentData> students;
 
   @override
   void initState() {
     super.initState();
+    final todayStr = DateTime.now().toIso8601String().split('T')[0];
+
     if (widget.session != null) {
       students = widget.session!.students.asMap().entries.map((entry) {
         final index = entry.key;
         final s = entry.value;
-        // Try to find full student data in teacherClass to get the avatar
+        // Try to find full student data in teacherClass to get the avatar and attendance history
         final classStudent = widget.teacherClass.students
             .cast<TeacherStudentModel?>()
             .firstWhere(
               (cs) => cs?.oid == s.studentOid,
               orElse: () => null,
             );
+
+        // Check for existing attendance record for today
+        AttendanceStatus initialStatus = AttendanceStatus.none;
+        if (classStudent != null) {
+          final todayRecord = classStudent.details.attendance.recentRecords
+              .where((r) => r.date.startsWith(todayStr))
+              .firstOrNull;
+
+          if (todayRecord != null) {
+            final status = todayRecord.status.toLowerCase();
+            if (status == 'present') {
+              initialStatus = AttendanceStatus.present;
+            } else if (status == 'absent') {
+              initialStatus = AttendanceStatus.absent;
+            } else if (status == 'late') {
+              initialStatus = AttendanceStatus.late;
+            }
+          }
+        }
+
         return StudentData(
           studentOid: s.studentOid,
           name: s.studentName,
           subtitle: 'Roll No. ${(index + 1).toString().padLeft(3, '0')}',
           imagePath: classStudent?.avatar ?? '',
+          status: initialStatus,
         );
       }).toList();
     } else {
       students = widget.teacherClass.students.asMap().entries.map((entry) {
         final index = entry.key;
         final s = entry.value;
+
+        // Check for existing attendance record for today
+        AttendanceStatus initialStatus = AttendanceStatus.none;
+        final todayRecord = s.details.attendance.recentRecords
+            .where((r) => r.date.startsWith(todayStr))
+            .firstOrNull;
+
+        if (todayRecord != null) {
+          final status = todayRecord.status.toLowerCase();
+          if (status == 'present') {
+            initialStatus = AttendanceStatus.present;
+          } else if (status == 'absent') {
+            initialStatus = AttendanceStatus.absent;
+          } else if (status == 'late') {
+            initialStatus = AttendanceStatus.late;
+          }
+        }
+
         return StudentData(
           studentOid: s.oid,
           name: s.fullName,
           subtitle: 'Roll No. ${(index + 1).toString().padLeft(3, '0')}',
           imagePath: s.avatar,
+          status: initialStatus,
         );
       }).toList();
     }

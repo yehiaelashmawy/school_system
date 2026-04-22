@@ -23,11 +23,10 @@ class AttendanceRepo {
         },
       );
 
-      if (response['success'] == true) {
-        final data = response['data'];
-        if (data == null) {
-          return Left(ApiErrors(errorMessage: 'No data returned from server'));
-        }
+      final success = response['success'] as bool? ?? false;
+      final data = response['data'];
+
+      if (success && data != null) {
         return Right(AttendanceSessionModel.fromJson(
           (data as Map).cast<String, dynamic>(),
         ));
@@ -35,6 +34,37 @@ class AttendanceRepo {
         return Left(ApiErrors(
           errorMessage:
               response['messages']?['Error'] ?? 'Failed to start session',
+        ));
+      }
+    } catch (e) {
+      if (e is ApiErrors) return Left(e);
+      return Left(ApiErrors(errorMessage: e.toString()));
+    }
+  }
+
+  Future<Either<ApiErrors, String>> submitAttendance({
+    required String classOid,
+    required String date,
+    required List<Map<String, dynamic>> attendances,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '/api/Attendance',
+        data: {
+          'classOid': classOid,
+          'date': date,
+          'attendances': attendances,
+        },
+      );
+
+      final success = response['success'] as bool? ?? false;
+      if (success) {
+        return Right(response['messages']?['EN']?.toString() ??
+            'Attendance record created successfully');
+      } else {
+        return Left(ApiErrors(
+          errorMessage: response['messages']?['EN']?.toString() ??
+              'Failed to submit attendance',
         ));
       }
     } catch (e) {
