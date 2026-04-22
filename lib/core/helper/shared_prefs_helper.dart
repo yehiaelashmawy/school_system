@@ -36,6 +36,10 @@ class SharedPrefsHelper {
   static Future<void> setTeacherOid(String id) async =>
       await _prefs.setString('teacherOid', id);
 
+  static bool get isDarkMode => _prefs.getBool('isDarkMode') ?? false;
+  static Future<void> setIsDarkMode(bool value) async =>
+      await _prefs.setBool('isDarkMode', value);
+
   static Future<void> clearAuth() async {
     await _prefs.remove('isAuthenticated');
     await _prefs.remove('userRole');

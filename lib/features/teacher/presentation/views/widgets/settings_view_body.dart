@@ -1,3 +1,4 @@
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
 import 'package:school_system/core/utils/theme_manager.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/settings_link_tile.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/settings_switch_tile.dart';
@@ -50,7 +51,8 @@ class _SettingsViewBodyState extends State<SettingsViewBody> {
             title: 'Dark Mode',
             icon: Icons.nightlight_round,
             value: ThemeManager.isDarkMode,
-            onChanged: (value) {
+            onChanged: (value) async {
+              await SharedPrefsHelper.setIsDarkMode(value);
               setState(() {
                 ThemeManager.themeNotifier.value = 
                     value ? ThemeMode.dark : ThemeMode.light;
