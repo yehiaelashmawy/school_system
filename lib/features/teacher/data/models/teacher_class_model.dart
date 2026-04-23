@@ -299,6 +299,23 @@ class TeacherHomeworkModel {
   final String dueDate;
   final String status;
   final double? grade;
+  final String? description;
+  final String? instructions;
+  final String? assignedDate;
+  final int? totalMarks;
+  final String? submissionType;
+  final bool? allowLateSubmissions;
+  final bool? notifyParents;
+  final String? className;
+  final String? subjectName;
+  final String? teacherName;
+  final int? submittedCount;
+  final int? totalStudents;
+  final int? pendingCount;
+  final int? gradedCount;
+  final int? lateCount;
+  final List<dynamic>? attachments;
+  final List<LessonMaterialModel>? materials;
 
   const TeacherHomeworkModel({
     required this.oid,
@@ -306,15 +323,51 @@ class TeacherHomeworkModel {
     required this.dueDate,
     required this.status,
     this.grade,
+    this.description,
+    this.instructions,
+    this.assignedDate,
+    this.totalMarks,
+    this.submissionType,
+    this.allowLateSubmissions,
+    this.notifyParents,
+    this.className,
+    this.subjectName,
+    this.teacherName,
+    this.submittedCount,
+    this.totalStudents,
+    this.pendingCount,
+    this.gradedCount,
+    this.lateCount,
+    this.attachments,
+    this.materials,
   });
 
   factory TeacherHomeworkModel.fromJson(Map<String, dynamic> json) {
     return TeacherHomeworkModel(
-      oid: (json['oid'] ?? '').toString(),
+      oid: (json['oid'] ?? json['id'] ?? '').toString(),
       title: (json['title'] ?? '').toString(),
       dueDate: (json['dueDate'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
       grade: (json['grade'] as num?)?.toDouble(),
+      description: json['description']?.toString(),
+      instructions: json['instructions']?.toString(),
+      assignedDate: json['assignedDate']?.toString(),
+      totalMarks: (json['totalMarks'] as num?)?.toInt(),
+      submissionType: json['submissionType']?.toString(),
+      allowLateSubmissions: json['allowLateSubmissions'] as bool?,
+      notifyParents: json['notifyParents'] as bool?,
+      className: json['className']?.toString(),
+      subjectName: json['subjectName']?.toString(),
+      teacherName: json['teacherName']?.toString(),
+      submittedCount: (json['submittedCount'] as num?)?.toInt(),
+      totalStudents: (json['totalStudents'] as num?)?.toInt(),
+      pendingCount: (json['pendingCount'] as num?)?.toInt(),
+      gradedCount: (json['gradedCount'] as num?)?.toInt(),
+      lateCount: (json['lateCount'] as num?)?.toInt(),
+      attachments: json['attachments'] as List<dynamic>?,
+      materials: (json['materials'] as List<dynamic>?)
+          ?.map((e) => LessonMaterialModel.fromJson(e))
+          .toList(),
     );
   }
 }

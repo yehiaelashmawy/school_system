@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
+import 'package:intl/intl.dart';
 
 class HomeworkDetailsHeader extends StatelessWidget {
-  const HomeworkDetailsHeader({super.key});
+  final TeacherHomeworkModel homework;
+
+  const HomeworkDetailsHeader({super.key, required this.homework});
 
   @override
   Widget build(BuildContext context) {
+    DateTime? dueDateParsed;
+    try {
+      dueDateParsed = DateTime.parse(homework.dueDate);
+    } catch (_) {}
+
+    final dateStr = dueDateParsed != null
+        ? DateFormat('MMM dd, yyyy').format(dueDateParsed)
+        : '--';
+    final timeStr = dueDateParsed != null
+        ? DateFormat('hh:mm a').format(dueDateParsed)
+        : '--';
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -25,13 +41,17 @@ class HomeworkDetailsHeader extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD1FAE5),
+                  color: homework.status.toUpperCase() == 'ACTIVE'
+                      ? const Color(0xFFD1FAE5)
+                      : Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'ACTIVE',
+                child: Text(
+                  homework.status.toUpperCase(),
                   style: TextStyle(
-                    color: Color(0xFF065F46),
+                    color: homework.status.toUpperCase() == 'ACTIVE'
+                        ? const Color(0xFF065F46)
+                        : Colors.black54,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
@@ -47,7 +67,7 @@ class HomeworkDetailsHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '24/32 Submitted',
+                    '${homework.submittedCount ?? 0}/${homework.totalStudents ?? 0} Submitted',
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 12,
@@ -60,7 +80,7 @@ class HomeworkDetailsHeader extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Ancient Civilizations\nResearch Project',
+            homework.title,
             style: AppTextStyle.bold20.copyWith(
               color: AppColors.black,
               height: 1.3,
@@ -101,7 +121,7 @@ class HomeworkDetailsHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Oct 25, 2023',
+                      dateStr,
                       style: AppTextStyle.semiBold14.copyWith(
                         color: AppColors.black,
                       ),
@@ -146,7 +166,7 @@ class HomeworkDetailsHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '11:59 PM',
+                      timeStr,
                       style: AppTextStyle.semiBold14.copyWith(
                         color: AppColors.black,
                       ),

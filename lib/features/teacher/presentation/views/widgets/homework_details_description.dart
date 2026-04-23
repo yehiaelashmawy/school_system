@@ -3,7 +3,9 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 
 class HomeworkDetailsDescription extends StatelessWidget {
-  const HomeworkDetailsDescription({super.key});
+  final String description;
+
+  const HomeworkDetailsDescription({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class HomeworkDetailsDescription extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            'Explore the fascinating world of the ancient Mesopotamian and Egyptian civilizations. Students will investigate the social structures, technological advancements, and cultural legacies that shaped these early societies and continue to influence the modern world.',
+            description,
             style: AppTextStyle.regular14.copyWith(
               color: AppColors.grey,
               height: 1.5,

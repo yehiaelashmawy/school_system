@@ -3,7 +3,9 @@ import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 
 class HomeworkDetailsInstructions extends StatelessWidget {
-  const HomeworkDetailsInstructions({super.key});
+  final String instructions;
+
+  const HomeworkDetailsInstructions({super.key, required this.instructions});
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +30,12 @@ class HomeworkDetailsInstructions extends StatelessWidget {
             color: AppColors.white,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Column(
-            children: [
-              _buildInstructionItem(
-                1,
-                'Choose one primary civilization to focus your research on (Mesopotamia, Egypt, or Indus Valley).',
-              ),
-              const SizedBox(height: 16),
-              _buildInstructionItem(
-                2,
-                'Identify at least three major architectural achievements and their significance.',
-              ),
-              const SizedBox(height: 16),
-              _buildInstructionItem(
-                3,
-                'Draft a 1000-word essay following the MLA citation guidelines provided in the reference files.',
-              ),
-            ],
+          child: Text(
+            instructions,
+            style: AppTextStyle.regular14.copyWith(
+              color: AppColors.grey,
+              height: 1.5,
+            ),
           ),
         ),
       ],

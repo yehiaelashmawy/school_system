@@ -167,7 +167,7 @@ class HomeworkListBody extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => ui.label == 'GRADING'
                                   ? const ReviewSubmissionsView()
-                                  : const HomeworkDetailsView(),
+                                  : HomeworkDetailsView(homeworkId: homework.oid),
                             ),
                           );
                         },
