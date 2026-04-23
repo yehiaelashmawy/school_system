@@ -366,7 +366,7 @@ class TeacherHomeworkModel {
       lateCount: (json['lateCount'] as num?)?.toInt(),
       attachments: json['attachments'] as List<dynamic>?,
       materials: (json['materials'] as List<dynamic>?)
-          ?.map((e) => LessonMaterialModel.fromJson(e))
+          ?.map((e) => LessonMaterialModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
   }

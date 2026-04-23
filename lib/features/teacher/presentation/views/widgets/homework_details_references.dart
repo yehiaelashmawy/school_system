@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:school_system/core/helper/url_helper.dart';
+import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
@@ -8,6 +13,41 @@ class HomeworkDetailsReferences extends StatelessWidget {
   final List<LessonMaterialModel> materials;
 
   const HomeworkDetailsReferences({super.key, required this.materials});
+
+  Future<void> _openOrDownloadFile({
+    required BuildContext context,
+    required LessonMaterialModel material,
+    required bool showSavedMessage,
+  }) async {
+    final fileName = material.name;
+    final rawUrl = material.fileUrl;
+    if (rawUrl.trim().isEmpty) {
+      CustomSnackBar.showError(context, 'File URL is missing');
+      return;
+    }
+
+    final fileUrl = UrlHelper.getFullImageUrl(rawUrl);
+    if (fileUrl.trim().isEmpty) {
+      CustomSnackBar.showError(context, 'Invalid file URL');
+      return;
+    }
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final filePath = '${tempDir.path}/$fileName';
+
+      await Dio().download(fileUrl, filePath);
+      await OpenFilex.open(filePath);
+      if (!context.mounted) return;
+
+      if (showSavedMessage) {
+        CustomSnackBar.showSuccess(context, 'File downloaded successfully');
+      }
+    } catch (_) {
+      if (!context.mounted) return;
+      CustomSnackBar.showError(context, 'Failed to open/download file');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +85,16 @@ class HomeworkDetailsReferences extends StatelessWidget {
                   : AppColors.primaryColor.withValues(alpha: 0.1),
               iconData: isPdf ? Icons.picture_as_pdf_outlined : Icons.description_outlined,
               iconWidgetColor: isPdf ? const Color(0xFFEF4444) : AppColors.primaryColor,
+              onTap: () => _openOrDownloadFile(
+                context: context,
+                material: material,
+                showSavedMessage: false,
+              ),
+              onDownloadTap: () => _openOrDownloadFile(
+                context: context,
+                material: material,
+                showSavedMessage: true,
+              ),
             ),
           );
         }),

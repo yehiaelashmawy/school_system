@@ -34,12 +34,14 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
+  final TextEditingController _instController = TextEditingController();
   final TextEditingController _pointsController = TextEditingController();
 
   @override
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
+    _instController.dispose();
     _pointsController.dispose();
     super.dispose();
   }
@@ -61,6 +63,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
   void _submitHomework() {
     if (_titleController.text.isEmpty ||
         _descController.text.isEmpty ||
+        _instController.text.isEmpty ||
         _pointsController.text.isEmpty ||
         _selectedClassId == null ||
         _selectedSubjectId == null ||
@@ -74,7 +77,7 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
     context.read<AddHomeworkCubit>().createHomework(
       title: _titleController.text,
       description: _descController.text,
-      instructions: _descController.text, // Sending same for now
+      instructions: _instController.text,
       dueDate: _dueDate!,
       totalMarks: points,
       classId: _selectedClassId!,
@@ -217,8 +220,17 @@ class _AddHomeworkViewBodyState extends State<AddHomeworkViewBody> {
               const SizedBox(height: 8),
               CustomTextField(
                 controller: _descController,
-                hintText:
-                    'Enter homework instructions, references, or specific requirements...',
+                hintText: 'Enter a general description of the homework...',
+                minLines: 3,
+                maxLines: 5,
+              ),
+              const SizedBox(height: 20),
+
+              const FieldLabel(label: 'Instructions'),
+              const SizedBox(height: 8),
+              CustomTextField(
+                controller: _instController,
+                hintText: 'Enter specific instructions or requirements...',
                 minLines: 4,
                 maxLines: 6,
               ),

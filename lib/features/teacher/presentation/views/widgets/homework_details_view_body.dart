@@ -29,7 +29,7 @@ class HomeworkDetailsViewBody extends StatelessWidget {
         final isLoading = state is HomeworkDetailsLoading || state is HomeworkDetailsInitial;
         final homework = state is HomeworkDetailsSuccess ? state.homework : null;
 
-        final dummyHomework = const TeacherHomeworkModel(
+        final dummyHomework = TeacherHomeworkModel(
           oid: '',
           title: 'Loading Homework Title...',
           dueDate: '2023-10-25T23:59:00',
@@ -38,7 +38,15 @@ class HomeworkDetailsViewBody extends StatelessWidget {
           totalStudents: 0,
           description: 'Loading description...',
           instructions: 'Loading instructions...',
-          materials: [],
+          materials: [
+            LessonMaterialModel(
+              oid: 'dummy',
+              name: 'Loading material.pdf',
+              fileUrl: '',
+              fileType: 'application/pdf',
+              fileSize: 1024 * 1024,
+            ),
+          ],
         );
 
         final displayHomework = homework ?? dummyHomework;
