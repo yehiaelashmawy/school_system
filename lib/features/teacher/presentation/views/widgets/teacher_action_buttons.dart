@@ -49,7 +49,8 @@ class TeacherActionButtons extends StatelessWidget {
                     context.read<TeacherExamsCubit>().fetchExams();
                     context.read<TeacherClassesCubit>().fetchClasses();
                     final teacherIdentifier =
-                        (SharedPrefsHelper.teacherOid?.trim().isNotEmpty ?? false)
+                        (SharedPrefsHelper.teacherOid?.trim().isNotEmpty ??
+                            false)
                         ? SharedPrefsHelper.teacherOid!.trim()
                         : (SharedPrefsHelper.userId ?? '');
                     context.read<TeacherTimetableCubit>().fetchTodayClasses(

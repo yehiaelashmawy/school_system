@@ -113,9 +113,8 @@ class TeacherStudentDetailsModel {
           ? examsRaw
                 .whereType<Map>()
                 .map(
-                  (exam) => TeacherExamModel.fromJson(
-                    exam.cast<String, dynamic>(),
-                  ),
+                  (exam) =>
+                      TeacherExamModel.fromJson(exam.cast<String, dynamic>()),
                 )
                 .toList()
           : const [],
@@ -129,23 +128,168 @@ class TeacherStudentDetailsModel {
 class TeacherLessonModel {
   final String oid;
   final String title;
+  final String description;
   final String date;
+  final String startTime;
+  final String endTime;
+  final int duration;
   final String status;
+  final String type;
+  final String className;
+  final String subjectName;
+  final String teacherName;
+  final int materialsCount;
+  final int objectivesCount;
+  final bool hasHomework;
+  final LessonHomeworkModel? homework;
+  final List<LessonObjectiveModel> objectives;
+  final List<LessonMaterialModel> materials;
+  final List<String>? resourceLinks;
+  final String? teacherNotes;
+  final String createdAt;
+  final String? updatedAt;
 
-  const TeacherLessonModel({
+  TeacherLessonModel({
     required this.oid,
     required this.title,
+    required this.description,
     required this.date,
+    required this.startTime,
+    required this.endTime,
+    required this.duration,
     required this.status,
+    required this.type,
+    required this.className,
+    required this.subjectName,
+    required this.teacherName,
+    required this.materialsCount,
+    required this.objectivesCount,
+    required this.hasHomework,
+    this.homework,
+    required this.objectives,
+    required this.materials,
+    this.resourceLinks,
+    this.teacherNotes,
+    required this.createdAt,
+    this.updatedAt,
   });
 
   factory TeacherLessonModel.fromJson(Map<String, dynamic> json) {
     return TeacherLessonModel(
       oid: (json['oid'] ?? '').toString(),
       title: (json['title'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
       date: (json['date'] ?? '').toString(),
+      startTime: (json['startTime'] ?? '').toString(),
+      endTime: (json['endTime'] ?? '').toString(),
+      duration: (json['duration'] as num?)?.toInt() ?? 0,
       status: (json['status'] ?? '').toString(),
+      type: (json['type'] ?? '').toString(),
+      className: (json['className'] ?? '').toString(),
+      subjectName: (json['subjectName'] ?? '').toString(),
+      teacherName: (json['teacherName'] ?? '').toString(),
+      materialsCount: (json['materialsCount'] as num?)?.toInt() ?? 0,
+      objectivesCount: (json['objectivesCount'] as num?)?.toInt() ?? 0,
+      hasHomework: json['hasHomework'] ?? false,
+      homework: json['homework'] != null
+          ? LessonHomeworkModel.fromJson(json['homework'])
+          : null,
+      objectives:
+          (json['objectives'] as List?)
+              ?.map((e) => LessonObjectiveModel.fromJson(e))
+              .toList() ??
+          [],
+      materials:
+          (json['materials'] as List?)
+              ?.map((e) => LessonMaterialModel.fromJson(e))
+              .toList() ??
+          [],
+      resourceLinks: (json['resourceLinks'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      teacherNotes: json['teacherNotes']?.toString(),
+      createdAt: (json['createdAt'] ?? '').toString(),
+      updatedAt: json['updatedAt']?.toString(),
     );
+  }
+}
+
+class LessonObjectiveModel {
+  final String oid;
+  final String description;
+  final int order;
+
+  LessonObjectiveModel({
+    required this.oid,
+    required this.description,
+    required this.order,
+  });
+
+  factory LessonObjectiveModel.fromJson(Map<String, dynamic> json) {
+    return LessonObjectiveModel(
+      oid: json['oid'] ?? '',
+      description: json['description'] ?? '',
+      order: json['order'] ?? 0,
+    );
+  }
+}
+
+class LessonMaterialModel {
+  final String? oid;
+  final String name;
+  final String fileUrl;
+  final String fileType;
+  final int fileSize;
+
+  LessonMaterialModel({
+    this.oid,
+    required this.name,
+    required this.fileUrl,
+    required this.fileType,
+    required this.fileSize,
+  });
+
+  factory LessonMaterialModel.fromJson(Map<String, dynamic> json) {
+    return LessonMaterialModel(
+      oid: json['oid'],
+      name: json['name'] ?? '',
+      fileUrl: json['fileUrl'] ?? '',
+      fileType: json['fileType'] ?? '',
+      fileSize: (json['fileSize'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'fileUrl': fileUrl,
+      'fileType': fileType,
+      'fileSize': fileSize,
+    };
+  }
+}
+
+class LessonHomeworkModel {
+  final String? title;
+  final String? description;
+  final String? dueDate;
+
+  LessonHomeworkModel({this.title, this.description, this.dueDate});
+
+  factory LessonHomeworkModel.fromJson(Map<String, dynamic> json) {
+    return LessonHomeworkModel(
+      title: json['title'],
+      description: json['description'],
+      dueDate: json['dueDate'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (dueDate != null) 'dueDate': dueDate,
+    };
   }
 }
 
@@ -222,7 +366,8 @@ class TeacherAttendanceModel {
       presentCount: (json['presentCount'] as num?)?.toInt() ?? 0,
       absentCount: (json['absentCount'] as num?)?.toInt() ?? 0,
       lateCount: (json['lateCount'] as num?)?.toInt() ?? 0,
-      attendancePercentage: (json['attendancePercentage'] as num?)?.toDouble() ?? 0,
+      attendancePercentage:
+          (json['attendancePercentage'] as num?)?.toDouble() ?? 0,
       recentRecords: recordsRaw is List
           ? recordsRaw
                 .whereType<Map>()

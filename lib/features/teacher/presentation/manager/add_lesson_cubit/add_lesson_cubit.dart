@@ -25,9 +25,9 @@ class AddLessonCubit extends Cubit<AddLessonState> {
     final createResult = await repo.createLesson(
       title: title,
       description: description,
-      date: date,
-      startTime: startTime,
-      endTime: endTime,
+      date: DateTime.parse(date),
+      startTime: DateTime.parse(startTime),
+      endTime: DateTime.parse(endTime),
       classOid: classOid,
       subjectOid: subjectOid,
       type: type,
