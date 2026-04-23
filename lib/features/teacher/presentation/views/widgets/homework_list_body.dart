@@ -6,28 +6,39 @@ import 'package:school_system/features/teacher/presentation/views/homework_detai
 import 'package:school_system/features/teacher/presentation/views/review_submissions_view.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/homework_list_item.dart';
 
-class HomeworkListBody extends StatelessWidget {
+class HomeworkListBody extends StatefulWidget {
   final List<TeacherHomeworkModel> homeworks;
 
   const HomeworkListBody({super.key, this.homeworks = const []});
+
+  @override
+  State<HomeworkListBody> createState() => _HomeworkListBodyState();
+}
+
+class _HomeworkListBodyState extends State<HomeworkListBody> {
+  late List<TeacherHomeworkModel> _homeworks;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeworks = List.from(widget.homeworks);
+  }
+
+  @override
+  void didUpdateWidget(HomeworkListBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.homeworks != widget.homeworks) {
+      _homeworks = List.from(widget.homeworks);
+    }
+  }
 
   String _formatDate(String rawDate) {
     if (rawDate.trim().isEmpty) return 'Date unavailable';
     final parsed = DateTime.tryParse(rawDate);
     if (parsed == null) return rawDate;
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
   }
@@ -40,21 +51,21 @@ class HomeworkListBody extends StatelessWidget {
     if (normalized == 'grading') {
       return _HomeworkUiState(
         label: 'GRADING',
-        badgeColor: Color(0xFFDBEAFE),
-        badgeTextColor: Color(0xFF1E40AF),
+        badgeColor: const Color(0xFFDBEAFE),
+        badgeTextColor: const Color(0xFF1E40AF),
         buttonText: 'Review Submissions',
-        buttonColor: Color(0xFFF1F5F9),
-        buttonTextColor: Color(0xFF475569),
+        buttonColor: const Color(0xFFF1F5F9),
+        buttonTextColor: const Color(0xFF475569),
         isOverdue: false,
       );
     }
     if (normalized == 'completed') {
       return _HomeworkUiState(
         label: 'COMPLETED',
-        badgeColor: Color(0xFFE2E8F0),
-        badgeTextColor: Color(0xFF334155),
+        badgeColor: const Color(0xFFE2E8F0),
+        badgeTextColor: const Color(0xFF334155),
         buttonText: 'View Details',
-        buttonColor: Color(0xFFEFF6FF),
+        buttonColor: const Color(0xFFEFF6FF),
         buttonTextColor: AppColors.primaryColor,
         isOverdue: false,
       );
@@ -62,23 +73,41 @@ class HomeworkListBody extends StatelessWidget {
     if (isPastDue) {
       return _HomeworkUiState(
         label: 'OVERDUE',
-        badgeColor: Color(0xFFFEE2E2),
-        badgeTextColor: Color(0xFF991B1B),
+        badgeColor: const Color(0xFFFEE2E2),
+        badgeTextColor: const Color(0xFF991B1B),
         buttonText: 'Review Submissions',
-        buttonColor: Color(0xFFF1F5F9),
-        buttonTextColor: Color(0xFF475569),
+        buttonColor: const Color(0xFFF1F5F9),
+        buttonTextColor: const Color(0xFF475569),
         isOverdue: true,
       );
     }
     return _HomeworkUiState(
       label: 'ACTIVE',
-      badgeColor: Color(0xFFD1FAE5),
-      badgeTextColor: Color(0xFF065F46),
+      badgeColor: const Color(0xFFD1FAE5),
+      badgeTextColor: const Color(0xFF065F46),
       buttonText: 'View Details',
       buttonColor: AppColors.primaryColor,
       buttonTextColor: Colors.white,
       isOverdue: false,
     );
+  }
+
+  Future<void> _navigateToDetails(
+      BuildContext context, TeacherHomeworkModel homework, _HomeworkUiState ui) async {
+    final deleted = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ui.label == 'GRADING'
+            ? const ReviewSubmissionsView()
+            : HomeworkDetailsView(homeworkId: homework.oid),
+      ),
+    );
+
+    if (deleted == true) {
+      setState(() {
+        _homeworks.removeWhere((h) => h.oid == homework.oid);
+      });
+    }
   }
 
   @override
@@ -126,7 +155,7 @@ class HomeworkListBody extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: homeworks.isEmpty
+            child: _homeworks.isEmpty
                 ? Center(
                     child: Text(
                       'No homework found for this class.',
@@ -137,10 +166,10 @@ class HomeworkListBody extends StatelessWidget {
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: homeworks.length,
+                    itemCount: _homeworks.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 16),
                     itemBuilder: (context, index) {
-                      final homework = homeworks[index];
+                      final homework = _homeworks[index];
                       final ui = _mapStatus(homework.status, homework.dueDate);
                       return HomeworkItemCard(
                         title: homework.title.isNotEmpty
@@ -161,16 +190,7 @@ class HomeworkListBody extends StatelessWidget {
                         buttonColor: ui.buttonColor,
                         buttonTextColor: ui.buttonTextColor,
                         isOverdue: ui.isOverdue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ui.label == 'GRADING'
-                                  ? const ReviewSubmissionsView()
-                                  : HomeworkDetailsView(homeworkId: homework.oid),
-                            ),
-                          );
-                        },
+                        onTap: () => _navigateToDetails(context, homework, ui),
                       );
                     },
                   ),

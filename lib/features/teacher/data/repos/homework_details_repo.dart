@@ -25,4 +25,21 @@ class HomeworkDetailsRepo {
       return Left(ApiErrors(errorMessage: e.toString()));
     }
   }
+
+  Future<Either<ApiErrors, String>> deleteHomework(String homeworkId) async {
+    try {
+      final response = await apiService.delete('/api/Homeworks/$homeworkId');
+
+      if (response != null && response['success'] == true) {
+        final msg = response['messages']?['EN']?.toString() ??
+            'Homework deleted successfully';
+        return Right(msg);
+      }
+
+      return Left(ApiErrors(errorMessage: 'Failed to delete homework'));
+    } catch (e) {
+      if (e is ApiErrors) return Left(e);
+      return Left(ApiErrors(errorMessage: e.toString()));
+    }
+  }
 }
