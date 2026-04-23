@@ -15,7 +15,7 @@ class AddHomeworkRepo {
     required String title,
     required String description,
     required String instructions,
-    required String dueDate,
+    required DateTime dueDate,
     required int totalMarks,
     required String classId,
     required String subjectId,
@@ -31,7 +31,7 @@ class AddHomeworkRepo {
           "title": title,
           "description": description,
           "instructions": instructions,
-          "dueDate": dueDate,
+          "dueDate": dueDate.toUtc().toIso8601String(),
           "totalMarks": totalMarks,
           "submissionType": submissionType,
           "allowLateSubmissions": allowLateSubmissions,
@@ -81,7 +81,7 @@ class AddHomeworkRepo {
     required String homeworkId,
     required PlatformFile file,
   }) async {
-    final endpoint = '/api/Files/upload/homeworks/$homeworkId';
+    final endpoint = '/api/Files/upload/homework/$homeworkId';
 
     try {
       dynamic response;
@@ -117,7 +117,7 @@ class AddHomeworkRepo {
     required String homeworkId,
     required List<PlatformFile> files,
   }) async {
-    final endpoint = '/api/Files/upload-multiple/homeworks/$homeworkId';
+    final endpoint = '/api/Files/upload/homework/$homeworkId';
 
     try {
       final multipartFiles = <MapEntry<String, MultipartFile>>[];

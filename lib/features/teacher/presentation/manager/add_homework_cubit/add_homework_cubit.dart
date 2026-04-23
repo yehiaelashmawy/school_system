@@ -27,7 +27,7 @@ class AddHomeworkCubit extends Cubit<AddHomeworkState> {
       title: title,
       description: description,
       instructions: instructions,
-      dueDate: dueDate,
+      dueDate: DateTime.parse(dueDate),
       totalMarks: totalMarks,
       classId: classId,
       subjectId: subjectId,

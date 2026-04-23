@@ -267,7 +267,7 @@ class AddLessonRepo {
     required String lessonId,
     required PlatformFile file,
   }) async {
-    final endpoint = '/api/Files/upload/lessons/$lessonId';
+    final endpoint = '/api/Files/upload/lesson/$lessonId';
 
     try {
       dynamic response;
@@ -304,7 +304,7 @@ class AddLessonRepo {
     required String lessonId,
     required List<PlatformFile> files,
   }) async {
-    final endpoint = '/api/Files/upload-multiple/lessons/$lessonId';
+    final endpoint = '/api/Files/upload/lesson/$lessonId';
 
     try {
       final multipartFiles = <MapEntry<String, MultipartFile>>[];
