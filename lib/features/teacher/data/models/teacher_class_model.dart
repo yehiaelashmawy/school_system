@@ -1,3 +1,5 @@
+import 'package:school_system/features/teacher/data/models/teacher_exam_model.dart';
+
 class TeacherClassModel {
   final String oid;
   final String name;
@@ -368,32 +370,6 @@ class TeacherHomeworkModel {
       materials: (json['materials'] as List<dynamic>?)
           ?.map((e) => LessonMaterialModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-    );
-  }
-}
-
-class TeacherExamModel {
-  final String oid;
-  final String name;
-  final String date;
-  final double? score;
-  final double? grade;
-
-  const TeacherExamModel({
-    required this.oid,
-    required this.name,
-    required this.date,
-    this.score,
-    this.grade,
-  });
-
-  factory TeacherExamModel.fromJson(Map<String, dynamic> json) {
-    return TeacherExamModel(
-      oid: (json['oid'] ?? '').toString(),
-      name: (json['name'] ?? '').toString(),
-      date: (json['date'] ?? '').toString(),
-      score: (json['score'] as num?)?.toDouble(),
-      grade: (json['grade'] as num?)?.toDouble(),
     );
   }
 }

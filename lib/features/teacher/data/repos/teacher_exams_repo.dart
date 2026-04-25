@@ -41,6 +41,18 @@ class TeacherExamsRepo {
     }
   }
 
+  Future<Either<ApiErrors, TeacherExamModel>> getExamDetails(String examId) async {
+    try {
+      final response = await apiService.get('/api/Exams/$examId');
+      return Right(TeacherExamModel.fromJson(response['data']));
+    } catch (e) {
+      if (e is ApiErrors) {
+        return Left(e);
+      }
+      return Left(ApiErrors(errorMessage: e.toString()));
+    }
+  }
+
   /// Upload one file
   Future<Either<ApiErrors, void>> _uploadSingleFile({
     required String examId,

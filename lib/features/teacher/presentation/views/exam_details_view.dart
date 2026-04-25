@@ -4,8 +4,9 @@ import 'package:school_system/core/utils/app_text_style.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/exam_details_view_body.dart';
 
 class ExamDetailsView extends StatelessWidget {
-  const ExamDetailsView({super.key});
+  const ExamDetailsView({super.key, this.examId});
 
+  final String? examId;
   static const String routeName = '/exam_details';
 
   @override
@@ -31,7 +32,7 @@ class ExamDetailsView extends StatelessWidget {
           ),
         ],
       ),
-      body: const ExamDetailsViewBody(),
+      body: ExamDetailsViewBody(examId: examId),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_system/core/utils/app_colors.dart';
-import 'package:school_system/features/teacher/data/models/teacher_class_model.dart';
+import 'package:school_system/features/teacher/data/models/teacher_exam_model.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/exam_item_card.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/exams_toggle_bar.dart';
 
@@ -48,7 +48,18 @@ class _ExamsListBodyState extends State<ExamsListBody> {
     return '${months[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
   }
 
-  String _formatTime(String rawDate) {
+  String _formatTime(String rawDate, String startTime) {
+    if (startTime.isNotEmpty) {
+      final parts = startTime.split(':');
+      if (parts.length >= 2) {
+        final h = int.tryParse(parts[0]) ?? 0;
+        final m = parts[1];
+        final suffix = h >= 12 ? 'PM' : 'AM';
+        final hour = h == 0 ? 12 : (h > 12 ? h - 12 : h);
+        return '${hour.toString().padLeft(2, '0')}:$m $suffix';
+      }
+    }
+
     final parsed = DateTime.tryParse(rawDate);
     if (parsed == null) return '--:--';
     final hour = parsed.hour == 0
@@ -96,24 +107,32 @@ class _ExamsListBodyState extends State<ExamsListBody> {
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     itemCount: _filteredExams.length + 1,
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    separatorBuilder: (_, _) => const SizedBox(height: 16),
                     itemBuilder: (context, index) {
                       if (index == _filteredExams.length) {
                         return const SizedBox(height: 80);
                       }
                       final exam = _filteredExams[index];
-                      final isDraft = exam.grade == null && !_isUpcomingExams;
+                      final isDraft =
+                          exam.status.toLowerCase() == 'draft' ||
+                          exam.status.toLowerCase() == 'pending';
+
                       return ExamItemCard(
+                        examId: exam.oid,
                         title: exam.name.isNotEmpty
                             ? exam.name
                             : 'Untitled Exam',
                         date: _formatDate(exam.date),
-                        time: _formatTime(exam.date),
-                        subject: 'Class Exam',
-                        grade: exam.grade != null
-                            ? 'Grade ${exam.grade!.toStringAsFixed(0)}'
-                            : 'Pending grade',
-                        status: _isUpcomingExams ? 'CONFIRMED' : 'COMPLETED',
+                        time: _formatTime(exam.date, exam.startTime),
+                        subject: exam.subjectName.isNotEmpty
+                            ? '${exam.subjectName} - ${exam.className}'
+                            : 'Class Exam',
+                        grade: exam.maxScore > 0
+                            ? 'Max Score: ${exam.maxScore}'
+                            : 'Pending score',
+                        status: exam.status.isNotEmpty
+                            ? exam.status
+                            : (_isUpcomingExams ? 'CONFIRMED' : 'COMPLETED'),
                         statusColor: _isUpcomingExams
                             ? AppColors.secondaryColor
                             : AppColors.grey,

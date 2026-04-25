@@ -10,6 +10,8 @@ import 'package:school_system/features/teacher/presentation/views/widgets/studen
 import 'package:school_system/features/teacher/presentation/views/widgets/attendance_list_body.dart';
 import 'package:school_system/features/teacher/presentation/views/add_homework_view.dart';
 
+import '../../data/models/teacher_exam_model.dart';
+
 class StudentList extends StatefulWidget {
   final String className;
   final TeacherClassModel? teacherClass;

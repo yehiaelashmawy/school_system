@@ -14,6 +14,7 @@ class ExamItemCard extends StatelessWidget {
     required this.status,
     required this.statusColor,
     required this.isDraft,
+    required this.examId,
   });
 
   final String title;
@@ -24,6 +25,7 @@ class ExamItemCard extends StatelessWidget {
   final String status;
   final Color statusColor;
   final bool isDraft;
+  final String examId;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +127,7 @@ class ExamItemCard extends StatelessWidget {
                           Navigator.of(
                             context,
                             rootNavigator: true,
-                          ).pushNamed('/exam_details');
+                          ).pushNamed('/exam_details', arguments: examId);
                         },
                         icon: Icon(
                           isDraft ? Icons.edit_outlined : Icons.info_outline,

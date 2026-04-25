@@ -1,50 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/models/teacher_exam_model.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_exams_repo.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/section_header.dart';
 
 class ExamDetailsViewBody extends StatelessWidget {
-  const ExamDetailsViewBody({super.key});
+  const ExamDetailsViewBody({super.key, this.examId});
+  final String? examId;
+
+  Future<TeacherExamModel?> _fetchExamDetails() async {
+    if (examId == null || examId!.trim().isEmpty) return null;
+    final repo = TeacherExamsRepo(ApiService());
+    final result = await repo.getExamDetails(examId!);
+    return result.fold(
+      (failure) => null,
+      (exam) => exam,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<TeacherExamModel?>(
+      future: _fetchExamDetails(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+          return const Center(
+            child: Text(
+              'Failed to load exam details.',
+              style: TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        final exam = snapshot.data!;
+        return _buildContent(exam);
+      },
+    );
+  }
+
+  Widget _buildContent(TeacherExamModel exam) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTopCard(),
+          _buildTopCard(exam),
           const SizedBox(height: 24),
           const SectionHeader(
             icon: Icons.info_outline,
             title: 'Instructions for Students',
           ),
           const SizedBox(height: 16),
-          _buildInstructionsList(),
+          _buildInstructionsList(exam.instructions),
           const SizedBox(height: 24),
-          const SectionHeader(
-            icon: Icons.description_outlined,
-            title: 'Reference Materials',
-          ),
-          const SizedBox(height: 16),
-          _buildReferenceCard(
-            'Formula Sheet - Algebra.pdf',
-            '2.4 MB • PDF Document',
-            true,
-          ),
-          const SizedBox(height: 12),
-          _buildReferenceCard(
-            'Sample Question Paper 2023.docx',
-            '1.1 MB • Word Document',
-            false,
-          ),
-          const SizedBox(height: 32),
+          if (exam.materials.isNotEmpty) ...[
+            const SectionHeader(
+              icon: Icons.description_outlined,
+              title: 'Reference Materials',
+            ),
+            const SizedBox(height: 16),
+            ...exam.materials.map((material) {
+              final matMap = material as Map<String, dynamic>;
+              final isPdf = matMap['fileType']?.toString().contains('pdf') ?? false;
+              final sizeInKb = ((matMap['fileSize'] as num?) ?? 0) / 1024;
+              final sizeText = sizeInKb > 1024
+                  ? '${(sizeInKb / 1024).toStringAsFixed(1)} MB'
+                  : '${sizeInKb.toStringAsFixed(1)} KB';
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildReferenceCard(
+                  matMap['name']?.toString() ?? 'Material',
+                  '$sizeText • ${isPdf ? 'PDF Document' : 'Document'}',
+                  isPdf,
+                ),
+              );
+            }),
+            const SizedBox(height: 32),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildTopCard() {
+  Widget _buildTopCard(TeacherExamModel exam) {
+    final parsedDate = DateTime.tryParse(exam.date);
+    final dateStr = parsedDate != null
+        ? DateFormat('MMM dd, yyyy').format(parsedDate)
+        : exam.date;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -61,7 +109,7 @@ class ExamDetailsViewBody extends StatelessWidget {
                 height: 48,
                 width: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xffEFF6FF), // very light blue
+                  color: const Color(0xffEFF6FF),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -75,14 +123,14 @@ class ExamDetailsViewBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Final Term Examination',
+                      exam.name,
                       style: AppTextStyle.bold18.copyWith(
                         color: AppColors.black,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Mathematics Grade 10 • Section B',
+                      '${exam.subjectName} ${exam.className} • ${exam.type}',
                       style: AppTextStyle.regular14.copyWith(
                         color: AppColors.grey,
                       ),
@@ -99,12 +147,12 @@ class ExamDetailsViewBody extends StatelessWidget {
                 child: _buildInfoBox(
                   Icons.calendar_today_outlined,
                   'DATE',
-                  'Oct 24, 2023',
+                  dateStr,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildInfoBox(Icons.access_time, 'TIME', '09:00 AM'),
+                child: _buildInfoBox(Icons.access_time, 'TIME', exam.startTime),
               ),
             ],
           ),
@@ -115,7 +163,7 @@ class ExamDetailsViewBody extends StatelessWidget {
                 child: _buildInfoBox(
                   Icons.hourglass_empty,
                   'DURATION',
-                  '120 Minutes',
+                  '${exam.duration} Minutes',
                 ),
               ),
               const SizedBox(width: 12),
@@ -123,7 +171,7 @@ class ExamDetailsViewBody extends StatelessWidget {
                 child: _buildInfoBox(
                   Icons.location_on_outlined,
                   'LOCATION',
-                  'Hall A, Floor 2',
+                  exam.room.isNotEmpty ? exam.room : 'N/A',
                 ),
               ),
             ],
@@ -168,13 +216,14 @@ class ExamDetailsViewBody extends StatelessWidget {
     );
   }
 
-  Widget _buildInstructionsList() {
-    final instructions = [
-      'Please arrive 15 minutes before the exam starts.',
-      'Scientific calculators are permitted for section B only.',
-      'Mobile phones and smartwatches must be turned off and placed in bags.',
-      'Students must carry their valid institutional ID cards.',
-    ];
+  Widget _buildInstructionsList(String instructionsStr) {
+    final instructions =
+        instructionsStr.split('\n').where((s) => s.trim().isNotEmpty).toList();
+
+    if (instructions.isEmpty) {
+      return const Text('No specific instructions provided.',
+          style: TextStyle(color: Colors.grey));
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -204,7 +253,7 @@ class ExamDetailsViewBody extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    text,
+                    text.trim(),
                     style: AppTextStyle.regular14.copyWith(
                       color: AppColors.grey,
                     ),
