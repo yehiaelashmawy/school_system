@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:school_system/core/api/api_service.dart';
+import 'package:school_system/core/helper/url_helper.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/core/widgets/custom_snack_bar.dart';
 import 'package:school_system/features/teacher/data/models/teacher_exam_model.dart';
 import 'package:school_system/features/teacher/data/repos/teacher_exams_repo.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/section_header.dart';
@@ -15,10 +20,42 @@ class ExamDetailsViewBody extends StatelessWidget {
     if (examId == null || examId!.trim().isEmpty) return null;
     final repo = TeacherExamsRepo(ApiService());
     final result = await repo.getExamDetails(examId!);
-    return result.fold(
-      (failure) => null,
-      (exam) => exam,
-    );
+    return result.fold((failure) => null, (exam) => exam);
+  }
+
+  Future<void> _openOrDownloadFile({
+    required BuildContext context,
+    required Map<String, dynamic> material,
+    required bool showSavedMessage,
+  }) async {
+    final fileName = material['name']?.toString() ?? 'exam_file';
+    final rawUrl = material['fileUrl']?.toString() ?? '';
+    if (rawUrl.trim().isEmpty) {
+      CustomSnackBar.showError(context, 'File URL is missing');
+      return;
+    }
+
+    final fileUrl = UrlHelper.getFullImageUrl(rawUrl);
+    if (fileUrl.trim().isEmpty) {
+      CustomSnackBar.showError(context, 'Invalid file URL');
+      return;
+    }
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final filePath = '${tempDir.path}/$fileName';
+
+      await Dio().download(fileUrl, filePath);
+      await OpenFilex.open(filePath);
+      if (!context.mounted) return;
+
+      if (showSavedMessage) {
+        CustomSnackBar.showSuccess(context, 'File downloaded successfully');
+      }
+    } catch (_) {
+      if (!context.mounted) return;
+      CustomSnackBar.showError(context, 'Failed to open/download file');
+    }
   }
 
   @override
@@ -28,7 +65,9 @@ class ExamDetailsViewBody extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+        } else if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data == null) {
           return const Center(
             child: Text(
               'Failed to load exam details.',
@@ -38,12 +77,12 @@ class ExamDetailsViewBody extends StatelessWidget {
         }
 
         final exam = snapshot.data!;
-        return _buildContent(exam);
+        return _buildContent(context, exam);
       },
     );
   }
 
-  Widget _buildContent(TeacherExamModel exam) {
+  Widget _buildContent(BuildContext context, TeacherExamModel exam) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -66,7 +105,8 @@ class ExamDetailsViewBody extends StatelessWidget {
             const SizedBox(height: 16),
             ...exam.materials.map((material) {
               final matMap = material as Map<String, dynamic>;
-              final isPdf = matMap['fileType']?.toString().contains('pdf') ?? false;
+              final isPdf =
+                  matMap['fileType']?.toString().contains('pdf') ?? false;
               final sizeInKb = ((matMap['fileSize'] as num?) ?? 0) / 1024;
               final sizeText = sizeInKb > 1024
                   ? '${(sizeInKb / 1024).toStringAsFixed(1)} MB'
@@ -74,9 +114,20 @@ class ExamDetailsViewBody extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _buildReferenceCard(
-                  matMap['name']?.toString() ?? 'Material',
-                  '$sizeText • ${isPdf ? 'PDF Document' : 'Document'}',
-                  isPdf,
+                  title: matMap['name']?.toString() ?? 'Material',
+                  subtitle:
+                      '$sizeText • ${isPdf ? 'PDF Document' : 'Document'}',
+                  isPdf: isPdf,
+                  onTap: () => _openOrDownloadFile(
+                    context: context,
+                    material: matMap,
+                    showSavedMessage: false,
+                  ),
+                  onDownloadTap: () => _openOrDownloadFile(
+                    context: context,
+                    material: matMap,
+                    showSavedMessage: true,
+                  ),
                 ),
               );
             }),
@@ -217,12 +268,16 @@ class ExamDetailsViewBody extends StatelessWidget {
   }
 
   Widget _buildInstructionsList(String instructionsStr) {
-    final instructions =
-        instructionsStr.split('\n').where((s) => s.trim().isNotEmpty).toList();
+    final instructions = instructionsStr
+        .split('\n')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
 
     if (instructions.isEmpty) {
-      return const Text('No specific instructions provided.',
-          style: TextStyle(color: Colors.grey));
+      return const Text(
+        'No specific instructions provided.',
+        style: TextStyle(color: Colors.grey),
+      );
     }
 
     return Container(
@@ -267,55 +322,71 @@ class ExamDetailsViewBody extends StatelessWidget {
     );
   }
 
-  Widget _buildReferenceCard(String title, String subtitle, bool isPdf) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 48,
-            width: 48,
-            decoration: BoxDecoration(
-              color: isPdf ? const Color(0xffFEE2E2) : const Color(0xffDBEAFE),
-              borderRadius: BorderRadius.circular(12),
+  Widget _buildReferenceCard({
+    required String title,
+    required String subtitle,
+    required bool isPdf,
+    required VoidCallback onTap,
+    required VoidCallback onDownloadTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: isPdf
+                    ? const Color(0xffFEE2E2)
+                    : const Color(0xffDBEAFE),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                isPdf ? Icons.picture_as_pdf : Icons.article,
+                color: isPdf
+                    ? const Color(0xffDC2626)
+                    : const Color(0xff2563EB),
+              ),
             ),
-            child: Icon(
-              isPdf ? Icons.picture_as_pdf : Icons.article,
-              color: isPdf ? const Color(0xffDC2626) : const Color(0xff2563EB),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyle.semiBold14.copyWith(
-                    color: AppColors.black,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyle.semiBold14.copyWith(
+                      color: AppColors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: AppTextStyle.regular12.copyWith(color: AppColors.grey),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: AppTextStyle.regular12.copyWith(
+                      color: AppColors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.file_download_outlined,
-              color: AppColors.secondaryColor,
+            IconButton(
+              icon: Icon(
+                Icons.file_download_outlined,
+                color: AppColors.secondaryColor,
+              ),
+              onPressed: onDownloadTap,
             ),
-            onPressed: () {},
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
