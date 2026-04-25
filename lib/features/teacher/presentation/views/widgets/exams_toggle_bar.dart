@@ -39,7 +39,7 @@ class ExamsToggleBar extends StatelessWidget {
                               color: AppColors.black.withValues(alpha: 0.05),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
-                            )
+                            ),
                           ]
                         : [],
                   ),
@@ -72,7 +72,7 @@ class ExamsToggleBar extends StatelessWidget {
                               color: AppColors.black.withValues(alpha: 0.05),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
-                            )
+                            ),
                           ]
                         : [],
                   ),

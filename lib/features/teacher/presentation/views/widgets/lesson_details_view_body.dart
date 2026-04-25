@@ -117,7 +117,8 @@ class LessonDetailsViewBody extends StatelessWidget {
             subjectName = result['subjectName']?.toString() ?? 'Subject';
             lessonName = result['lessonName']?.toString() ?? 'Lesson';
             description =
-                result['description']?.toString() ?? 'No description available.';
+                result['description']?.toString() ??
+                'No description available.';
             final rawMaterials = result['materials'];
             if (rawMaterials is List<Map<String, dynamic>>) {
               materials = rawMaterials;
@@ -213,7 +214,9 @@ class LessonDetailsViewBody extends StatelessWidget {
                             iconColor: isPdf
                                 ? const Color(0xffFEE2E2)
                                 : const Color(0xffDBEAFE),
-                            iconData: isPdf ? Icons.picture_as_pdf : Icons.image,
+                            iconData: isPdf
+                                ? Icons.picture_as_pdf
+                                : Icons.image,
                             iconWidgetColor: isPdf
                                 ? const Color(0xffDC2626)
                                 : const Color(0xff2563EB),

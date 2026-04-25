@@ -76,14 +76,16 @@ class TakeAttendanceViewBody extends StatelessWidget {
             subject: c.name,
             studentsCount: c.studentsCount,
             onViewReports: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pushNamed(AttendanceReportView.routeName);
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushNamed(AttendanceReportView.routeName);
             },
             onTakeAttendance: () {
-              Navigator.of(context, rootNavigator: true).pushNamed(
-                AttendanceMethodView.routeName,
-                arguments: c,
-              );
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushNamed(AttendanceMethodView.routeName, arguments: c);
             },
           );
         }),

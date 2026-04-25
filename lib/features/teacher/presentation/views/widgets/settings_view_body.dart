@@ -44,7 +44,7 @@ class _SettingsViewBodyState extends State<SettingsViewBody> {
               });
             },
           ),
-          
+
           const SizedBox(height: 32),
           _buildSectionHeader('PREFERENCES'),
           SettingsSwitchTile(
@@ -54,14 +54,15 @@ class _SettingsViewBodyState extends State<SettingsViewBody> {
             onChanged: (value) async {
               await SharedPrefsHelper.setIsDarkMode(value);
               setState(() {
-                ThemeManager.themeNotifier.value = 
-                    value ? ThemeMode.dark : ThemeMode.light;
+                ThemeManager.themeNotifier.value = value
+                    ? ThemeMode.dark
+                    : ThemeMode.light;
               });
-              
+
               // Force the whole app to rebuild seamlessly to pick up AppColors
               // without destroying the current navigation stack!
               ThemeManager.forceAppRebuild(
-                context.findAncestorStateOfType<NavigatorState>()!.context
+                context.findAncestorStateOfType<NavigatorState>()!.context,
               );
             },
           ),

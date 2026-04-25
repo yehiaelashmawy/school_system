@@ -20,9 +20,9 @@ class TeacherWeeklyScheduleView extends StatelessWidget {
         : (SharedPrefsHelper.userId ?? '');
 
     return BlocProvider(
-      create: (context) => TeacherWeeklyScheduleCubit(
-        TeacherTimetableRepo(ApiService()),
-      )..fetchWeeklySchedule(teacherIdentifier),
+      create: (context) =>
+          TeacherWeeklyScheduleCubit(TeacherTimetableRepo(ApiService()))
+            ..fetchWeeklySchedule(teacherIdentifier),
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         appBar: AppBar(

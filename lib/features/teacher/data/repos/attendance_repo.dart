@@ -27,14 +27,18 @@ class AttendanceRepo {
       final data = response['data'];
 
       if (success && data != null) {
-        return Right(AttendanceSessionModel.fromJson(
-          (data as Map).cast<String, dynamic>(),
-        ));
+        return Right(
+          AttendanceSessionModel.fromJson(
+            (data as Map).cast<String, dynamic>(),
+          ),
+        );
       } else {
-        return Left(ApiErrors(
-          errorMessage:
-              response['messages']?['Error'] ?? 'Failed to start session',
-        ));
+        return Left(
+          ApiErrors(
+            errorMessage:
+                response['messages']?['Error'] ?? 'Failed to start session',
+          ),
+        );
       }
     } catch (e) {
       if (e is ApiErrors) return Left(e);
@@ -50,22 +54,23 @@ class AttendanceRepo {
     try {
       final response = await _apiService.post(
         '/api/Attendance',
-        data: {
-          'classOid': classOid,
-          'date': date,
-          'attendances': attendances,
-        },
+        data: {'classOid': classOid, 'date': date, 'attendances': attendances},
       );
 
       final success = response['success'] as bool? ?? false;
       if (success) {
-        return Right(response['messages']?['EN']?.toString() ??
-            'Attendance record created successfully');
+        return Right(
+          response['messages']?['EN']?.toString() ??
+              'Attendance record created successfully',
+        );
       } else {
-        return Left(ApiErrors(
-          errorMessage: response['messages']?['EN']?.toString() ??
-              'Failed to submit attendance',
-        ));
+        return Left(
+          ApiErrors(
+            errorMessage:
+                response['messages']?['EN']?.toString() ??
+                'Failed to submit attendance',
+          ),
+        );
       }
     } catch (e) {
       if (e is ApiErrors) return Left(e);

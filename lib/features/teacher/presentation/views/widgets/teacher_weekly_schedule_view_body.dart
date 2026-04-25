@@ -12,10 +12,12 @@ class TeacherWeeklyScheduleViewBody extends StatefulWidget {
   const TeacherWeeklyScheduleViewBody({super.key});
 
   @override
-  State<TeacherWeeklyScheduleViewBody> createState() => _TeacherWeeklyScheduleViewBodyState();
+  State<TeacherWeeklyScheduleViewBody> createState() =>
+      _TeacherWeeklyScheduleViewBodyState();
 }
 
-class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleViewBody> {
+class _TeacherWeeklyScheduleViewBodyState
+    extends State<TeacherWeeklyScheduleViewBody> {
   int _selectedDayIndex = 0;
   late DateTime _currentStartDate;
   late int _currentWeekNumber;
@@ -38,9 +40,11 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
   }
 
   DateTime _mondayOfWeek(DateTime date) {
-    return DateTime(date.year, date.month, date.day).subtract(
-      Duration(days: date.weekday - DateTime.monday),
-    );
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: date.weekday - DateTime.monday));
   }
 
   int _weekNumber(DateTime date) {
@@ -51,14 +55,36 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
 
   String _getMonthName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
 
   String _getFullMonthName(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -74,20 +100,31 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
   }
 
   String _getSelectedDateString() {
-    final selectedDate = _currentStartDate.add(Duration(days: _selectedDayIndex));
-    return '${_getFullMonthName(selectedDate.month)} ${selectedDate.day.toString().padLeft(2, '0')}'.toUpperCase();
+    final selectedDate = _currentStartDate.add(
+      Duration(days: _selectedDayIndex),
+    );
+    return '${_getFullMonthName(selectedDate.month)} ${selectedDate.day.toString().padLeft(2, '0')}'
+        .toUpperCase();
   }
 
   String _dayKeyFromDate(DateTime date) {
     switch (date.weekday) {
-      case DateTime.monday: return 'Monday';
-      case DateTime.tuesday: return 'Tuesday';
-      case DateTime.wednesday: return 'Wednesday';
-      case DateTime.thursday: return 'Thursday';
-      case DateTime.friday: return 'Friday';
-      case DateTime.saturday: return 'Saturday';
-      case DateTime.sunday: return 'Sunday';
-      default: return 'Monday';
+      case DateTime.monday:
+        return 'Monday';
+      case DateTime.tuesday:
+        return 'Tuesday';
+      case DateTime.wednesday:
+        return 'Wednesday';
+      case DateTime.thursday:
+        return 'Thursday';
+      case DateTime.friday:
+        return 'Friday';
+      case DateTime.saturday:
+        return 'Saturday';
+      case DateTime.sunday:
+        return 'Sunday';
+      default:
+        return 'Monday';
     }
   }
 
@@ -95,7 +132,8 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
   Widget build(BuildContext context) {
     return BlocBuilder<TeacherWeeklyScheduleCubit, TeacherWeeklyScheduleState>(
       builder: (context, state) {
-        if (state is TeacherWeeklyScheduleLoading || state is TeacherWeeklyScheduleInitial) {
+        if (state is TeacherWeeklyScheduleLoading ||
+            state is TeacherWeeklyScheduleInitial) {
           final skeletonDays = List.generate(
             5,
             (index) => ScheduleDay(
@@ -160,7 +198,7 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
 
         if (state is TeacherWeeklyScheduleSuccess) {
           final weeklySchedule = state.weeklySchedule;
-          
+
           final generatedDays = List.generate(5, (index) {
             final date = _currentStartDate.add(Duration(days: index));
             final dayKey = _dayKeyFromDate(date);
@@ -173,8 +211,10 @@ class _TeacherWeeklyScheduleViewBodyState extends State<TeacherWeeklyScheduleVie
           });
 
           List<CurriculumItem> curriculumItems = [];
-          
-          final selectedDate = _currentStartDate.add(Duration(days: _selectedDayIndex));
+
+          final selectedDate = _currentStartDate.add(
+            Duration(days: _selectedDayIndex),
+          );
           final selectedKey = _dayKeyFromDate(selectedDate);
           final selectedClasses = weeklySchedule[selectedKey] ?? [];
 

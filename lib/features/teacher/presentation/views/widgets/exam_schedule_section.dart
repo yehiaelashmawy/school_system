@@ -3,25 +3,22 @@ import 'package:school_system/features/teacher/presentation/views/widgets/custom
 import 'package:school_system/features/teacher/presentation/views/widgets/field_label.dart';
 
 class ExamScheduleSection extends StatefulWidget {
-  const ExamScheduleSection({super.key});
+  final TextEditingController dateController;
+  final TextEditingController startTimeController;
+  final TextEditingController durationController;
+
+  const ExamScheduleSection({
+    super.key,
+    required this.dateController,
+    required this.startTimeController,
+    required this.durationController,
+  });
 
   @override
   State<ExamScheduleSection> createState() => _ExamScheduleSectionState();
 }
 
 class _ExamScheduleSectionState extends State<ExamScheduleSection> {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _startTimeController = TextEditingController();
-  final TextEditingController _endTimeController = TextEditingController();
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    _startTimeController.dispose();
-    _endTimeController.dispose();
-    super.dispose();
-  }
-
   Future<void> _pickDate() async {
     final date = await showDatePicker(
       context: context,
@@ -31,8 +28,8 @@ class _ExamScheduleSectionState extends State<ExamScheduleSection> {
     );
     if (date != null) {
       setState(() {
-        _dateController.text =
-            "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}";
+        widget.dateController.text =
+            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}T00:00:00.000Z";
       });
     }
   }
@@ -44,10 +41,12 @@ class _ExamScheduleSectionState extends State<ExamScheduleSection> {
     );
     if (time != null && mounted) {
       setState(() {
+        final timeStr =
+            "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
         if (isStart) {
-          _startTimeController.text = time.format(context);
+          widget.startTimeController.text = timeStr;
         } else {
-          _endTimeController.text = time.format(context);
+          widget.durationController.text = timeStr;
         }
       });
     }
@@ -61,8 +60,8 @@ class _ExamScheduleSectionState extends State<ExamScheduleSection> {
         const FieldLabel(label: 'Exam Date'),
         const SizedBox(height: 8),
         CustomTextField(
-          hintText: 'mm/dd/yyyy',
-          controller: _dateController,
+          hintText: 'yyyy-mm-ddThh:mm:ss.mmmZ',
+          controller: widget.dateController,
           readOnly: true,
           onTap: _pickDate,
         ),
@@ -76,8 +75,8 @@ class _ExamScheduleSectionState extends State<ExamScheduleSection> {
                   const FieldLabel(label: 'Start Time'),
                   const SizedBox(height: 8),
                   CustomTextField(
-                    hintText: '--:-- --',
-                    controller: _startTimeController,
+                    hintText: '--:--',
+                    controller: widget.startTimeController,
                     readOnly: true,
                     onTap: () => _pickTime(true),
                   ),
@@ -89,11 +88,11 @@ class _ExamScheduleSectionState extends State<ExamScheduleSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const FieldLabel(label: 'End Time'),
+                  const FieldLabel(label: 'Duration (HH:mm)'),
                   const SizedBox(height: 8),
                   CustomTextField(
-                    hintText: '--:-- --',
-                    controller: _endTimeController,
+                    hintText: '--:--',
+                    controller: widget.durationController,
                     readOnly: true,
                     onTap: () => _pickTime(false),
                   ),

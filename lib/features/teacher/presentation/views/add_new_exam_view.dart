@@ -9,6 +9,9 @@ import 'package:school_system/features/teacher/presentation/manager/teacher_clas
 import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_cubit.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/add_new_exam_view_body.dart';
 
+import 'package:school_system/features/teacher/presentation/manager/add_exam_cubit/add_exam_cubit.dart';
+import 'package:school_system/features/teacher/data/repos/teacher_exams_repo.dart';
+
 class AddNewExamView extends StatelessWidget {
   const AddNewExamView({super.key});
   static const String routeName = '/add_new_exam';
@@ -61,6 +64,9 @@ class AddNewExamView extends StatelessWidget {
             create: (context) =>
                 TeacherSubjectsCubit(TeacherSubjectsRepo(ApiService()))
                   ..fetchSubjects(),
+          ),
+          BlocProvider(
+            create: (context) => AddExamCubit(TeacherExamsRepo(ApiService())),
           ),
         ],
         // Use builder to obtain a new BuildContext that has access to providers.

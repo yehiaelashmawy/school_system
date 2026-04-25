@@ -43,7 +43,8 @@ class _LessonDetailsViewState extends State<LessonDetailsView> {
 
     try {
       final response = await ApiService().delete('/api/Lessons/$lessonId');
-      final isSuccess = response is Map<String, dynamic> &&
+      final isSuccess =
+          response is Map<String, dynamic> &&
           (response['success'] == true || response['data'] == true);
 
       if (!mounted) return;

@@ -14,7 +14,11 @@ class HomeworkDetailsDescription extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.description_outlined, color: AppColors.primaryColor, size: 20),
+            Icon(
+              Icons.description_outlined,
+              color: AppColors.primaryColor,
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Text(
               'Description',

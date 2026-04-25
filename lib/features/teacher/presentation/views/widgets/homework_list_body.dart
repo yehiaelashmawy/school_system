@@ -37,8 +37,18 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
     final parsed = DateTime.tryParse(rawDate);
     if (parsed == null) return rawDate;
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[parsed.month - 1]} ${parsed.day}, ${parsed.year}';
   }
@@ -93,7 +103,10 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
   }
 
   Future<void> _navigateToDetails(
-      BuildContext context, TeacherHomeworkModel homework, _HomeworkUiState ui) async {
+    BuildContext context,
+    TeacherHomeworkModel homework,
+    _HomeworkUiState ui,
+  ) async {
     final deleted = await Navigator.push<bool>(
       context,
       MaterialPageRoute(

@@ -21,7 +21,8 @@ class SubmitAttendanceFailure extends SubmitAttendanceState {
 class SubmitAttendanceCubit extends Cubit<SubmitAttendanceState> {
   final AttendanceRepo _attendanceRepo;
 
-  SubmitAttendanceCubit(this._attendanceRepo) : super(SubmitAttendanceInitial());
+  SubmitAttendanceCubit(this._attendanceRepo)
+    : super(SubmitAttendanceInitial());
 
   Future<void> submitAttendance({
     required String classOid,

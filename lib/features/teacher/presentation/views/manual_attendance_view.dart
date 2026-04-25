@@ -24,11 +24,7 @@ class ManualAttendanceView extends StatefulWidget {
   final TeacherClassModel teacherClass;
   final AttendanceSessionModel? session;
 
-  ManualAttendanceView({
-    super.key,
-    required this.teacherClass,
-    this.session,
-  });
+  ManualAttendanceView({super.key, required this.teacherClass, this.session});
 
   @override
   State<ManualAttendanceView> createState() => _ManualAttendanceViewState();
@@ -133,8 +129,9 @@ class _ManualAttendanceViewState extends State<ManualAttendanceView> {
                               )
                             : Text(
                                 'Finalise Attendance',
-                                style: AppTextStyle.semiBold16
-                                    .copyWith(color: Colors.white),
+                                style: AppTextStyle.semiBold16.copyWith(
+                                  color: Colors.white,
+                                ),
                               ),
                       ),
                     ),

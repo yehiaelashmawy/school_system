@@ -3,7 +3,14 @@ import 'package:school_system/features/teacher/presentation/views/widgets/custom
 import 'package:school_system/features/teacher/presentation/views/widgets/field_label.dart';
 
 class ExamGradingSection extends StatelessWidget {
-  const ExamGradingSection({super.key});
+  final TextEditingController totalMarksController;
+  final TextEditingController passingMarksController;
+
+  const ExamGradingSection({
+    super.key,
+    required this.totalMarksController,
+    required this.passingMarksController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +22,9 @@ class ExamGradingSection extends StatelessWidget {
             children: [
               const FieldLabel(label: 'Total Marks'),
               const SizedBox(height: 8),
-              const CustomTextField(
+              CustomTextField(
                 hintText: '100',
+                controller: totalMarksController,
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -29,8 +37,9 @@ class ExamGradingSection extends StatelessWidget {
             children: [
               const FieldLabel(label: 'Passing Marks'),
               const SizedBox(height: 8),
-              const CustomTextField(
+              CustomTextField(
                 hintText: '33',
+                controller: passingMarksController,
                 keyboardType: TextInputType.number,
               ),
             ],

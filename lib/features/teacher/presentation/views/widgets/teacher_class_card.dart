@@ -277,16 +277,16 @@ class _ClassActionRow extends StatelessWidget {
                 color: AppColors.black.withValues(alpha: 0.54),
               )
             : imagePath.startsWith('assets')
-                ? Image.asset(imagePath, fit: BoxFit.cover)
-                : Image.network(
-                    imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.person,
-                      size: 20,
-                      color: AppColors.black.withValues(alpha: 0.54),
-                    ),
-                  ),
+            ? Image.asset(imagePath, fit: BoxFit.cover)
+            : Image.network(
+                imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.person,
+                  size: 20,
+                  color: AppColors.black.withValues(alpha: 0.54),
+                ),
+              ),
       ),
     );
   }

@@ -5,12 +5,13 @@ import 'package:school_system/features/teacher/presentation/manager/teacher_subj
 class TeacherSubjectsCubit extends Cubit<TeacherSubjectsState> {
   final TeacherSubjectsRepo teacherSubjectsRepo;
 
-  TeacherSubjectsCubit(this.teacherSubjectsRepo) : super(TeacherSubjectsInitial());
+  TeacherSubjectsCubit(this.teacherSubjectsRepo)
+    : super(TeacherSubjectsInitial());
 
   Future<void> fetchSubjects() async {
     emit(TeacherSubjectsLoading());
     final result = await teacherSubjectsRepo.getTeacherSubjects();
-    
+
     result.fold(
       (error) => emit(TeacherSubjectsFailure(error)),
       (subjects) => emit(TeacherSubjectsSuccess(subjects)),

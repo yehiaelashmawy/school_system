@@ -30,22 +30,21 @@ class TeacherHomeViewBody extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AnnouncementsCubit(
-            AnnouncementsRepo(ApiService()),
-          )..fetchHighPriorityAnnouncements(take: 2),
+          create: (context) =>
+              AnnouncementsCubit(AnnouncementsRepo(ApiService()))
+                ..fetchHighPriorityAnnouncements(take: 2),
         ),
         BlocProvider(
-          create: (context) => TeacherExamsCubit(
-            TeacherExamsRepo(ApiService()),
-          )..fetchExams(),
+          create: (context) =>
+              TeacherExamsCubit(TeacherExamsRepo(ApiService()))..fetchExams(),
         ),
         BlocProvider(
           create: (context) => ProfileCubit(ProfileRepo())..fetchProfile(),
         ),
         BlocProvider(
-          create: (context) => TeacherTimetableCubit(
-            TeacherTimetableRepo(ApiService()),
-          )..fetchTodayClasses(teacherIdentifier),
+          create: (context) =>
+              TeacherTimetableCubit(TeacherTimetableRepo(ApiService()))
+                ..fetchTodayClasses(teacherIdentifier),
         ),
       ],
       child: Container(
@@ -63,7 +62,10 @@ class TeacherHomeViewBody extends StatelessWidget {
                     child: const TeacherCustomAppBar(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 24.0,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [

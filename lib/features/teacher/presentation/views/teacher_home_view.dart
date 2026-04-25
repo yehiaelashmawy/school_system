@@ -123,9 +123,9 @@ class _TeacherHomeViewState extends State<TeacherHomeView> {
         }
       },
       child: BlocProvider(
-        create: (context) => TeacherClassesCubit(
-          TeacherClassesRepo(ApiService()),
-        )..fetchClasses(),
+        create: (context) =>
+            TeacherClassesCubit(TeacherClassesRepo(ApiService()))
+              ..fetchClasses(),
         child: Scaffold(
           backgroundColor: AppColors.backgroundColor,
           body: IndexedStack(index: _currentIndex, children: _views),

@@ -6,7 +6,9 @@ import 'package:school_system/features/teacher/presentation/views/widgets/dashed
 import 'package:school_system/features/teacher/presentation/views/widgets/lesson_file_card.dart';
 
 class ExamAttachmentsSection extends StatefulWidget {
-  const ExamAttachmentsSection({super.key});
+  final ValueChanged<List<PlatformFile>> onFilesChanged;
+
+  const ExamAttachmentsSection({super.key, required this.onFilesChanged});
 
   @override
   State<ExamAttachmentsSection> createState() => _ExamAttachmentsSectionState();
@@ -26,6 +28,7 @@ class _ExamAttachmentsSectionState extends State<ExamAttachmentsSection> {
       setState(() {
         _attachedFiles.addAll(result.files);
       });
+      widget.onFilesChanged(_attachedFiles);
     }
   }
 
@@ -65,7 +68,9 @@ class _ExamAttachmentsSectionState extends State<ExamAttachmentsSection> {
                 fileName: file.name,
                 fileInfo: sizeStr,
                 iconColor: const Color(0xffFEE2E2),
-                iconData: isPdf ? Icons.picture_as_pdf : Icons.insert_drive_file,
+                iconData: isPdf
+                    ? Icons.picture_as_pdf
+                    : Icons.insert_drive_file,
                 iconWidgetColor: const Color(0xffDC2626),
               ),
             );

@@ -27,9 +27,7 @@ class StudentListItem extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24),
                   child: avatar.isEmpty
@@ -39,17 +37,16 @@ class StudentListItem extends StatelessWidget {
                           size: 28,
                         )
                       : avatar.startsWith('assets')
-                          ? Image.asset(avatar, fit: BoxFit.cover)
-                          : Image.network(
-                              avatar,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                Icons.person,
-                                color: AppColors.black.withValues(alpha: 0.54),
-                                size: 28,
-                              ),
-                            ),
+                      ? Image.asset(avatar, fit: BoxFit.cover)
+                      : Image.network(
+                          avatar,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.person,
+                            color: AppColors.black.withValues(alpha: 0.54),
+                            size: 28,
+                          ),
+                        ),
                 ),
               ),
               if (isOnline)

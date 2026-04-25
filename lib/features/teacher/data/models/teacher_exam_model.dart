@@ -13,6 +13,9 @@ class TeacherExamModel {
   final String status;
   final String room;
   final int studentsCount;
+  final String instructions;
+  final List<dynamic> materials;
+  final dynamic statistics;
 
   TeacherExamModel({
     required this.oid,
@@ -29,6 +32,9 @@ class TeacherExamModel {
     required this.status,
     required this.room,
     required this.studentsCount,
+    required this.instructions,
+    required this.materials,
+    this.statistics,
   });
 
   factory TeacherExamModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +53,9 @@ class TeacherExamModel {
       status: json['status'] ?? '',
       room: json['room'] ?? '',
       studentsCount: json['studentsCount'] ?? 0,
+      instructions: json['instructions'] ?? '',
+      materials: json['materials'] ?? [],
+      statistics: json['statistics'],
     );
   }
 }

@@ -10,7 +10,18 @@ import 'package:school_system/features/teacher/presentation/manager/teacher_subj
 import 'package:school_system/features/teacher/presentation/manager/teacher_subjects_cubit/teacher_subjects_state.dart';
 
 class ExamDetailsSection extends StatefulWidget {
-  const ExamDetailsSection({super.key});
+  final TextEditingController titleController;
+  final ValueChanged<String?> onSubjectChanged;
+  final ValueChanged<String?> onClassChanged;
+  final ValueChanged<String?> onTypeChanged;
+
+  const ExamDetailsSection({
+    super.key,
+    required this.titleController,
+    required this.onSubjectChanged,
+    required this.onClassChanged,
+    required this.onTypeChanged,
+  });
 
   @override
   State<ExamDetailsSection> createState() => _ExamDetailsSectionState();
@@ -19,6 +30,7 @@ class ExamDetailsSection extends StatefulWidget {
 class _ExamDetailsSectionState extends State<ExamDetailsSection> {
   String? _selectedSubject;
   String? _selectedClass;
+  String? _selectedType;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +39,24 @@ class _ExamDetailsSectionState extends State<ExamDetailsSection> {
       children: [
         const FieldLabel(label: 'Exam Title'),
         const SizedBox(height: 8),
-        const CustomTextField(hintText: 'e.g., Mid-term Mathematics'),
+        CustomTextField(
+          hintText: 'e.g., Mid-term Mathematics',
+          controller: widget.titleController,
+        ),
+        const SizedBox(height: 16),
+        const FieldLabel(label: 'Exam Type'),
+        const SizedBox(height: 8),
+        CustomDropdownField(
+          hintText: 'Choose exam type',
+          items: const ['Quiz', 'Midterm', 'Final', 'Practical'],
+          value: _selectedType,
+          onChanged: (val) {
+            setState(() {
+              _selectedType = val;
+            });
+            widget.onTypeChanged(val);
+          },
+        ),
         const SizedBox(height: 16),
         Row(
           children: [
@@ -55,8 +84,9 @@ class _ExamDetailsSectionState extends State<ExamDetailsSection> {
                           style: const TextStyle(color: Colors.red),
                         );
                       } else if (subjectState is TeacherSubjectsSuccess) {
-                        final subjectNames =
-                            subjectState.subjects.map((e) => e.name).toList();
+                        final subjectNames = subjectState.subjects
+                            .map((e) => e.name)
+                            .toList();
 
                         if (_selectedSubject != null &&
                             !subjectNames.contains(_selectedSubject)) {
@@ -71,6 +101,10 @@ class _ExamDetailsSectionState extends State<ExamDetailsSection> {
                             setState(() {
                               _selectedSubject = val;
                             });
+                            final subject = subjectState.subjects.firstWhere(
+                              (e) => e.name == val,
+                            );
+                            widget.onSubjectChanged(subject.oid);
                           },
                         );
                       }
@@ -105,8 +139,9 @@ class _ExamDetailsSectionState extends State<ExamDetailsSection> {
                           style: const TextStyle(color: Colors.red),
                         );
                       } else if (classState is TeacherClassesSuccess) {
-                        final classNames =
-                            classState.classes.map((e) => e.name).toList();
+                        final classNames = classState.classes
+                            .map((e) => e.name)
+                            .toList();
 
                         if (_selectedClass != null &&
                             !classNames.contains(_selectedClass)) {
@@ -121,6 +156,10 @@ class _ExamDetailsSectionState extends State<ExamDetailsSection> {
                             setState(() {
                               _selectedClass = val;
                             });
+                            final classModel = classState.classes.firstWhere(
+                              (e) => e.name == val,
+                            );
+                            widget.onClassChanged(classModel.oid);
                           },
                         );
                       }

@@ -83,8 +83,12 @@ class HomeworkDetailsReferences extends StatelessWidget {
               iconColor: isPdf
                   ? const Color(0xFFFEE2E2)
                   : AppColors.primaryColor.withValues(alpha: 0.1),
-              iconData: isPdf ? Icons.picture_as_pdf_outlined : Icons.description_outlined,
-              iconWidgetColor: isPdf ? const Color(0xFFEF4444) : AppColors.primaryColor,
+              iconData: isPdf
+                  ? Icons.picture_as_pdf_outlined
+                  : Icons.description_outlined,
+              iconWidgetColor: isPdf
+                  ? const Color(0xFFEF4444)
+                  : AppColors.primaryColor,
               onTap: () => _openOrDownloadFile(
                 context: context,
                 material: material,

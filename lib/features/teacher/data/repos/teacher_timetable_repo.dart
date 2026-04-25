@@ -13,21 +13,26 @@ class TeacherTimetableRepo {
     try {
       if (teacherOid.trim().isEmpty) {
         return Left(
-          ApiErrors(
-            errorMessage: 'Teacher id is missing. Please login again.',
-          ),
+          ApiErrors(errorMessage: 'Teacher id is missing. Please login again.'),
         );
       }
 
-      final response = await apiService.get('/api/Timetable/teacher/$teacherOid');
+      final response = await apiService.get(
+        '/api/Timetable/teacher/$teacherOid',
+      );
       final data = response['data'] as Map<String, dynamic>? ?? {};
-      final weeklySchedule = data['weeklySchedule'] as Map<String, dynamic>? ?? {};
+      final weeklySchedule =
+          data['weeklySchedule'] as Map<String, dynamic>? ?? {};
 
       final todayKey = _weekdayKey(DateTime.now().weekday);
       final todayRaw = weeklySchedule[todayKey] as List<dynamic>? ?? [];
 
       final classes = todayRaw
-          .map((item) => TeacherTimetableEntryModel.fromJson(item as Map<String, dynamic>))
+          .map(
+            (item) => TeacherTimetableEntryModel.fromJson(
+              item as Map<String, dynamic>,
+            ),
+          )
           .toList();
 
       return Right(classes);
@@ -44,22 +49,27 @@ class TeacherTimetableRepo {
     try {
       if (teacherOid.trim().isEmpty) {
         return Left(
-          ApiErrors(
-            errorMessage: 'Teacher id is missing. Please login again.',
-          ),
+          ApiErrors(errorMessage: 'Teacher id is missing. Please login again.'),
         );
       }
 
-      final response = await apiService.get('/api/Timetable/teacher/$teacherOid');
+      final response = await apiService.get(
+        '/api/Timetable/teacher/$teacherOid',
+      );
       final data = response['data'] as Map<String, dynamic>? ?? {};
-      final weeklySchedule = data['weeklySchedule'] as Map<String, dynamic>? ?? {};
+      final weeklySchedule =
+          data['weeklySchedule'] as Map<String, dynamic>? ?? {};
 
       final Map<String, List<TeacherTimetableEntryModel>> allClasses = {};
-      
+
       weeklySchedule.forEach((key, value) {
         if (value is List) {
           allClasses[key] = value
-              .map((item) => TeacherTimetableEntryModel.fromJson(item as Map<String, dynamic>))
+              .map(
+                (item) => TeacherTimetableEntryModel.fromJson(
+                  item as Map<String, dynamic>,
+                ),
+              )
               .toList();
         }
       });

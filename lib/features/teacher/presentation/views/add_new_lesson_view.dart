@@ -37,18 +37,17 @@ class AddNewLessonView extends StatelessWidget {
       body: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => TeacherClassesCubit(
-              TeacherClassesRepo(ApiService()),
-            )..fetchClasses(),
-          ),
-          BlocProvider(
-            create: (context) => TeacherSubjectsCubit(
-              TeacherSubjectsRepo(ApiService()),
-            )..fetchSubjects(),
+            create: (context) =>
+                TeacherClassesCubit(TeacherClassesRepo(ApiService()))
+                  ..fetchClasses(),
           ),
           BlocProvider(
             create: (context) =>
-                AddLessonCubit(AddLessonRepo(ApiService())),
+                TeacherSubjectsCubit(TeacherSubjectsRepo(ApiService()))
+                  ..fetchSubjects(),
+          ),
+          BlocProvider(
+            create: (context) => AddLessonCubit(AddLessonRepo(ApiService())),
           ),
         ],
         child: const AddNewLessonViewBody(),
@@ -56,4 +55,3 @@ class AddNewLessonView extends StatelessWidget {
     );
   }
 }
-

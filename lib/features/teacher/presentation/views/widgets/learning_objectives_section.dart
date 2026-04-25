@@ -64,11 +64,7 @@ class LearningObjectivesSection extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              color: AppColors.grey,
-              fontSize: 13,
-              height: 1.4,
-            ),
+            style: TextStyle(color: AppColors.grey, fontSize: 13, height: 1.4),
           ),
         ),
       ],

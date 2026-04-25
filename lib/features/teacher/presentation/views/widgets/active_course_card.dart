@@ -34,11 +34,7 @@ class ActiveCourseCard extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 14,
-                color: AppColors.grey,
-              ),
+              Icon(Icons.location_on_outlined, size: 14, color: AppColors.grey),
               const SizedBox(width: 4),
               Text(
                 location,

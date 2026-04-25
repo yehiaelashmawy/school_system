@@ -42,6 +42,7 @@ class HomeworkDetailsInstructions extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildInstructionItem(int number, String text) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

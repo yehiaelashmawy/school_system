@@ -22,12 +22,13 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
 
   void _showFilterSheet(List<TeacherClassModel> allClasses) {
     // Get unique levels from fetched classes and sort them
-    final levels = allClasses
-        .map((c) => c.level)
-        .where((l) => l.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final levels =
+        allClasses
+            .map((c) => c.level)
+            .where((l) => l.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
 
     showModalBottomSheet(
       context: context,
@@ -54,16 +55,18 @@ class _ClassesViewBodyState extends State<ClassesViewBody> {
                   Navigator.pop(context);
                 },
               ),
-              ...levels.map((level) => ListTile(
-                    title: Text('Grade $level Only'),
-                    trailing: _selectedFilter == level
-                        ? Icon(Icons.check, color: AppColors.primaryColor)
-                        : null,
-                    onTap: () {
-                      setState(() => _selectedFilter = level);
-                      Navigator.pop(context);
-                    },
-                  )),
+              ...levels.map(
+                (level) => ListTile(
+                  title: Text('Grade $level Only'),
+                  trailing: _selectedFilter == level
+                      ? Icon(Icons.check, color: AppColors.primaryColor)
+                      : null,
+                  onTap: () {
+                    setState(() => _selectedFilter = level);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),
@@ -174,10 +177,10 @@ class _ActiveClassesTab extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final c = classes[index];
-        final studentAvatars =
-            c.students.map((s) => s.avatar).take(3).toList();
-        final extraCount =
-            c.studentsCount > 3 ? c.studentsCount - studentAvatars.length : 0;
+        final studentAvatars = c.students.map((s) => s.avatar).take(3).toList();
+        final extraCount = c.studentsCount > 3
+            ? c.studentsCount - studentAvatars.length
+            : 0;
 
         return TeacherClassCard(
           image: 'assets/images/class_image.png',

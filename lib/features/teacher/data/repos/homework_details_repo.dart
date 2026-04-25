@@ -31,7 +31,8 @@ class HomeworkDetailsRepo {
       final response = await apiService.delete('/api/Homeworks/$homeworkId');
 
       if (response != null && response['success'] == true) {
-        final msg = response['messages']?['EN']?.toString() ??
+        final msg =
+            response['messages']?['EN']?.toString() ??
             'Homework deleted successfully';
         return Right(msg);
       }

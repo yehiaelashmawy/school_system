@@ -27,7 +27,9 @@ class AttendanceLessonCard extends StatelessWidget {
           color: isSelected ? AppColors.secondaryColor : AppColors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.secondaryColor : const Color(0xffE2E8F0),
+            color: isSelected
+                ? AppColors.secondaryColor
+                : const Color(0xffE2E8F0),
             width: 2,
           ),
           boxShadow: isSelected
@@ -36,7 +38,7 @@ class AttendanceLessonCard extends StatelessWidget {
                     color: AppColors.secondaryColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
-                  )
+                  ),
                 ]
               : null,
         ),

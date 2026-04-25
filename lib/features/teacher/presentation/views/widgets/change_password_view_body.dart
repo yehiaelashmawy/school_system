@@ -69,10 +69,7 @@ class _ChangePasswordViewBodyState extends State<ChangePasswordViewBody> {
               Navigator.of(
                 context,
                 rootNavigator: true,
-              ).pushNamedAndRemoveUntil(
-                AuthView.routeName,
-                (route) => false,
-              );
+              ).pushNamedAndRemoveUntil(AuthView.routeName, (route) => false);
             }
           });
         } else if (state is ChangePasswordFailure) {

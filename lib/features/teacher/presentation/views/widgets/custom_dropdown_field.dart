@@ -16,7 +16,6 @@ class CustomDropdownField extends StatelessWidget {
   final String? value;
   final ValueChanged<String?>? onChanged;
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,10 +33,7 @@ class CustomDropdownField extends StatelessWidget {
             hintText,
             style: AppTextStyle.regular14.copyWith(color: AppColors.darkBlue),
           ),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.primaryColor,
-          ),
+          icon: Icon(Icons.keyboard_arrow_down, color: AppColors.primaryColor),
           items: items.map((String item) {
             return DropdownMenuItem<String>(
               value: item,

@@ -13,7 +13,9 @@ class UpcomingExamsSection extends StatelessWidget {
     try {
       final examDate = DateTime.parse(dateStr);
       final now = DateTime.now();
-      final diff = examDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+      final diff = examDate
+          .difference(DateTime(now.year, now.month, now.day))
+          .inDays;
       if (diff < 0) return 'Past';
       if (diff == 0) return 'Today';
       if (diff == 1) return 'Tomorrow';
@@ -27,7 +29,9 @@ class UpcomingExamsSection extends StatelessWidget {
     try {
       final examDate = DateTime.parse(dateStr);
       final now = DateTime.now();
-      final diff = examDate.difference(DateTime(now.year, now.month, now.day)).inDays;
+      final diff = examDate
+          .difference(DateTime(now.year, now.month, now.day))
+          .inDays;
       if (diff <= 2) return const Color(0xFFF97316); // Orange — urgent
       if (diff <= 5) return AppColors.primaryColor;
       return AppColors.grey;
@@ -87,8 +91,18 @@ class UpcomingExamsSection extends StatelessWidget {
                   try {
                     final date = DateTime.parse(exam.date);
                     const months = [
-                      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-                      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+                      'JAN',
+                      'FEB',
+                      'MAR',
+                      'APR',
+                      'MAY',
+                      'JUN',
+                      'JUL',
+                      'AUG',
+                      'SEP',
+                      'OCT',
+                      'NOV',
+                      'DEC',
                     ];
                     month = months[date.month - 1];
                     day = date.day.toString();
@@ -101,7 +115,8 @@ class UpcomingExamsSection extends StatelessWidget {
                         month: month,
                         day: day,
                         title: exam.name,
-                        subtitle: '${exam.className} • ${exam.studentsCount} Students',
+                        subtitle:
+                            '${exam.className} • ${exam.studentsCount} Students',
                         statusText: _computeStatusText(exam.date),
                         statusColor: _computeStatusColor(exam.date),
                       ),

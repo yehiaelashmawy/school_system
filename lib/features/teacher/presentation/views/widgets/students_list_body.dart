@@ -32,7 +32,11 @@ class StudentsListBody extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: () {},
-                  icon: Icon(Icons.filter_list, size: 18, color: AppColors.primaryColor),
+                  icon: Icon(
+                    Icons.filter_list,
+                    size: 18,
+                    color: AppColors.primaryColor,
+                  ),
                   label: Text(
                     'Filter',
                     style: TextStyle(
@@ -49,10 +53,8 @@ class StudentsListBody extends StatelessWidget {
             child: hasStudents
                 ? ListView.separated(
                     itemCount: students.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 1,
-                      color: Color(0xffE2E8F0),
-                    ),
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1, color: Color(0xffE2E8F0)),
                     itemBuilder: (context, index) {
                       final student = students[index];
                       return StudentListItem(

@@ -23,7 +23,10 @@ class TodaysClassesSection extends StatelessWidget {
             const Text('Today\'s Classes', style: AppTextStyle.bold20),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, TeacherWeeklyScheduleView.routeName);
+                Navigator.pushNamed(
+                  context,
+                  TeacherWeeklyScheduleView.routeName,
+                );
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

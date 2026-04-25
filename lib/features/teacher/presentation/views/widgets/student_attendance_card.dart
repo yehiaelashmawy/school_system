@@ -54,7 +54,8 @@ class StudentAttendanceCard extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 400; // Increased threshold for 3 items
+          final isNarrow =
+              constraints.maxWidth < 400; // Increased threshold for 3 items
 
           final studentInfo = Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,9 +63,7 @@ class StudentAttendanceCard extends StatelessWidget {
               Container(
                 width: 50,
                 height: 50,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(25),
                   child: imagePath.isEmpty
@@ -74,17 +73,16 @@ class StudentAttendanceCard extends StatelessWidget {
                           color: AppColors.black.withValues(alpha: 0.54),
                         )
                       : imagePath.startsWith('assets')
-                          ? Image.asset(imagePath, fit: BoxFit.cover)
-                          : Image.network(
-                              imagePath,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                Icons.person,
-                                size: 24,
-                                color: AppColors.black.withValues(alpha: 0.54),
-                              ),
-                            ),
+                      ? Image.asset(imagePath, fit: BoxFit.cover)
+                      : Image.network(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.person,
+                            size: 24,
+                            color: AppColors.black.withValues(alpha: 0.54),
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(width: 16),

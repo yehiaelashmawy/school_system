@@ -42,8 +42,11 @@ class TeacherSubjectModel {
       code: json['code'] as String,
       teachersCount: json['teachersCount'] as int,
       activeClassesCount: json['activeClassesCount'] as int,
-      teachers: (json['teachers'] as List?)
-              ?.map((e) => SubjectTeacherModel.fromJson(e as Map<String, dynamic>))
+      teachers:
+          (json['teachers'] as List?)
+              ?.map(
+                (e) => SubjectTeacherModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );

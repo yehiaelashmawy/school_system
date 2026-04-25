@@ -26,8 +26,11 @@ class HomeworkDetailsViewBody extends StatelessWidget {
           );
         }
 
-        final isLoading = state is HomeworkDetailsLoading || state is HomeworkDetailsInitial;
-        final homework = state is HomeworkDetailsSuccess ? state.homework : null;
+        final isLoading =
+            state is HomeworkDetailsLoading || state is HomeworkDetailsInitial;
+        final homework = state is HomeworkDetailsSuccess
+            ? state.homework
+            : null;
 
         final dummyHomework = TeacherHomeworkModel(
           oid: '',
@@ -61,11 +64,17 @@ class HomeworkDetailsViewBody extends StatelessWidget {
                 if (homework != null || isLoading) ...[
                   HomeworkDetailsHeader(homework: displayHomework),
                   const SizedBox(height: 24),
-                  HomeworkDetailsDescription(description: displayHomework.description ?? ''),
+                  HomeworkDetailsDescription(
+                    description: displayHomework.description ?? '',
+                  ),
                   const SizedBox(height: 24),
-                  HomeworkDetailsInstructions(instructions: displayHomework.instructions ?? ''),
+                  HomeworkDetailsInstructions(
+                    instructions: displayHomework.instructions ?? '',
+                  ),
                   const SizedBox(height: 24),
-                  HomeworkDetailsReferences(materials: displayHomework.materials ?? []),
+                  HomeworkDetailsReferences(
+                    materials: displayHomework.materials ?? [],
+                  ),
                   const SizedBox(height: 32),
                 ],
               ],

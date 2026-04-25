@@ -25,7 +25,6 @@ class StudentData {
   });
 }
 
-
 class ManualAttendanceViewBody extends StatefulWidget {
   final TeacherClassModel teacherClass;
   final AttendanceSessionModel? session;
@@ -58,10 +57,7 @@ class ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
         // Try to find full student data in teacherClass to get the avatar and attendance history
         final classStudent = widget.teacherClass.students
             .cast<TeacherStudentModel?>()
-            .firstWhere(
-              (cs) => cs?.oid == s.studentOid,
-              orElse: () => null,
-            );
+            .firstWhere((cs) => cs?.oid == s.studentOid, orElse: () => null);
 
         // Check for existing attendance record for today
         AttendanceStatus initialStatus = AttendanceStatus.none;
@@ -135,121 +131,121 @@ class ManualAttendanceViewBodyState extends State<ManualAttendanceViewBody> {
       child: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${teacherClass.level.toUpperCase()} • ${teacherClass.name.toUpperCase()}',
-                style: AppTextStyle.bold12.copyWith(
-                  color: AppColors.grey,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Attendance Check',
-                style: AppTextStyle.bold24.copyWith(
-                  color: AppColors.black,
-                  fontSize: 32,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '$enrolledCount Students Enrolled',
-                style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
-              ),
-            ],
-          ),
-        ),
-        if (widget.session != null)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xffE2E8F0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.calendar_today_rounded,
-                    color: AppColors.secondaryColor,
-                    size: 20,
+                Text(
+                  '${teacherClass.level.toUpperCase()} • ${teacherClass.name.toUpperCase()}',
+                  style: AppTextStyle.bold12.copyWith(
+                    color: AppColors.grey,
+                    letterSpacing: 1.0,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ACTIVE SESSION',
-                        style: AppTextStyle.bold12.copyWith(
-                          color: AppColors.grey,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        widget.session!.lessonName,
-                        style: AppTextStyle.bold16.copyWith(
-                          color: AppColors.darkBlue,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 8),
+                Text(
+                  'Attendance Check',
+                  style: AppTextStyle.bold24.copyWith(
+                    color: AppColors.black,
+                    fontSize: 32,
                   ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$enrolledCount Students Enrolled',
+                  style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
                 ),
               ],
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.all(24),
-          child: AttendanceStatsRow(
-            enrolledCount: enrolledCount,
-            absentCount: absentCount,
+          if (widget.session != null)
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xffE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.calendar_today_rounded,
+                      color: AppColors.secondaryColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ACTIVE SESSION',
+                          style: AppTextStyle.bold12.copyWith(
+                            color: AppColors.grey,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.session!.lessonName,
+                          style: AppTextStyle.bold16.copyWith(
+                            color: AppColors.darkBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: AttendanceStatsRow(
+              enrolledCount: enrolledCount,
+              absentCount: absentCount,
+            ),
           ),
-        ),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          itemCount: students.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            final student = students[index];
-            return StudentAttendanceCard(
-              name: student.name,
-              subtitle: student.subtitle,
-              imagePath: student.imagePath,
-              hasHonorRoll: student.hasHonorRoll,
-              status: student.status,
-              onStatusChanged: (newStatus) {
-                setState(() {
-                  student.status = newStatus;
-                });
-              },
-            );
-          },
-        ),
-      ],
-    ),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            itemCount: students.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemBuilder: (context, index) {
+              final student = students[index];
+              return StudentAttendanceCard(
+                name: student.name,
+                subtitle: student.subtitle,
+                imagePath: student.imagePath,
+                hasHonorRoll: student.hasHonorRoll,
+                status: student.status,
+                onStatusChanged: (newStatus) {
+                  setState(() {
+                    student.status = newStatus;
+                  });
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

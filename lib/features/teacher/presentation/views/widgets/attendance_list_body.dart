@@ -41,8 +41,18 @@ class AttendanceListBody extends StatelessWidget {
     final d = DateTime.tryParse(raw);
     if (d == null) return raw;
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[d.month - 1]} ${d.day}, ${d.year}';
   }
@@ -87,8 +97,10 @@ class AttendanceListBody extends StatelessWidget {
               'Present: ${summary.presentCount} • Absent: ${summary.absentCount} • Late: ${summary.lateCount}',
           studentsCount: studentCount,
           onViewReports: () {
-            Navigator.of(context, rootNavigator: true)
-                .pushNamed(AttendanceReportView.routeName);
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushNamed(AttendanceReportView.routeName);
           },
           onTakeAttendance: () {
             Navigator.of(context, rootNavigator: true).pushNamed(

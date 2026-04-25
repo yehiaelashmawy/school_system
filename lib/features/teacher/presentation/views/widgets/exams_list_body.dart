@@ -21,7 +21,9 @@ class _ExamsListBodyState extends State<ExamsListBody> {
     return widget.exams.where((exam) {
       final examDate = DateTime.tryParse(exam.date);
       if (examDate == null) return _isUpcomingExams;
-      final isUpcoming = !examDate.isBefore(DateTime(now.year, now.month, now.day));
+      final isUpcoming = !examDate.isBefore(
+        DateTime(now.year, now.month, now.day),
+      );
       return _isUpcomingExams ? isUpcoming : !isUpcoming;
     }).toList();
   }
@@ -102,7 +104,9 @@ class _ExamsListBodyState extends State<ExamsListBody> {
                       final exam = _filteredExams[index];
                       final isDraft = exam.grade == null && !_isUpcomingExams;
                       return ExamItemCard(
-                        title: exam.name.isNotEmpty ? exam.name : 'Untitled Exam',
+                        title: exam.name.isNotEmpty
+                            ? exam.name
+                            : 'Untitled Exam',
                         date: _formatDate(exam.date),
                         time: _formatTime(exam.date),
                         subject: 'Class Exam',

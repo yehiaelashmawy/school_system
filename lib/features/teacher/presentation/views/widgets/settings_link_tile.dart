@@ -55,7 +55,7 @@ class SettingsLinkTile extends StatelessWidget {
                         fontSize: 12,
                       ),
                     ),
-                  ]
+                  ],
                 ],
               ),
             ),

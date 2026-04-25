@@ -27,13 +27,16 @@ class TeacherSubjectsRepo {
     }
   }
 
-  Future<Either<ApiErrors, List<TeacherSubjectModel>>> getTeacherSubjects() async {
+  Future<Either<ApiErrors, List<TeacherSubjectModel>>>
+  getTeacherSubjects() async {
     try {
       final response = await apiService.get('/api/Subjects');
 
       final data = response['data'] as List;
-      
-      List<TeacherSubjectModel> subjects = data.map((e) => TeacherSubjectModel.fromJson(e)).toList();
+
+      List<TeacherSubjectModel> subjects = data
+          .map((e) => TeacherSubjectModel.fromJson(e))
+          .toList();
 
       final String? token = SharedPrefsHelper.token;
       final String? currentUserEmail = _getEmailFromToken(token);
@@ -41,7 +44,8 @@ class TeacherSubjectsRepo {
       if (currentUserEmail != null && currentUserEmail.isNotEmpty) {
         subjects = subjects.where((subject) {
           return subject.teachers.any(
-            (teacher) => teacher.email.toLowerCase() == currentUserEmail.toLowerCase(),
+            (teacher) =>
+                teacher.email.toLowerCase() == currentUserEmail.toLowerCase(),
           );
         }).toList();
       }

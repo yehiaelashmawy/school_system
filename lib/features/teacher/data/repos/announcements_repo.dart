@@ -8,11 +8,16 @@ class AnnouncementsRepo {
 
   AnnouncementsRepo(this.apiService);
 
-  Future<Either<ApiErrors, List<AnnouncementModel>>> getHighPriorityAnnouncements({int take = 1}) async {
+  Future<Either<ApiErrors, List<AnnouncementModel>>>
+  getHighPriorityAnnouncements({int take = 1}) async {
     try {
-      final response = await apiService.get('/api/Announcements/priority/High?take=$take');
+      final response = await apiService.get(
+        '/api/Announcements/priority/High?take=$take',
+      );
       final data = response['data'] as List;
-      final announcements = data.map((e) => AnnouncementModel.fromJson(e)).toList();
+      final announcements = data
+          .map((e) => AnnouncementModel.fromJson(e))
+          .toList();
       return Right(announcements);
     } catch (e) {
       if (e is ApiErrors) {

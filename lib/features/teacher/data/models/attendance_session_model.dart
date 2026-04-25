@@ -35,14 +35,19 @@ class AttendanceSessionModel {
       method: int.tryParse(json['method']?.toString() ?? '1') ?? 1,
       qrCodeBase64: json['qrCodeBase64']?.toString(),
       randomNumbers: randomNumbersRaw is List
-          ? randomNumbersRaw.map((e) => int.tryParse(e.toString()) ?? 0).toList()
+          ? randomNumbersRaw
+                .map((e) => int.tryParse(e.toString()) ?? 0)
+                .toList()
           : null,
       expiresAt: json['expiresAt']?.toString(),
       students: studentsRaw is List
           ? studentsRaw
-              .whereType<Map>()
-              .map((s) => SessionStudentModel.fromJson(s.cast<String, dynamic>()))
-              .toList()
+                .whereType<Map>()
+                .map(
+                  (s) =>
+                      SessionStudentModel.fromJson(s.cast<String, dynamic>()),
+                )
+                .toList()
           : [],
     );
   }
@@ -52,10 +57,7 @@ class SessionStudentModel {
   final String studentOid;
   final String studentName;
 
-  SessionStudentModel({
-    required this.studentOid,
-    required this.studentName,
-  });
+  SessionStudentModel({required this.studentOid, required this.studentName});
 
   factory SessionStudentModel.fromJson(Map<String, dynamic> json) {
     return SessionStudentModel(

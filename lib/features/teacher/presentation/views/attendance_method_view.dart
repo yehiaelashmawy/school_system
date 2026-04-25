@@ -21,11 +21,7 @@ class AttendanceMethodView extends StatelessWidget {
   final TeacherClassModel teacherClass;
   final String? lessonId;
 
-  AttendanceMethodView({
-    super.key,
-    required this.teacherClass,
-    this.lessonId,
-  });
+  AttendanceMethodView({super.key, required this.teacherClass, this.lessonId});
 
   @override
   Widget build(BuildContext context) {

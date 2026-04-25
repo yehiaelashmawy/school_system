@@ -38,14 +38,14 @@ class AddHomeworkView extends StatelessWidget {
       body: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => TeacherClassesCubit(
-              TeacherClassesRepo(ApiService()),
-            )..fetchClasses(),
+            create: (context) =>
+                TeacherClassesCubit(TeacherClassesRepo(ApiService()))
+                  ..fetchClasses(),
           ),
           BlocProvider(
-            create: (context) => TeacherSubjectsCubit(
-              TeacherSubjectsRepo(ApiService()),
-            )..fetchSubjects(),
+            create: (context) =>
+                TeacherSubjectsCubit(TeacherSubjectsRepo(ApiService()))
+                  ..fetchSubjects(),
           ),
           BlocProvider(
             create: (context) =>

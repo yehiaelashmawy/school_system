@@ -61,7 +61,9 @@ class SchoolAnnouncementsSection extends StatelessWidget {
                 if (state.announcements.isEmpty) {
                   return Text(
                     'No announcements at this time.',
-                    style: AppTextStyle.regular14.copyWith(color: AppColors.grey),
+                    style: AppTextStyle.regular14.copyWith(
+                      color: AppColors.grey,
+                    ),
                   );
                 }
                 return Column(

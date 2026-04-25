@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_system/features/teacher/presentation/views/widgets/lesson_file_card.dart';
 
 class HomeworkFileList extends StatelessWidget {
-  const HomeworkFileList({
-    super.key,
-    required this.attachedFiles,
-  });
+  const HomeworkFileList({super.key, required this.attachedFiles});
 
   final List<PlatformFile> attachedFiles;
 
@@ -19,7 +16,8 @@ class HomeworkFileList extends StatelessWidget {
         const SizedBox(height: 16),
         ...attachedFiles.map((file) {
           final isPdf = file.extension?.toLowerCase() == 'pdf';
-          final isDoc = file.extension?.toLowerCase() == 'doc' ||
+          final isDoc =
+              file.extension?.toLowerCase() == 'doc' ||
               file.extension?.toLowerCase() == 'docx';
           final kbSize = file.size / 1024;
           final mbSize = kbSize / 1024;

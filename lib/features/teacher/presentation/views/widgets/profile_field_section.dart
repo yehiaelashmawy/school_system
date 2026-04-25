@@ -23,14 +23,18 @@ class ProfileFieldSection extends StatelessWidget {
           label,
           style: AppTextStyle.semiBold14.copyWith(
             color: const Color(0xff475569), // Slate 600
-            fontSize: 12, 
+            fontSize: 12,
           ),
         ),
         const SizedBox(height: 8),
         CustomTextField(
           controller: controller,
           hintText: '',
-          suffixIcon: Icon(suffixIcon, color: const Color(0xff94A3B8), size: 20),
+          suffixIcon: Icon(
+            suffixIcon,
+            color: const Color(0xff94A3B8),
+            size: 20,
+          ),
         ),
       ],
     );
