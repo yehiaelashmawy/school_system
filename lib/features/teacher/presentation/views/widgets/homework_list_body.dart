@@ -63,9 +63,6 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
         label: 'GRADING',
         badgeColor: const Color(0xFFDBEAFE),
         badgeTextColor: const Color(0xFF1E40AF),
-        buttonText: 'Review Submissions',
-        buttonColor: const Color(0xFFF1F5F9),
-        buttonTextColor: const Color(0xFF475569),
         isOverdue: false,
       );
     }
@@ -74,9 +71,6 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
         label: 'COMPLETED',
         badgeColor: const Color(0xFFE2E8F0),
         badgeTextColor: const Color(0xFF334155),
-        buttonText: 'View Details',
-        buttonColor: const Color(0xFFEFF6FF),
-        buttonTextColor: AppColors.primaryColor,
         isOverdue: false,
       );
     }
@@ -85,9 +79,6 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
         label: 'OVERDUE',
         badgeColor: const Color(0xFFFEE2E2),
         badgeTextColor: const Color(0xFF991B1B),
-        buttonText: 'Review Submissions',
-        buttonColor: const Color(0xFFF1F5F9),
-        buttonTextColor: const Color(0xFF475569),
         isOverdue: true,
       );
     }
@@ -95,24 +86,18 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
       label: 'ACTIVE',
       badgeColor: const Color(0xFFD1FAE5),
       badgeTextColor: const Color(0xFF065F46),
-      buttonText: 'View Details',
-      buttonColor: AppColors.primaryColor,
-      buttonTextColor: Colors.white,
       isOverdue: false,
     );
   }
 
-  Future<void> _navigateToDetails(
+  Future<void> _openDetails(
     BuildContext context,
     TeacherHomeworkModel homework,
-    _HomeworkUiState ui,
   ) async {
     final deleted = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (context) => ui.label == 'GRADING'
-            ? const ReviewSubmissionsView()
-            : HomeworkDetailsView(homeworkId: homework.oid),
+        builder: (context) => HomeworkDetailsView(homeworkId: homework.oid),
       ),
     );
 
@@ -121,6 +106,15 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
         _homeworks.removeWhere((h) => h.oid == homework.oid);
       });
     }
+  }
+
+  void _openReview(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReviewSubmissionsView(),
+      ),
+    );
   }
 
   @override
@@ -199,11 +193,9 @@ class _HomeworkListBodyState extends State<HomeworkListBody> {
                         progress: homework.grade != null
                             ? (homework.grade!.clamp(0, 100) / 100)
                             : null,
-                        buttonText: ui.buttonText,
-                        buttonColor: ui.buttonColor,
-                        buttonTextColor: ui.buttonTextColor,
                         isOverdue: ui.isOverdue,
-                        onTap: () => _navigateToDetails(context, homework, ui),
+                        onDetailsTap: () => _openDetails(context, homework),
+                        onReviewTap: () => _openReview(context),
                       );
                     },
                   ),
@@ -218,18 +210,12 @@ class _HomeworkUiState {
   final String label;
   final Color badgeColor;
   final Color badgeTextColor;
-  final String buttonText;
-  final Color buttonColor;
-  final Color buttonTextColor;
   final bool isOverdue;
 
   const _HomeworkUiState({
     required this.label,
     required this.badgeColor,
     required this.badgeTextColor,
-    required this.buttonText,
-    required this.buttonColor,
-    required this.buttonTextColor,
     required this.isOverdue,
   });
 }

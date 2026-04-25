@@ -14,11 +14,9 @@ class HomeworkItemCard extends StatelessWidget {
     required this.dueDate,
     required this.submissions,
     this.progress,
-    required this.buttonText,
-    required this.buttonColor,
-    required this.buttonTextColor,
     required this.isOverdue,
-    required this.onTap,
+    required this.onDetailsTap,
+    required this.onReviewTap,
   });
 
   final String title;
@@ -30,11 +28,9 @@ class HomeworkItemCard extends StatelessWidget {
   final String dueDate;
   final String submissions;
   final double? progress;
-  final String buttonText;
-  final Color buttonColor;
-  final Color buttonTextColor;
   final bool isOverdue;
-  final VoidCallback onTap;
+  final VoidCallback onDetailsTap;
+  final VoidCallback onReviewTap;
 
   @override
   Widget build(BuildContext context) {
@@ -186,23 +182,44 @@ class HomeworkItemCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onTap,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: onDetailsTap,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: AppColors.primaryColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'View Details',
+                    style: AppTextStyle.semiBold14
+                        .copyWith(color: AppColors.primaryColor),
+                  ),
                 ),
               ),
-              child: Text(
-                buttonText,
-                style: AppTextStyle.semiBold14.copyWith(color: buttonTextColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: onReviewTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondaryColor,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Review Submission',
+                    style: AppTextStyle.semiBold14.copyWith(color: Colors.white),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
