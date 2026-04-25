@@ -25,12 +25,6 @@ class ExamDetailsView extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: AppColors.primaryColor),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert, color: AppColors.darkBlue),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: ExamDetailsViewBody(examId: examId),
     );

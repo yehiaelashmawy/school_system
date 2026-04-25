@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import 'package:open_filex/open_filex.dart';
@@ -15,6 +16,31 @@ import 'package:school_system/features/teacher/presentation/views/widgets/sectio
 class ExamDetailsViewBody extends StatelessWidget {
   const ExamDetailsViewBody({super.key, this.examId});
   final String? examId;
+  
+  static final _dummyExam = TeacherExamModel(
+    oid: '1',
+    name: 'Midterm Examination',
+    description: 'General mathematics midterm exam',
+    type: 'Written',
+    subjectName: 'Mathematics',
+    className: 'Grade 10-A',
+    date: '2024-05-20',
+    startTime: '09:00',
+    duration: '02:00',
+    maxScore: 100,
+    passingScore: 50,
+    status: 'Upcoming',
+    room: 'Hall A',
+    studentsCount: 30,
+    instructions: 'Please bring your own calculator.\nNo cell phones allowed.',
+    materials: [
+      {
+        'name': 'Exam_Manual.pdf',
+        'fileSize': 1024 * 500,
+        'fileType': 'application/pdf',
+      }
+    ],
+  );
 
   Future<TeacherExamModel?> _fetchExamDetails() async {
     if (examId == null || examId!.trim().isEmpty) return null;
@@ -64,7 +90,10 @@ class ExamDetailsViewBody extends StatelessWidget {
       future: _fetchExamDetails(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Skeletonizer(
+            enabled: true,
+            child: _buildContent(context, _dummyExam),
+          );
         } else if (snapshot.hasError ||
             !snapshot.hasData ||
             snapshot.data == null) {

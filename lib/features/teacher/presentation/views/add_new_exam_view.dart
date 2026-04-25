@@ -34,24 +34,6 @@ class AddNewExamView extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        centerTitle: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Exam saved as draft')),
-              );
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              'Drafts',
-              style: AppTextStyle.medium14.copyWith(
-                color: AppColors.primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: MultiBlocProvider(
         providers: [
