@@ -13,7 +13,9 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final message = conversation is MessageModel ? conversation as MessageModel : null;
+    final message = conversation is MessageModel
+        ? conversation as MessageModel
+        : null;
 
     return Scaffold(
       backgroundColor: ThemeManager.isDarkMode
@@ -40,29 +42,7 @@ class ChatView extends StatelessWidget {
               ? message!.senderRoleRaw
               : 'Online',
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.videocam_outlined,
-              color: ThemeManager.isDarkMode
-                  ? Colors.white
-                  : AppColors.darkBlue,
-              size: 28,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.info_outline,
-              color: ThemeManager.isDarkMode
-                  ? Colors.white
-                  : AppColors.darkBlue,
-              size: 26,
-            ),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
+
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(

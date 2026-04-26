@@ -1,11 +1,157 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:school_system/core/utils/app_colors.dart';
+import 'package:school_system/features/student/data/models/student_weekly_schedule_model.dart';
+import 'package:school_system/features/student/presentation/manager/student_weekly_schedule_cubit/student_weekly_schedule_cubit.dart';
+import 'package:school_system/features/student/presentation/manager/student_weekly_schedule_cubit/student_weekly_schedule_state.dart';
 
 class StudentTodaySchedule extends StatelessWidget {
   const StudentTodaySchedule({super.key});
 
+  /// Maps Dart's [DateTime.weekday] (1=Mon…7=Sun) to the API day index (0=Mon…4=Fri).
+  /// Returns -1 if it's a weekend (Sat/Sun), meaning no school today.
+  int _todayIndex() {
+    final weekday = DateTime.now().weekday; // 1=Mon … 7=Sun
+    if (weekday >= 1 && weekday <= 5) return weekday - 1;
+    return -1;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<StudentWeeklyScheduleCubit, StudentWeeklyScheduleState>(
+      builder: (context, state) {
+        // ── Loading / Initial ──────────────────────────────────────────────────
+        if (state is StudentWeeklyScheduleInitial ||
+            state is StudentWeeklyScheduleLoading) {
+          return _buildShell(
+            context,
+            child: Skeletonizer(
+              enabled: true,
+              child: _buildScheduleList([
+                _fakeSkeleton('09:00', 'AM', 'Mathematics', 'Room 101', true),
+                _fakeSkeleton('11:00', 'AM', 'Physics', 'Room 204', false),
+                _fakeSkeleton('02:00', 'PM', 'Chemistry', 'LAB B', false),
+              ]),
+            ),
+          );
+        }
+
+        // ── Error ──────────────────────────────────────────────────────────────
+        if (state is StudentWeeklyScheduleFailure) {
+          return _buildShell(
+            context,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: Text(
+                  state.error.errorMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.grey),
+                ),
+              ),
+            ),
+          );
+        }
+
+        // ── Success ────────────────────────────────────────────────────────────
+        if (state is StudentWeeklyScheduleSuccess) {
+          final todayIdx = _todayIndex();
+
+          // Weekend
+          if (todayIdx == -1) {
+            return _buildShell(
+              context,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Text(
+                    'No classes today 🎉',
+                    style: TextStyle(color: AppColors.grey),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Find today's timetable entry
+          StudentWeeklyTimetableDay? todayData;
+          if (todayIdx < state.data.weeklyTimetable.length) {
+            todayData = state.data.weeklyTimetable[todayIdx];
+          }
+
+          if (todayData == null || todayData.lessons.isEmpty) {
+            return _buildShell(
+              context,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Text(
+                    'No classes scheduled for today.',
+                    style: TextStyle(color: AppColors.grey),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Determine the currently active lesson (based on time)
+          final now = TimeOfDay.now();
+          int activeIndex = -1;
+          for (int i = 0; i < todayData.lessons.length; i++) {
+            final lessonTime = _parseTime(todayData.lessons[i].time);
+            if (lessonTime != null) {
+              final lessonMinutes = lessonTime.hour * 60 + lessonTime.minute;
+              final nowMinutes = now.hour * 60 + now.minute;
+              // Mark a lesson as active if it started within the past 60 minutes
+              if (nowMinutes >= lessonMinutes &&
+                  nowMinutes < lessonMinutes + 60) {
+                activeIndex = i;
+                break;
+              }
+            }
+          }
+
+          final items = todayData.lessons.asMap().entries.map((entry) {
+            final i = entry.key;
+            final lesson = entry.value;
+            final parsed = _parseTime(lesson.time);
+            final isLast = i == todayData!.lessons.length - 1;
+
+            String timeStr = lesson.time;
+            String period = '';
+            if (parsed != null) {
+              final hour = parsed.hour % 12 == 0 ? 12 : parsed.hour % 12;
+              final minute =
+                  parsed.minute.toString().padLeft(2, '0');
+              timeStr = '$hour:$minute';
+              period = parsed.hour < 12 ? 'AM' : 'PM';
+            }
+
+            return _ScheduleItem(
+              time: timeStr,
+              period: period,
+              subject: lesson.subjectName,
+              topic: lesson.teacherName,
+              room: lesson.room,
+              isActive: i == activeIndex,
+              hasDivider: !isLast,
+            );
+          }).toList();
+
+          return _buildShell(
+            context,
+            child: _buildScheduleList(items),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  /// The outer section wrapper (title + "VIEW WEEK SCHEDULE" button).
+  Widget _buildShell(BuildContext context, {required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,7 +172,7 @@ class StudentTodaySchedule extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Schedule",
+                  'Schedule',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -38,10 +184,8 @@ class StudentTodaySchedule extends StatelessWidget {
             ),
             OutlinedButton(
               onPressed: () {
-                Navigator.of(
-                  context,
-                  rootNavigator: true,
-                ).pushNamed('weekly_schedule_view');
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed('weekly_schedule_view');
               },
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
@@ -68,50 +212,73 @@ class StudentTodaySchedule extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.lightGrey.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.lightGrey.withValues(alpha: 0.3),
-            ),
-          ),
-          child: const Column(
-            children: [
-              _ScheduleItem(
-                time: '09:00',
-                period: 'NOW',
-                subject: 'Physics',
-                topic: 'Quantum Mechanics Basics',
-                room: 'R. 402',
-                isActive: true,
-                hasDivider: true,
-              ),
-              _ScheduleItem(
-                time: '12:30',
-                period: 'PM',
-                subject: 'Literature',
-                topic: 'Prof. Elena',
-                room: 'R. 104',
-                isActive: false,
-                hasDivider: true,
-              ),
-              _ScheduleItem(
-                time: '02:15',
-                period: 'PM',
-                subject: 'Chemistry',
-                topic: 'Organic Compounds',
-                room: 'LAB B',
-                isActive: false,
-                hasDivider: false,
-              ),
-            ],
-          ),
-        ),
+        child,
       ],
     );
   }
+
+  Widget _buildScheduleList(List<Widget> items) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.lightGrey.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(children: items),
+    );
+  }
+
+  // Skeleton placeholder item
+  _ScheduleItem _fakeSkeleton(
+    String time,
+    String period,
+    String subject,
+    String room,
+    bool isActive,
+  ) {
+    return _ScheduleItem(
+      time: time,
+      period: period,
+      subject: subject,
+      topic: 'Prof. Placeholder',
+      room: room,
+      isActive: isActive,
+      hasDivider: true,
+    );
+  }
+
+  TimeOfDay? _parseTime(String raw) {
+    // Supports "HH:mm" or "H:mm AM/PM"
+    final trimmed = raw.trim();
+    // Try 24-hour first
+    final re24 = RegExp(r'^(\d{1,2}):(\d{2})$');
+    final m24 = re24.firstMatch(trimmed);
+    if (m24 != null) {
+      return TimeOfDay(
+        hour: int.parse(m24.group(1)!),
+        minute: int.parse(m24.group(2)!),
+      );
+    }
+    // Try 12-hour
+    final re12 = RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)$', caseSensitive: false);
+    final m12 = re12.firstMatch(trimmed);
+    if (m12 != null) {
+      int hour = int.parse(m12.group(1)!);
+      final minute = int.parse(m12.group(2)!);
+      final isPm = m12.group(3)!.toUpperCase() == 'PM';
+      if (isPm && hour != 12) hour += 12;
+      if (!isPm && hour == 12) hour = 0;
+      return TimeOfDay(hour: hour, minute: minute);
+    }
+    return null;
+  }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Private schedule row widget (unchanged visual design)
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _ScheduleItem extends StatelessWidget {
   final String time;
@@ -155,7 +322,8 @@ class _ScheduleItem extends StatelessWidget {
                   period,
                   style: TextStyle(
                     fontSize: 10,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isActive ? FontWeight.bold : FontWeight.normal,
                     color: isActive ? AppColors.primaryColor : AppColors.grey,
                   ),
                 ),
