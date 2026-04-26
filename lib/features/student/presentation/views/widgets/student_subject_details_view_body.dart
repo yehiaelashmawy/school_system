@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:school_system/core/utils/app_colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/core/api/api_service.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/student/data/models/student_my_subjects_model.dart';
 import 'package:school_system/features/student/data/models/student_subject_model.dart';
+import 'package:school_system/features/student/data/repos/student_my_subjects_repo.dart';
+import 'package:school_system/features/student/presentation/manager/student_subject_detail_cubit/student_subject_detail_cubit.dart';
+import 'package:school_system/features/student/presentation/manager/student_subject_detail_cubit/student_subject_detail_state.dart';
 import 'package:school_system/features/student/presentation/views/widgets/subject_details_hero_card.dart';
-import 'package:school_system/features/student/presentation/views/student_lesson_details_view.dart';
-import 'package:school_system/features/student/presentation/views/widgets/student_assignments_tab.dart';
-import 'package:school_system/features/student/presentation/views/widgets/student_exams_tab.dart';
 import 'package:school_system/features/student/presentation/views/widgets/subject_details_tabs.dart';
-import 'package:school_system/features/student/presentation/views/widgets/course_material_item_card.dart';
+import 'package:school_system/features/student/presentation/views/widgets/subject_lessons_tab.dart';
+import 'package:school_system/features/student/presentation/views/widgets/subject_homeworks_tab.dart';
+import 'package:school_system/features/student/presentation/views/widgets/subject_exams_tab.dart';
 
 class StudentSubjectDetailsViewBody extends StatefulWidget {
   final StudentSubjectModel subject;
@@ -25,77 +29,88 @@ class _StudentSubjectDetailsViewBodyState
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(24.0),
-      children: [
-        SubjectDetailsHeroCard(subject: widget.subject),
-        const SizedBox(height: 32),
-        SubjectDetailsTabs(
-          selectedIndex: _selectedTab,
-          onTabSelected: (index) {
-            setState(() {
-              _selectedTab = index;
-            });
-          },
-        ),
-        const SizedBox(height: 32),
-        if (_selectedTab == 0) ...[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocProvider(
+      create: (_) => StudentSubjectDetailCubit(
+        StudentMySubjectsRepo(ApiService()),
+      )..fetchSubjectDetail(widget.subject.oid),
+      child: BlocBuilder<StudentSubjectDetailCubit, StudentSubjectDetailState>(
+        builder: (context, state) {
+          final isLoading = state is StudentSubjectDetailLoading ||
+              state is StudentSubjectDetailInitial;
+
+          StudentMySubjectDetail? detail;
+          if (state is StudentSubjectDetailSuccess) {
+            detail = state.data;
+          }
+
+          return ListView(
+            padding: const EdgeInsets.all(24.0),
             children: [
-              Text(
-                'Course Materials',
-                style: AppTextStyle.bold16.copyWith(
-                  color: AppColors.darkBlue,
-                  fontSize: 18,
+              SubjectDetailsHeroCard(subject: widget.subject),
+              const SizedBox(height: 32),
+              SubjectDetailsTabs(
+                selectedIndex: _selectedTab,
+                onTabSelected: (index) =>
+                    setState(() => _selectedTab = index),
+              ),
+              const SizedBox(height: 32),
+
+              // ── Error banner ───────────────────────────────────────────
+              if (state is StudentSubjectDetailFailure)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: Colors.red, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            state.error.errorMessage,
+                            style: AppTextStyle.medium12
+                                .copyWith(color: Colors.red),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context
+                              .read<StudentSubjectDetailCubit>()
+                              .fetchSubjectDetail(widget.subject.oid),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              Text(
-                '4 Modules Available',
-                style: AppTextStyle.medium12.copyWith(color: AppColors.grey),
-              ),
+
+              // ── Tab content ────────────────────────────────────────────
+              if (_selectedTab == 0)
+                SubjectLessonsTab(
+                  lessons: detail?.lessons ?? [],
+                  isLoading: isLoading,
+                )
+              else if (_selectedTab == 1)
+                SubjectHomeworksTab(
+                  homeworks: detail?.homeworks ?? [],
+                  subjectName: widget.subject.subjectName,
+                  isLoading: isLoading,
+                )
+              else if (_selectedTab == 2)
+                SubjectExamsTab(
+                  exams: detail?.exams ?? [],
+                  isLoading: isLoading,
+                ),
+
+              const SizedBox(height: 24),
             ],
-          ),
-          const SizedBox(height: 24),
-          CourseMaterialItemCard(
-            title: 'Complex Numbers & Vectors',
-            subtitle: 'Uploaded 2 days ago • 4.2 MB',
-            onViewPressed: () {
-              Navigator.of(context, rootNavigator: true).pushNamed(
-                StudentLessonDetailsView.routeName,
-                arguments: 'Complex Numbers & Vectors',
-              );
-            },
-            onDownloadPressed: () {},
-          ),
-          CourseMaterialItemCard(
-            title: 'Introduction to Calculus: Limits',
-            subtitle: 'Uploaded Oct 12, 2023 • 2.8 MB',
-            onViewPressed: () {},
-            onDownloadPressed: () {},
-          ),
-          CourseMaterialItemCard(
-            title: 'Coordinate Geometry Workbook',
-            subtitle: 'Uploaded Oct 05, 2023 • 5.1 MB',
-            onViewPressed: () {},
-            onDownloadPressed: () {},
-          ),
-        ] else if (_selectedTab == 1) ...[
-          const StudentAssignmentsTab(),
-        ] else if (_selectedTab == 2) ...[
-          const StudentExamsTab(),
-        ] else ...[
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: Text(
-                'No content currently available.',
-                style: AppTextStyle.medium14.copyWith(color: AppColors.grey),
-              ),
-            ),
-          ),
-        ],
-      ],
+          );
+        },
+      ),
     );
   }
 }

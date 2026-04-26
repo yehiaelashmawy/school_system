@@ -10,16 +10,17 @@ class StudentSubjectsRepo {
 
   Future<Either<ApiErrors, List<StudentSubjectModel>>> getStudentSubjects() async {
     try {
-      final response = await apiService.get('/api/Subjects');
+      final response = await apiService.get('/api/my-subjects');
       final data = response is Map<String, dynamic> ? response['data'] : null;
       final subjects = data is List
           ? data
-                .whereType<Map>()
-                .map(
-                  (item) =>
-                      StudentSubjectModel.fromApiJson(item.cast<String, dynamic>()),
-                )
-                .toList()
+              .whereType<Map>()
+              .map(
+                (item) => StudentSubjectModel.fromMySubjectsJson(
+                  item.cast<String, dynamic>(),
+                ),
+              )
+              .toList()
           : <StudentSubjectModel>[];
 
       return Right(subjects);
