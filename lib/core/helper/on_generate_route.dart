@@ -87,9 +87,9 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
         builder: (context) => StudentSubjectDetailsView(subject: subject),
       );
     case StudentLessonDetailsView.routeName:
-      final title = settings.arguments as String;
+      final id = settings.arguments as String;
       return MaterialPageRoute(
-        builder: (context) => StudentLessonDetailsView(lessonTitle: title),
+        builder: (context) => StudentLessonDetailsView(lessonId: id),
       );
     case StudentAssignmentDetailsView.routeName:
       final args = settings.arguments as StudentAssignmentDetailsArgs;

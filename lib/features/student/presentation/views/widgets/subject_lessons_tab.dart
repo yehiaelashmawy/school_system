@@ -83,8 +83,9 @@ class SubjectLessonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = lesson.isCompleted;
-    final statusColor =
-        isCompleted ? AppColors.secondaryColor : const Color(0xffF79009);
+    final statusColor = isCompleted
+        ? AppColors.secondaryColor
+        : const Color.fromARGB(255, 9, 33, 247);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -101,80 +102,120 @@ class SubjectLessonCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  lesson.title,
-                  style: AppTextStyle.bold16.copyWith(color: AppColors.darkBlue),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon Box
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                if (lesson.formattedDate.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today_outlined,
-                          size: 12, color: AppColors.grey),
-                      const SizedBox(width: 4),
-                      Text(
-                        lesson.formattedDate,
-                        style: AppTextStyle.medium12
-                            .copyWith(color: AppColors.grey),
-                      ),
-                      if (lesson.formattedTimeRange.isNotEmpty)
-                        Text(
-                          '  •  ${lesson.formattedTimeRange}',
-                          style: AppTextStyle.medium12
-                              .copyWith(color: AppColors.grey),
-                        ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 8),
-                Row(
+                child: Icon(
+                  Icons.play_lesson_outlined,
+                  color: AppColors.primaryColor,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Text Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        lesson.status.toUpperCase(),
-                        style: AppTextStyle.bold12.copyWith(
-                          color: statusColor,
-                          fontSize: 10,
-                        ),
+                    Text(
+                      lesson.title,
+                      style: AppTextStyle.bold16.copyWith(
+                        color: AppColors.darkBlue,
                       ),
                     ),
-                    if (lesson.materialsCount > 0) ...[
-                      const SizedBox(width: 8),
-                      Icon(Icons.attach_file, size: 13, color: AppColors.grey),
-                      const SizedBox(width: 2),
-                      Text(
-                        '${lesson.materialsCount} materials',
-                        style: AppTextStyle.medium12
-                            .copyWith(color: AppColors.grey, fontSize: 11),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${lesson.formattedDate}${lesson.formattedTimeRange.isNotEmpty ? ' • ${lesson.formattedTimeRange}' : ''}',
+                      style: AppTextStyle.medium12.copyWith(
+                        color: AppColors.grey,
                       ),
-                    ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            lesson.status.toUpperCase(),
+                            style: AppTextStyle.bold12.copyWith(
+                              color: statusColor,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                        if (lesson.materialsCount > 0) ...[
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.attach_file,
+                            size: 13,
+                            color: AppColors.grey,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            '${lesson.materialsCount} materials',
+                            style: AppTextStyle.medium12.copyWith(
+                              color: AppColors.grey,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                StudentLessonDetailsView.routeName,
-                arguments: lesson.title,
-              );
-            },
-            icon: Icon(Icons.arrow_forward_ios,
-                size: 16, color: AppColors.primaryColor),
+          const SizedBox(height: 16),
+          // Action Button
+          Align(
+            alignment: Alignment.bottomRight,
+            child: SizedBox(
+              height: 40,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    StudentLessonDetailsView.routeName,
+                    arguments: lesson.lessonId,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(
+                    0xff0F52BD,
+                  ), // Dark blue from image
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                ),
+                icon: const Icon(Icons.remove_red_eye_outlined, size: 18),
+                label: const Text(
+                  'View',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
           ),
         ],
       ),
