@@ -81,6 +81,7 @@ class ProfileViewBody extends StatelessWidget {
                                   context,
                                   PersonalInformationView.routeName,
                                 ).then((_) {
+                                  if (!context.mounted) return;
                                   context.read<ProfileCubit>().fetchProfile();
                                 });
                               },
@@ -98,6 +99,7 @@ class ProfileViewBody extends StatelessWidget {
                               context,
                               PersonalInformationView.routeName,
                             ).then((_) {
+                              if (!context.mounted) return;
                               context.read<ProfileCubit>().fetchProfile();
                             });
                           },

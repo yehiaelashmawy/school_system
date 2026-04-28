@@ -186,7 +186,7 @@ class _AttendanceMethodViewBodyState extends State<AttendanceMethodViewBody> {
                 icon: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.qr_code, color: Colors.white),

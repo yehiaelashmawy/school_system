@@ -24,4 +24,11 @@ abstract class AppColors {
       ThemeManager.isDarkMode ? const Color(0xff14181F) : Colors.white;
   static Color get black =>
       ThemeManager.isDarkMode ? Colors.white : Colors.black;
+  static Color get black54 =>
+      ThemeManager.isDarkMode ? Colors.white54 : Colors.black54;
+
+  // Parent Home Specific Colors
+  static Color get announcementOrange => const Color(0xFFFFF7ED);
+  static Color get messagePurple => const Color(0xFFFAF5FF);
+  static Color get homeworkBlue => const Color(0xFFEFF6FF);
 }
