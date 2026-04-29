@@ -56,10 +56,7 @@ class _ParentHomeViewBodyContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const ParentHomeHeader(
-            userName: 'Loading...',
-            profileImageUrl: 'assets/images/profile_photo.png',
-          ),
+          const ParentHomeHeader(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Skeletonizer(
@@ -124,10 +121,7 @@ class _ParentHomeViewBodyContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ParentHomeHeader(
-              userName: 'Parent',
-              profileImageUrl: 'assets/images/profile_photo.png',
-            ),
+            const ParentHomeHeader(),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),

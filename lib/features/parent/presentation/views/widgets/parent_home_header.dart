@@ -1,47 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:school_system/core/helper/shared_prefs_helper.dart';
+import 'package:school_system/core/helper/url_helper.dart';
 import 'package:school_system/core/utils/app_colors.dart';
 import 'package:school_system/core/utils/app_text_style.dart';
+import 'package:school_system/features/teacher/data/repos/profile_repo.dart';
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:school_system/features/teacher/presentation/manager/profile_cubit/profile_state.dart';
 
 class ParentHomeHeader extends StatelessWidget {
-  final String userName;
-  final String profileImageUrl;
+  const ParentHomeHeader({super.key});
 
-  const ParentHomeHeader({
-    super.key,
-    required this.userName,
-    required this.profileImageUrl,
-  });
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning,';
+    } else if (hour < 17) {
+      return 'Good Afternoon,';
+    } else {
+      return 'Good Evening,';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: AssetImage(profileImageUrl),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome back,',
-                style: AppTextStyle.regular12.copyWith(
-                  color: AppColors.grey,
-                ),
+    return BlocProvider(
+      create: (context) => ProfileCubit(ProfileRepo())..fetchProfile(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Row(
+          children: [
+            BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, state) {
+                String? imageUrl;
+
+                if (state is ProfileSuccess) {
+                  imageUrl = UrlHelper.getFullImageUrl(state.profile.avatar);
+                }
+
+                return CircleAvatar(
+                  radius: 24,
+                  backgroundColor: AppColors.secondaryColor,
+                  backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                      ? NetworkImage(imageUrl)
+                      : null,
+                  child: (imageUrl == null || imageUrl.isEmpty)
+                      ? Icon(Icons.person, color: AppColors.white)
+                      : null,
+                );
+              },
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _getGreeting(),
+                    style: AppTextStyle.regular12.copyWith(
+                      color: AppColors.grey,
+                    ),
+                  ),
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      final parentName = state is ProfileSuccess
+                          ? (state.profile.fullName?.trim().isNotEmpty ?? false)
+                              ? state.profile.fullName!.trim()
+                              : 'Parent'
+                          : (SharedPrefsHelper.fullName?.trim().isNotEmpty ?? false)
+                              ? SharedPrefsHelper.fullName!.trim()
+                              : 'Parent';
+
+                      return Text(
+                        parentName,
+                        style: AppTextStyle.bold16.copyWith(
+                          color: AppColors.secondaryColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
+                  ),
+                ],
               ),
-              Text(
-                userName,
-                style: AppTextStyle.bold16.copyWith(
-                  color: AppColors.secondaryColor,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
