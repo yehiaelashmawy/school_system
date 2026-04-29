@@ -20,6 +20,58 @@ class RecentActivityItem extends StatelessWidget {
     required this.iconColor,
   });
 
+  factory RecentActivityItem.fromActivity({
+    required String activity,
+    required String timeAgo,
+    required String status,
+  }) {
+    IconData icon;
+    Color bgColor;
+    Color color;
+    String description = status;
+
+    switch (activity.toLowerCase()) {
+      case 'submitted homework':
+        icon = Icons.check_circle_outline;
+        bgColor = const Color(0xFFDCFCE7);
+        color = const Color(0xFF16A34A);
+        break;
+      case 'new announcement':
+        icon = Icons.campaign_outlined;
+        bgColor = const Color(0xFFFFEDD5);
+        color = const Color(0xFFEA580C);
+        break;
+      case 'message from teacher':
+        icon = Icons.chat_bubble_outline;
+        bgColor = const Color(0xFFF3E8FF);
+        color = const Color(0xFF9333EA);
+        break;
+      case 'exam result':
+        icon = Icons.grade_outlined;
+        bgColor = const Color(0xFFDBEAFE);
+        color = const Color(0xFF2563EB);
+        break;
+      case 'attendance':
+        icon = Icons.access_time;
+        bgColor = const Color(0xFFFEF3C7);
+        color = const Color(0xFFD97706);
+        break;
+      default:
+        icon = Icons.notifications_outlined;
+        bgColor = const Color(0xFFF1F5F9);
+        color = const Color(0xFF64748B);
+    }
+
+    return RecentActivityItem(
+      title: activity,
+      description: description,
+      time: timeAgo,
+      icon: icon,
+      iconBgColor: bgColor,
+      iconColor: color,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
