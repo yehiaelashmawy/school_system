@@ -19,7 +19,6 @@ class StudentAssignmentItemCard extends StatelessWidget {
   final String? filename;
 
   final VoidCallback? onViewDetails;
-  final VoidCallback? onSecondaryAction;
   final VoidCallback? onSubmitWork;
 
   const StudentAssignmentItemCard({
@@ -34,7 +33,6 @@ class StudentAssignmentItemCard extends StatelessWidget {
     this.description,
     this.filename,
     this.onViewDetails,
-    this.onSecondaryAction,
     this.onSubmitWork,
   });
 
@@ -60,108 +58,93 @@ class StudentAssignmentItemCard extends StatelessWidget {
     }
   }
 
-  String get _secondaryActionLabel {
-    switch (status) {
-      case AssignmentStatus.graded:
-        return 'Materials';
-      case AssignmentStatus.notSubmitted:
-        return 'Download';
-      case AssignmentStatus.pendingReview:
-        return 'Re-submit';
-    }
-  }
-
-  String get _viewDetailsLabel {
-    switch (status) {
-      case AssignmentStatus.pendingReview:
-        return 'Details';
-      default:
-        return 'View Details';
-    }
-  }
-
-  IconData get _secondaryActionIcon {
-    switch (status) {
-      case AssignmentStatus.graded:
-      case AssignmentStatus.notSubmitted:
-        return Icons.download_rounded;
-      case AssignmentStatus.pendingReview:
-        return Icons.history;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.lightGrey.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(14),
+        border: Border(left: BorderSide(color: _statusColor, width: 4)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.01),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(left: BorderSide(color: _statusColor, width: 4)),
-        ),
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header: Title and Status Badge
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: AppTextStyle.bold16.copyWith(
-                      color: AppColors.darkBlue,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
+                // Icon Box
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: _statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    _statusLabel,
-                    style: AppTextStyle.bold12.copyWith(
-                      color: _statusColor,
-                      fontSize: 10,
-                    ),
+                  child: Icon(
+                    Icons.assignment_outlined,
+                    color: AppColors.primaryColor,
+                    size: 24,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Subtitle (Date)
-            Row(
-              children: [
-                Icon(
-                  isDueSoon ? Icons.access_time : Icons.calendar_today_outlined,
-                  size: 14,
-                  color: isDueSoon ? _statusColor : AppColors.grey,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  submittedDate,
-                  style: AppTextStyle.medium12.copyWith(
-                    color: isDueSoon ? _statusColor : AppColors.grey,
+                const SizedBox(width: 12),
+                // Text Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTextStyle.bold16.copyWith(
+                          color: AppColors.darkBlue,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            isDueSoon ? Icons.access_time : Icons.calendar_today_outlined,
+                            size: 14,
+                            color: isDueSoon ? _statusColor : AppColors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            submittedDate,
+                            style: AppTextStyle.medium12.copyWith(
+                              color: isDueSoon ? _statusColor : AppColors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Status Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          _statusLabel,
+                          style: AppTextStyle.bold12.copyWith(
+                            color: _statusColor,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -180,7 +163,6 @@ class StudentAssignmentItemCard extends StatelessWidget {
             ] else if (status == AssignmentStatus.notSubmitted) ...[
               StudentAssignmentNotSubmittedContent(
                 description: description,
-                onSubmitWork: onSubmitWork,
               ),
             ] else if (status == AssignmentStatus.pendingReview) ...[
               StudentAssignmentPendingContent(filename: filename),
@@ -188,55 +170,50 @@ class StudentAssignmentItemCard extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Actions
+            // Action Buttons
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onViewDetails,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.lightGrey),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                if (status == AssignmentStatus.notSubmitted) ...[
+                  SizedBox(
+                    height: 40,
+                    child: ElevatedButton.icon(
+                      onPressed: onSubmitWork,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    icon: Icon(
-                      Icons.remove_red_eye_outlined,
-                      size: 18,
-                      color: AppColors.darkBlue,
-                    ),
-                    label: Text(
-                      _viewDetailsLabel,
-                      style: AppTextStyle.bold14.copyWith(
-                        color: AppColors.darkBlue,
+                      icon: const Icon(Icons.file_upload_outlined, size: 18),
+                      label: const Text(
+                        'Submit Work',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: onSecondaryAction,
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.lightGrey.withValues(
-                        alpha: 0.3,
-                      ),
+                  const SizedBox(width: 8),
+                ],
+                SizedBox(
+                  height: 40,
+                  child: ElevatedButton.icon(
+                    onPressed: onViewDetails,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff0F52BD), // Match lesson card blue
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                     ),
-                    icon: Icon(
-                      _secondaryActionIcon,
-                      size: 18,
-                      color: AppColors.darkBlue,
-                    ),
-                    label: Text(
-                      _secondaryActionLabel,
-                      style: AppTextStyle.bold14.copyWith(
-                        color: AppColors.darkBlue,
-                      ),
+                    icon: const Icon(Icons.remove_red_eye_outlined, size: 18),
+                    label: const Text(
+                      'View Details',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

@@ -165,29 +165,29 @@ class StudentMyHomework {
 
 class StudentMyExam {
   final String examId;
-  final String title;
+  final String name;
   final DateTime? date;
-  final int totalMarks;
+  final int maxScore;
   final String status;
-  final double? myGrade;
+  final double? myScore;
 
   StudentMyExam({
     required this.examId,
-    required this.title,
+    required this.name,
     this.date,
-    required this.totalMarks,
+    required this.maxScore,
     required this.status,
-    this.myGrade,
+    this.myScore,
   });
 
   factory StudentMyExam.fromJson(Map<String, dynamic> json) {
     return StudentMyExam(
       examId: json['examId']?.toString() ?? '',
-      title: json['title']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
       date: _tryParse(json['date']),
-      totalMarks: (json['totalMarks'] as num?)?.toInt() ?? 0,
+      maxScore: (json['maxScore'] as num?)?.toInt() ?? 0,
       status: json['status']?.toString() ?? '',
-      myGrade: (json['myGrade'] as num?)?.toDouble(),
+      myScore: (json['myScore'] as num?)?.toDouble(),
     );
   }
 

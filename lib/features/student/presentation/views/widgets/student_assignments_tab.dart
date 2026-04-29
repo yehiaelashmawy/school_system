@@ -30,7 +30,6 @@ class StudentAssignmentsTab extends StatelessWidget {
                   isDueSoon: false,
                   description: 'Loading description...',
                   onViewDetails: () {},
-                  onSecondaryAction: () {},
                 ),
               ),
             ),
@@ -58,7 +57,7 @@ class StudentAssignmentsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: homeworks.map((hw) {
               AssignmentStatus status = AssignmentStatus.notSubmitted;
-              
+
               if (hw.grade != null || hw.status?.toLowerCase() == 'graded') {
                 status = AssignmentStatus.graded;
               } else if (hw.status?.toLowerCase() == 'pending') {
@@ -111,7 +110,7 @@ class StudentAssignmentsTab extends StatelessWidget {
                     ),
                   );
                 },
-                onSecondaryAction: () {},
+
                 onSubmitWork: () {
                   Navigator.pushNamed(
                     context,
@@ -139,4 +138,3 @@ class StudentAssignmentsTab extends StatelessWidget {
     );
   }
 }
-

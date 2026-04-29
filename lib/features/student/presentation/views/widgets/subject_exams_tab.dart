@@ -27,12 +27,14 @@ class SubjectExamsTab extends StatelessWidget {
             (_) => StudentExamItemCard(
               iconData: Icons.calendar_today_outlined,
               iconColor: AppColors.primaryColor,
-              iconBackgroundColor:
-                  AppColors.primaryColor.withValues(alpha: 0.1),
+              iconBackgroundColor: AppColors.primaryColor.withValues(
+                alpha: 0.1,
+              ),
               badgeText: 'UPCOMING',
               badgeTextColor: AppColors.primaryColor,
-              badgeBackgroundColor:
-                  AppColors.primaryColor.withValues(alpha: 0.1),
+              badgeBackgroundColor: AppColors.primaryColor.withValues(
+                alpha: 0.1,
+              ),
               title: 'Loading Exam Title',
               subtitle: 'Loading exam details...',
               bottomLabel: 'STATUS',
@@ -60,9 +62,8 @@ class SubjectExamsTab extends StatelessWidget {
   }
 
   Widget _buildCard(BuildContext context, StudentMyExam exam) {
-    final isGraded = exam.myGrade != null;
-    final isCompleted =
-        exam.status.toLowerCase() == 'completed' || isGraded;
+    final isGraded = exam.myScore != null;
+    final isCompleted = exam.status.toLowerCase() == 'completed' || isGraded;
 
     final IconData iconData;
     final Color iconColor;
@@ -83,7 +84,7 @@ class SubjectExamsTab extends StatelessWidget {
       badgeTextColor = AppColors.secondaryColor;
       badgeBg = AppColors.primaryColor.withValues(alpha: 0.12);
       bottomLabel = 'FINAL GRADE';
-      bottomValue = '${exam.myGrade?.toStringAsFixed(0)}/${exam.totalMarks}';
+      bottomValue = '${exam.myScore?.toStringAsFixed(0)}/${exam.maxScore}';
       bottomValueColor = AppColors.secondaryColor;
       isPrimary = false;
     } else if (isCompleted) {
@@ -101,8 +102,9 @@ class SubjectExamsTab extends StatelessWidget {
       iconData = Icons.calendar_today_outlined;
       iconColor = AppColors.primaryColor;
       iconBg = AppColors.primaryColor.withValues(alpha: 0.1);
-      badgeText =
-          exam.formattedDate.isNotEmpty ? exam.formattedDate : 'UPCOMING';
+      badgeText = exam.formattedDate.isNotEmpty
+          ? exam.formattedDate
+          : 'UPCOMING';
       badgeTextColor = Colors.white;
       badgeBg = AppColors.secondaryColor;
       bottomLabel = 'STATUS';
@@ -118,7 +120,7 @@ class SubjectExamsTab extends StatelessWidget {
       badgeText: badgeText,
       badgeTextColor: badgeTextColor,
       badgeBackgroundColor: badgeBg,
-      title: exam.title,
+      title: exam.name,
       subtitle: exam.formattedDate.isNotEmpty
           ? 'Scheduled: ${exam.formattedDate}'
           : 'Date not set',
@@ -132,7 +134,7 @@ class SubjectExamsTab extends StatelessWidget {
           StudentExamDetailsView.routeName,
           arguments: StudentExamDetailsArgs(
             status: exam.status,
-            title: exam.title,
+            title: exam.name,
             date: exam.formattedDate,
             time: '',
             duration: '',

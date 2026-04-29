@@ -32,7 +32,6 @@ class SubjectHomeworksTab extends StatelessWidget {
               submittedDate: 'Loading Date',
               isDueSoon: false,
               onViewDetails: () {},
-              onSecondaryAction: () {},
             ),
           ),
         ),
@@ -99,7 +98,6 @@ class SubjectHomeworksTab extends StatelessWidget {
       totalGrade: hw.totalMarks.toString(),
       feedback: hw.feedback,
       onViewDetails: navigateToDetails,
-      onSecondaryAction: () {},
       onSubmitWork: navigateToDetails,
     );
   }
